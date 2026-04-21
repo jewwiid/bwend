@@ -185,6 +185,10 @@ function Navigation() {
     } else {
       document.documentElement.classList.remove('dark');
     }
+    const themeMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeMeta) {
+      themeMeta.setAttribute('content', darkMode ? '#121118' : '#fdfbf7');
+    }
   }, [darkMode]);
 
   return (
@@ -252,22 +256,22 @@ function HeroSection({ waitlist }: { waitlist: WaitlistSignup }) {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 lg:px-24 w-full">
         <div className="translate-y-4 animate-fade-in">
-          <SectionLabel className="text-white/60 mb-8">Currently live in London & NYC</SectionLabel>
+          <SectionLabel className="text-white/60 mb-8">Pre-launch. Gathering interest.</SectionLabel>
           <h1 className="font-display text-[clamp(3.5rem,10vw,8rem)] text-white font-semibold leading-[0.85] tracking-[-0.06em]">
             The dating app <br />
             <span className="italic font-serif">designed</span> to <br />
             be heard.
           </h1>
           <p className="mt-12 text-white/70 text-lg md:text-xl lg:text-2xl max-w-xl font-normal leading-relaxed tracking-normal">
-            Connect through the music you actually love — <br className="hidden md:block" />
-            before you ever match on looks.
+            We&apos;re building a way to connect through the music you actually love, <br className="hidden md:block" />
+            before you ever match on looks. Join the list to get early access.
           </p>
 
           <div className="mt-10 max-w-xl">
             {waitlist.submitted ? (
               <div className="inline-flex items-center gap-3 rounded-full border border-white/25 bg-white/10 px-6 py-3.5 text-white backdrop-blur-md">
                 <Icons.check className="h-5 w-5 shrink-0 text-emerald-400" />
-                <span className="text-sm font-medium tracking-wide">You&apos;re on the list — we&apos;ll be in touch.</span>
+                <span className="text-sm font-medium tracking-wide">You&apos;re on the list. We&apos;ll be in touch.</span>
               </div>
             ) : (
               <form
@@ -304,7 +308,7 @@ function HeroSection({ waitlist }: { waitlist: WaitlistSignup }) {
                 {waitlist.error}
               </p>
             ) : null}
-            <p className="mt-3 text-xs text-white/45">No spam — one line to get on the list.</p>
+            <p className="mt-3 text-xs text-white/45">No spam. One line to get on the list.</p>
           </div>
 
           <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
@@ -340,11 +344,11 @@ function AppShowcaseSection() {
         <div>
           <SectionLabel className="mb-6">The Experience</SectionLabel>
           <h2 className="font-display text-4xl md:text-5xl lg:text-[4.5rem] font-semibold text-[var(--color-text-primary)] leading-[0.95] tracking-tight">
-            Hear the vibe — <br />
-            before you see the face.
+            Hear the vibe. <br />
+            Before you see the face.
           </h2>
           <p className="mt-10 text-[var(--color-text-secondary)] text-xl leading-relaxed max-w-md font-normal">
-            Your top tracks, moods, and late-night repeats become the conversation. It feels closer to meeting through friends—with better playlists.
+            Your top tracks, moods, and late-night repeats become the conversation. It feels closer to meeting through friends, with better playlists.
           </p>
           <div className="mt-12 flex flex-col gap-6">
             <div className="flex items-start gap-4">
@@ -353,7 +357,7 @@ function AppShowcaseSection() {
               </div>
               <div>
                 <h4 className="font-bold text-sm uppercase tracking-widest text-[var(--color-text-primary)]">Ritual-based matching</h4>
-                <p className="mt-1 text-sm text-[var(--color-text-secondary)]">No more swiping. Every Tuesday, we blend your taste with someone new.</p>
+                <p className="mt-1 text-sm text-[var(--color-text-secondary)]">No endless catalog. The idea: one intentional blend at a time, not another night of swiping.</p>
               </div>
             </div>
             <div className="flex items-start gap-4">
@@ -395,15 +399,15 @@ function AppShowcaseSection() {
 }
 
 function LogoBar() {
-  const logos = ['The Verge', 'Wired', 'TechCrunch', 'Rolling Stone', 'NME'];
+  const pillars = ['Music-first matching', 'One blend at a time', 'Spotify-connected'];
   return (
     <section className="py-12 md:py-14 px-6 border-b border-[var(--color-border)] bg-[var(--color-bg-secondary)]/50">
       <p className="text-center text-xs uppercase tracking-[0.25em] text-[var(--color-text-muted)] mb-8">
-        Trusted energy
+        What we&apos;re building
       </p>
-      <div className="max-w-5xl mx-auto flex flex-wrap justify-center items-center gap-x-12 gap-y-6 opacity-45 grayscale">
-        {logos.map((name) => (
-          <span key={name} className="font-display text-lg md:text-xl font-semibold text-[var(--color-text-primary)]">
+      <div className="max-w-5xl mx-auto flex flex-wrap justify-center items-center gap-x-10 gap-y-4">
+        {pillars.map((name) => (
+          <span key={name} className="font-display text-base md:text-lg font-semibold text-[var(--color-text-primary)] opacity-80">
             {name}
           </span>
         ))}
@@ -428,7 +432,7 @@ function PhilosophySection() {
             </h2>
             <div className="mt-14 space-y-8 text-[var(--color-text-secondary)] text-xl leading-relaxed font-normal max-w-md">
               <p>
-                People spend hours curated the perfect "face," but 30 seconds of their most-played track says more than a bio ever could.
+                People spend hours curating the perfect "face," but 30 seconds of their most-played track says more than a bio ever could.
               </p>
               <p>
                 Bwend is for the people who let the music speak first. No more checkbox overlap. Just shared energy, track by track.
@@ -479,10 +483,10 @@ function LabsSection() {
               <span className="italic font-serif">scientists.</span>
             </h2>
             <p className="mt-12 text-[var(--color-text-secondary)] text-xl leading-relaxed font-normal max-w-md">
-              Our matching engine doesn't look at who you say you are. It looks at what you hear. 
+              The matching layer we&apos;re building won&apos;t start from who you say you are. It starts from what you actually listen to.
             </p>
             <p className="mt-8 text-[var(--color-text-muted)] text-base leading-relaxed max-w-md">
-              By analyzing decibels, BPM, and acoustic range, we find the person who shares your frequency—whether that's lo-fi mornings or techno nights.
+              Decibels, BPM, acoustic range: signals that point to someone on your wavelength, whether that&apos;s lo-fi mornings or techno nights.
             </p>
           </div>
         </div>
@@ -503,7 +507,7 @@ function HowItWorksSection() {
     {
       id: '02',
       title: 'Join a Ritual',
-      body: 'Receive your daily "Blend"—a person whose playlist sounds like a reflection of your own.',
+      body: 'Designed so each day you get one "Blend": a person whose playlist mirrors your taste.',
       color: 'var(--color-accent-lavender)',
     },
     {
@@ -528,7 +532,7 @@ function HowItWorksSection() {
           {steps.map((step, i) => (
             <div 
               key={step.id} 
-              className={`p-12 rounded-[2.5rem] bg-white border border-[var(--color-border)] shadow-sm hover:shadow-xl transition-all duration-700 ${
+              className={`p-12 rounded-[2.5rem] bg-[var(--color-bg-card)] border border-[var(--color-border)] shadow-sm hover:shadow-xl transition-all duration-700 ${
                 ref.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
               }`}
               style={{ transitionDelay: `${i * 200}ms` }}
@@ -542,9 +546,9 @@ function HowItWorksSection() {
 
         <div className="mt-24 text-center">
             <div className={`inline-flex items-center gap-1.5 p-1 rounded-full bg-[var(--color-bg-secondary)] border border-[var(--color-border)] transition-all duration-1000 ${ref.inView ? 'opacity-100' : 'opacity-0'}`}>
-                <span className="px-6 py-2.5 text-[0.625rem] font-bold uppercase tracking-[0.2em] text-[var(--color-text-primary)]">Ready to match?</span>
+                <span className="px-6 py-2.5 text-[0.625rem] font-bold uppercase tracking-[0.2em] text-[var(--color-text-primary)]">Want early access?</span>
                 <a href="#waitlist" className="px-6 py-2.5 rounded-full bg-[var(--color-ink)] text-white text-[0.625rem] font-bold uppercase tracking-[0.2em] hover:opacity-90 transition-opacity">
-                    Join London Pilot
+                    Join the waitlist
                 </a>
             </div>
         </div>
@@ -556,9 +560,9 @@ function HowItWorksSection() {
 function MidCTASection() {
   return (
     <section className="py-16 md:py-20 px-6">
-      <div className="max-w-4xl mx-auto rounded-[999px] px-8 py-12 md:py-16 text-center bg-gradient-to-br from-amber-100/90 via-orange-50 to-rose-100/80 border border-[var(--color-border)] shadow-sm">
+      <div className="mid-cta-surface max-w-4xl mx-auto rounded-[999px] px-8 py-12 md:py-16 text-center border border-[var(--color-border)] shadow-sm">
         <h2 className="font-display text-2xl md:text-3xl font-semibold text-[var(--color-text-primary)]">
-          Ready to meet someone who gets the soundtrack?
+          Be first when we open the list for real matches.
         </h2>
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
           <a href="#waitlist" className="w-full sm:w-auto inline-flex justify-center px-8 py-3.5 rounded-full bg-[var(--color-accent-cta)] text-white font-semibold text-sm hover:brightness-105 transition-all">
@@ -566,7 +570,7 @@ function MidCTASection() {
           </a>
           <a
             href="#philosophy"
-            className="w-full sm:w-auto inline-flex justify-center px-8 py-3.5 rounded-full bg-white/80 border border-[var(--color-border)] text-[var(--color-text-primary)] font-semibold text-sm hover:bg-white transition-colors"
+            className="w-full sm:w-auto inline-flex justify-center px-8 py-3.5 rounded-full bg-[var(--color-bg-card)]/85 border border-[var(--color-border)] text-[var(--color-text-primary)] font-semibold text-sm hover:bg-[var(--color-bg-elevated)] transition-colors"
           >
             Our philosophy
           </a>
@@ -581,7 +585,7 @@ function FeaturesSection() {
   const rows = [
     {
       title: 'Your Blend',
-      body: 'A playlist that belongs to both of you—not a list of mutual likes, but a living mix that grows with your relationship.',
+      body: 'A playlist that belongs to both of you, not a list of mutual likes, but a living mix that grows with your relationship.',
       img: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1200&q=80',
       align: 'left' as const,
     },
@@ -648,9 +652,9 @@ function FeaturesSection() {
 function StatsSection() {
   const ref = useInView();
   const stats = [
-    { value: '12k+', label: 'Waitlist entries', icon: Icons.spark },
-    { value: '50', label: 'Cities expanding', icon: Icons.wifi },
-    { value: '4.9', label: 'User rating', icon: Icons.heart },
+    { value: 'Soon', label: 'First cities TBA', icon: Icons.spark },
+    { value: 'Open', label: 'Waitlist', icon: Icons.wifi },
+    { value: 'You', label: 'Help shape the launch', icon: Icons.heart },
   ];
 
   return (
@@ -699,7 +703,7 @@ function MoodsSection() {
             What moves you?
           </h2>
           <p className="mt-8 text-[var(--color-text-secondary)] text-xl max-w-xl mx-auto">
-            Pick a mood. We'll find people who feel it the same way.
+            These are the moods we&apos;re tuning for. Tell us what matters on the waitlist.
           </p>
         </div>
         <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
@@ -793,31 +797,34 @@ function TestimonialsSection() {
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-32">
-          <SectionLabel className="text-white/40 mb-10">Social Proof</SectionLabel>
+          <SectionLabel className="text-white/40 mb-10">Before we launch</SectionLabel>
           <h2 className="font-display text-5xl md:text-7xl lg:text-[6rem] font-semibold tracking-tighter leading-[0.85]">
-            Hear it from <br />the crowd.
+            The moments <br />we&apos;re designing for.
           </h2>
+          <p className="mt-8 text-white/50 text-lg max-w-2xl mx-auto font-normal">
+            No reviews yet. Here&apos;s the kind of connection we&apos;re building toward.
+          </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-20 lg:gap-32 items-start">
           <div className="relative">
              <Icons.quote className="w-12 h-12 text-white/10 absolute -top-16 -left-4" />
              <p className="text-2xl md:text-3xl font-medium leading-[1.1] tracking-tight italic opacity-95">
-               "Other apps were like shooting fish in a barrel. But Bwend? We clicked immediately over obscure 80s synth. We've been together for six months."
+               &ldquo;I want the opener to be a song, not a pickup line.&rdquo;
              </p>
-             <p className="mt-12 text-[0.625rem] font-bold uppercase tracking-[0.3em] text-white/40">Sarah — 28, London</p>
+             <p className="mt-12 text-[0.625rem] font-bold uppercase tracking-[0.3em] text-white/40">Product north star</p>
           </div>
           <div className="relative">
              <p className="text-2xl md:text-3xl font-medium leading-[1.1] tracking-tight italic opacity-95">
-               "Finally skip the bios. The Ritual is actually fun. We knew the vibe was right before the first drink."
+               &ldquo;I&apos;m tired of swiping on faces. I want to know if we hear the same world.&rdquo;
              </p>
-             <p className="mt-12 text-[0.625rem] font-bold uppercase tracking-[0.3em] text-white/40">James — 31, NYC</p>
+             <p className="mt-12 text-[0.625rem] font-bold uppercase tracking-[0.3em] text-white/40">Why taste first</p>
           </div>
           <div className="relative">
              <p className="text-2xl md:text-3xl font-medium leading-[1.1] tracking-tight italic opacity-95">
-               "I'm a snob, I'll admit it. Bwend found the only person in the city who likes my niche jazz playlist. destiny — or just great data."
+               &ldquo;If our playlists overlap in a weird way, that&apos;s a better first signal than small talk.&rdquo;
              </p>
-             <p className="mt-12 text-[0.625rem] font-bold uppercase tracking-[0.3em] text-white/40">Alex — 26, Paris</p>
+             <p className="mt-12 text-[0.625rem] font-bold uppercase tracking-[0.3em] text-white/40">Shared energy</p>
           </div>
         </div>
       </div>
@@ -840,7 +847,7 @@ function FinalCTASection({ waitlist }: { waitlist: WaitlistSignup }) {
               need.
             </h2>
             <p className="mt-14 text-[var(--color-text-secondary)] text-xl leading-relaxed max-w-sm font-normal">
-              Bwend is currently in private pilot. One match a day. No noise. Just the music.
+              We&apos;re not live yet. Join the waitlist and we&apos;ll email you when the app opens. One match a day, no noise, music first.
             </p>
 
             {waitlist.submitted ? (
@@ -903,7 +910,7 @@ function Footer() {
           <div className="col-span-2 md:col-span-2">
             <img src={logoDark} alt="Bwend" className="h-8 mb-8 dark:opacity-90" />
             <p className="text-lg md:text-xl text-[var(--color-text-secondary)] max-w-xs leading-relaxed font-normal">
-              The dating app — <br />designed for the playlist you actually replay.
+              The dating app <br />designed for the playlist you actually replay.
             </p>
           </div>
           <div>
@@ -961,7 +968,7 @@ export function BwendLandingPage() {
   const waitlist = useWaitlistSignup();
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] theme-transition">
+    <div className="min-h-screen max-w-[1440px] mx-auto bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] theme-transition">
       <Navigation />
       <main>
         <HeroSection waitlist={waitlist} />
