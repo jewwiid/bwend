@@ -300,7 +300,8 @@ html:not(.dark) {
 
   .ds-btn-accent {
     background-color: var(--color-accent-cta);
-    color: #fff;
+    color: #14120f; /* High-contrast brown/dark text on pink/coral */
+    font-weight: 700;
   }
 
   .ds-btn-accent:hover:not(:disabled) {

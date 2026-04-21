@@ -235,7 +235,7 @@ function Navigation() {
               className={`px-6 py-3 rounded-full transition-all duration-500 ${
                 lightOnHero && !scrolled 
                   ? 'bg-white text-black hover:bg-white/90' 
-                  : 'bg-[var(--color-ink)] text-white hover:opacity-90'
+                  : 'bg-[var(--color-ink)] text-[var(--color-bg-primary)] hover:opacity-90'
               }`}
             >
               Join the list
@@ -308,7 +308,7 @@ function HeroSection({ waitlist }: { waitlist: WaitlistSignup }) {
                 <button
                   type="submit"
                   disabled={waitlist.loading}
-                  className="shrink-0 rounded-full border-0 bg-[var(--color-accent-cta)] px-8 py-3.5 text-[0.75rem] font-bold uppercase tracking-[0.2em] text-white shadow-xl transition-all hover:brightness-105 disabled:opacity-60"
+                  className="shrink-0 rounded-full border-0 bg-[var(--color-accent-cta)] px-8 py-3.5 text-[0.75rem] font-bold uppercase tracking-[0.2em] text-[#14120f] shadow-xl transition-all hover:brightness-105 disabled:opacity-60"
                 >
                   {waitlist.loading ? 'Joining…' : 'Sign up'}
                 </button>
@@ -576,7 +576,7 @@ function MidCTASection() {
           Be first when we open the list for real matches.
         </h2>
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <a href="#waitlist" className="w-full sm:w-auto inline-flex justify-center px-8 py-3.5 rounded-full bg-[var(--color-accent-cta)] text-white font-semibold text-sm hover:brightness-105 transition-all">
+          <a href="#waitlist" className="w-full sm:w-auto inline-flex justify-center px-8 py-3.5 rounded-full bg-[var(--color-accent-cta)] text-[#14120f] font-semibold text-sm hover:brightness-105 transition-all">
             Join waitlist
           </a>
           <a
@@ -770,21 +770,21 @@ function ComparisonSection() {
             </ul>
           </div>
 
-          <div className={`p-12 md:p-16 rounded-[3rem] bg-[var(--color-ink)] text-white shadow-2xl transition-all duration-1000 delay-300 ${ref.inView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'}`}>
-            <h3 className="text-[0.625rem] font-bold uppercase tracking-[0.3em] text-white/40 mb-12">The Bwend Way</h3>
+          <div className={`p-12 md:p-16 rounded-[3rem] bg-[var(--color-ink)] text-[var(--color-bg-primary)] shadow-2xl transition-all duration-1000 delay-300 ${ref.inView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'}`}>
+            <h3 className="text-[0.625rem] font-bold uppercase tracking-[0.3em] text-[var(--color-bg-primary)] opacity-40 mb-12">The Bwend Way</h3>
             <ul className="space-y-10">
               <li className="flex gap-6 items-start">
                 <Icons.check className="w-5 h-5 text-[var(--color-accent-peach)] mt-1" />
                 <div>
-                  <p className="text-xl font-medium text-white">The Daily Blend</p>
-                  <p className="mt-3 text-white/70 font-normal leading-relaxed">One high-intent connection a day. Focus on the person, not the catalog.</p>
+                  <p className="text-xl font-medium text-[var(--color-bg-primary)]">The Daily Blend</p>
+                  <p className="mt-3 text-[var(--color-bg-primary)] opacity-70 font-normal leading-relaxed">One high-intent connection a day. Focus on the person, not the catalog.</p>
                 </div>
               </li>
               <li className="flex gap-6 items-start">
                 <Icons.check className="w-5 h-5 text-[var(--color-accent-peach)] mt-1" />
                 <div>
-                  <p className="text-xl font-medium text-white">Music-first Momentum</p>
-                  <p className="mt-3 text-white/70 font-normal leading-relaxed">Start with a shared favorite track. The small talk is bypassed by default.</p>
+                  <p className="text-xl font-medium text-[var(--color-bg-primary)]">Music-first Momentum</p>
+                  <p className="mt-3 text-[var(--color-bg-primary)] opacity-70 font-normal leading-relaxed">Start with a shared favorite track. The small talk is bypassed by default.</p>
                 </div>
               </li>
             </ul>
@@ -802,7 +802,7 @@ function TestimonialsSection() {
     <section
       id="stories"
       ref={ref.ref}
-      className={`section-spread bg-[var(--color-ink)] text-white overflow-hidden transition-all duration-1000 ${
+      className={`section-spread bg-[var(--color-ink)] text-[var(--color-bg-primary)] overflow-hidden transition-all duration-1000 ${
         ref.inView ? 'opacity-100' : 'opacity-0'
       }`}
     >
