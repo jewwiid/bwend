@@ -8,8 +8,9 @@
     "dev:full": "convex dev --start 'vite'",
     "build": "tsc -b && vite build",
     "deploy:convex": "convex deploy",
+    "deploy:convex:prod": "convex deploy --env-file .env.production",
     "deploy:vercel": "vercel deploy --prod",
-    "deploy:prod": "npm run deploy:convex && npm run deploy:vercel",
+    "deploy:prod": "npm run deploy:convex:prod && npm run deploy:vercel",
     "lint": "eslint .",
     "preview": "vite preview"
   },
