@@ -124,6 +124,10 @@ export type WaitlistSignup = {
   submit: (e?: React.FormEvent) => Promise<void>;
 };
 
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 function useWaitlistSignup(): WaitlistSignup {
   const joinWaitlist = useMutation(api.waitlist.join);
   const [email, setEmail] = useState('');
@@ -146,7 +150,14 @@ function useWaitlistSignup(): WaitlistSignup {
   const submit = async (e?: React.FormEvent) => {
     e?.preventDefault();
     const trimmed = email.trim().toLowerCase();
-    if (!trimmed) return;
+    if (!trimmed) {
+      setError('Please enter your email.');
+      return;
+    }
+    if (!isValidEmail(trimmed)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
     setError(null);
     setLoading(true);
     try {
@@ -936,6 +947,9 @@ function Footer() {
               <input
                 type="email"
                 placeholder="Email"
+                required
+                pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+                title="Please enter a valid email address"
                 className="ds-input flex-1 py-3 text-xs font-bold"
               />
               <button

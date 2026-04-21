@@ -31,7 +31,7 @@ VITE_SPOTIFY_CLIENT_ID=your_client_id_here
 npm run build
 ```
 
-Output goes to `dist/` — ready to deploy to Vercel.
+Output goes to `dist/`, ready to deploy to Vercel.
 
 ## Tech Stack
 

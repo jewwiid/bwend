@@ -1,0 +1,28 @@
+---
+description: Do not use em dashes (—) in copy, UI strings, or comments; use commas, periods, or colons instead.
+alwaysApply: true
+---
+
+# No em dashes
+
+- **Do not** use the Unicode em dash character (U+2014, `—`) anywhere in this project: marketing copy, UI strings, meta tags, comments, or docs.
+- **Prefer**: a comma, period, colon, or parentheses depending on the sentence. For name/location lines (e.g. attributions), use a comma: `Sarah, 28, London`.
+- **Hyphen-minus** (`-`) is fine for compound words and ranges; this rule targets em dashes only.
+
+```tsx
+// ❌ BAD
+<p>We ship fast — without breaking things.</p>
+
+// ✅ GOOD
+<p>We ship fast, without breaking things.</p>
+```
+
+```html
+<!-- ❌ BAD -->
+<meta property="og:title" content="bwend — The dating app" />
+
+<!-- ✅ GOOD -->
+<meta property="og:title" content="bwend: The dating app" />
+```
+
+When editing existing text, replace any `—` with punctuation that matches the tone of the sentence.

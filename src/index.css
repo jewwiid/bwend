@@ -2,7 +2,7 @@
 
 /*
   Bwend design system (parameters)
-  — 4px grid, hierarchy (size/position/color), signifiers, interaction states,
+  - 4px grid, hierarchy (size/position/color), signifiers, interaction states,
     semantic colors, soft shadows (light), elevation without harsh shadow (dark),
     one sans + one display serif, tight display tracking / line-height.
 */
@@ -13,12 +13,12 @@
   --font-serif: 'Fraunces', Georgia, 'Times New Roman', serif;
 
   /* Landing/marketing: keep to ~6 distinct steps; dashboards stay smaller */
-  --text-ds-xs: 0.6875rem; /* 11px — tiny labels */
+  --text-ds-xs: 0.6875rem; /* 11px - tiny labels */
   --text-ds-sm: 0.8125rem; /* 13px */
-  --text-ds-base: 1rem; /* 16px — body */
+  --text-ds-base: 1rem; /* 16px - body */
   --text-ds-lg: 1.125rem; /* 18px */
   --text-ds-xl: 1.25rem; /* 20px */
-  --text-ds-2xl: 1.5rem; /* 24px — dashboard ceiling per guidance */
+  --text-ds-2xl: 1.5rem; /* 24px - dashboard ceiling per guidance */
   --text-ds-hero-sm: clamp(2.25rem, 5vw, 3.5rem);
   --text-ds-hero: clamp(2.75rem, 6vw, 5.5rem);
 
@@ -31,22 +31,23 @@
   --tracking-tight: -0.02em;
   --tracking-ui: 0.02em;
 
-  /* ─── Brand + surfaces ─── */
+  /* ─── Brand + surfaces (light: warm cream / paper) ─── */
   --color-bg-primary: #fdfbf7;
-  --color-bg-secondary: #f9f7f2;
+  --color-bg-secondary: #f5f0e8;
   --color-bg-card: #ffffff;
   --color-bg-elevated: #ffffff;
+  --color-bg-muted: #efe9df;
 
-  --color-text-primary: #111111;
-  --color-text-secondary: #4a4a4a;
-  --color-text-muted: #8a8a8a;
-  --color-text-disabled: #b4b4b4;
+  --color-text-primary: #14120f;
+  --color-text-secondary: #4a4540;
+  --color-text-muted: #8a847a;
+  --color-text-disabled: #b5aea3;
 
-  --color-border: #ebe8e1;
-  --color-border-subtle: #f3f0ea;
-  --color-ink: #111111;
+  --color-border: #e4ddd4;
+  --color-border-subtle: #efe8df;
+  --color-ink: #14120f;
 
-  /* Primary ramp (brand — tint for bg, shade for text) */
+  /* Primary ramp (brand: tint for bg, shade for text) */
   --color-primary-50: #fdf2f3;
   --color-primary-100: #f8dcdf;
   --color-primary-500: #e8919a;
@@ -96,52 +97,68 @@
   --spacing-ds-3: 0.75rem; /* 12 */
   --spacing-ds-4: 1rem; /* 16 */
   --spacing-ds-6: 1.5rem; /* 24 */
-  --spacing-ds-8: 2rem; /* 32 — common vertical rhythm between blocks */
+  --spacing-ds-8: 2rem; /* 32 - common vertical rhythm between blocks */
   --spacing-ds-10: 2.5rem; /* 40 */
   --spacing-ds-12: 3rem; /* 48 */
 }
 
-/* Dark: lower border contrast; cards lighter than bg; chips less saturated */
-.dark {
-  --color-bg-primary: #0c0c0c;
-  --color-bg-secondary: #141414;
-  --color-bg-card: #1a1a1a;
-  --color-bg-elevated: #1f1f1f;
+html, body {
+  background-color: var(--color-bg-primary);
+}
 
-  --color-text-primary: #f4f4f4;
-  --color-text-secondary: #b0b0b0;
-  --color-text-muted: #737373;
-  --color-text-disabled: #525252;
+/*
+  Dark: warm charcoal (not pure gray), elevated surfaces, soft borders,
+  accents slightly brighter so CTAs & chips read clearly.
+*/
+.dark {
+  --color-bg-primary: #121118;
+  --color-bg-secondary: #1a1822;
+  --color-bg-card: #22202c;
+  --color-bg-elevated: #2a2735;
+  --color-bg-muted: #18161e;
+
+  --color-text-primary: #f5f3ef;
+  --color-text-secondary: #b8b3a8;
+  --color-text-muted: #7f7a72;
+  --color-text-disabled: #5c5852;
 
   --color-border: rgb(255 255 255 / 0.1);
   --color-border-subtle: rgb(255 255 255 / 0.06);
-  --color-ink: #fafafa;
+  --color-ink: #f5f3ef;
 
-  --color-primary-50: #2a1518;
-  --color-primary-100: #3d1f24;
-  --color-primary-500: #c97a84;
-  --color-primary-700: #e8a9b0;
-  --color-primary-900: #fceff1;
+  --color-primary-50: #2d1f24;
+  --color-primary-100: #3d252c;
+  --color-primary-500: #e07a86;
+  --color-primary-700: #f0b4bc;
+  --color-primary-900: #fff5f6;
 
-  --color-accent-cta: #b86d76;
-  --color-accent-peach: #9e7a72;
-  --color-accent-coral: #a86f6a;
-  --color-accent-lavender: #8a7f9a;
-  --color-accent-warm-yellow: #a89462;
-  --color-accent-blush: #9a7a7a;
+  --color-accent-cta: #e07a86;
+  --color-accent-peach: #c9a090;
+  --color-accent-coral: #d88880;
+  --color-accent-lavender: #a898c4;
+  --color-accent-warm-yellow: #d4b86a;
+  --color-accent-blush: #c49a9a;
 
-  --color-semantic-info: #60a5fa;
-  --color-semantic-success: #4ade80;
-  --color-semantic-warning: #fbbf24;
-  --color-semantic-danger: #f87171;
+  --color-semantic-info: #7eb6ff;
+  --color-semantic-success: #5ee9a8;
+  --color-semantic-warning: #fcd34d;
+  --color-semantic-danger: #fb923c;
 
-  --shadow-ds-xs: 0 1px 2px rgb(0 0 0 / 0.35);
-  --shadow-ds-card: none;
-  --shadow-ds-card-hover: none;
-  --shadow-ds-popover: 0 16px 48px -8px rgb(0 0 0 / 0.55);
-  --shadow-ds-inner-warm: inset 0 1px 0 rgb(255 255 255 / 0.04);
+  --shadow-ds-xs: 0 1px 2px rgb(0 0 0 / 0.45);
+  --shadow-ds-card: 0 1px 0 rgb(255 255 255 / 0.04) inset;
+  --shadow-ds-card-hover: 0 4px 24px -4px rgb(0 0 0 / 0.45);
+  --shadow-ds-popover: 0 20px 50px -12px rgb(0 0 0 / 0.65);
+  --shadow-ds-inner-warm: inset 0 1px 0 rgb(255 255 255 / 0.06);
 
-  --color-focus-ring: var(--color-accent-lavender);
+  --color-focus-ring: #c4a8e8;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+html:not(.dark) {
+  color-scheme: light;
 }
 
 @layer base {
@@ -204,6 +221,25 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  /* Mid-page CTA pill: warm paper in light, deep plum in dark */
+  .mid-cta-surface {
+    background-image: linear-gradient(
+      135deg,
+      rgb(255 251 245 / 0.98) 0%,
+      rgb(255 248 240 / 0.96) 45%,
+      rgb(255 236 242 / 0.94) 100%
+    );
+  }
+
+  .dark .mid-cta-surface {
+    background-image: linear-gradient(
+      135deg,
+      rgb(34 32 44 / 0.96) 0%,
+      rgb(26 24 34 / 0.98) 50%,
+      rgb(36 28 36 / 0.95) 100%
+    );
   }
 
   /* Icon aligned to UI text line (24px line → 24px icon) */
