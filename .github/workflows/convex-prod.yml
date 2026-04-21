@@ -1,0 +1,21 @@
+# Manual: Actions → Deploy Convex production → Run workflow
+# Requires repo secret CONVEX_DEPLOY_KEY (Convex Dashboard → Project → Settings → Deploy keys)
+name: Deploy Convex production
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - name: Convex deploy
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: npx convex deploy --typecheck try
