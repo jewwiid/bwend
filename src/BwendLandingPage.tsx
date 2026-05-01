@@ -203,10 +203,8 @@ function Navigation() {
   }, [darkMode]);
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
-      scrolled 
-        ? 'bg-[var(--color-bg-primary)]/80 backdrop-blur-xl border-b border-[var(--color-border)]/50 py-4' 
-        : 'bg-transparent py-8'
+    <nav className={`fixed top-0 left-0 right-0 z-50 bg-transparent transition-all duration-700 ${
+      scrolled ? 'py-4' : 'py-8'
     }`}>
       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
         <div className="flex items-center justify-between">
@@ -982,7 +980,7 @@ export function BwendLandingPage() {
   const waitlist = useWaitlistSignup();
 
   return (
-    <div className="min-h-screen max-w-[1440px] mx-auto bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] theme-transition">
+    <div className="min-h-screen bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] theme-transition">
       <Navigation />
       <main>
         <HeroSection waitlist={waitlist} />
