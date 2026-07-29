@@ -2,8 +2,8 @@ import { useEffect, useState, useRef, type SVGProps } from 'react';
 import { useMutation } from 'convex/react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../convex/_generated/api';
-import logoLight from './assets/logo_light.svg';
-import logoDark from './assets/logo_dark.svg';
+import logoLight from './assets/logo_light.png';
+import logoDark from './assets/logo_dark.png';
 import { loadSession } from './lib/api';
 import { beginSpotifyLogin } from './lib/spotifyAuth';
 
