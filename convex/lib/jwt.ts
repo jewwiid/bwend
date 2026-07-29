@@ -2,7 +2,7 @@
  * JWT — HS256 sign/verify using WebCrypto (crypto.subtle).
  *
  * Ported from Swift SessionJWT.swift. Same claims structure:
- *   { sub: spotifyUserId, name?, iss: "bwend", iat, exp }
+ *   { sub: pseudonymousBwendUserId, iss: "bwend", iat, exp }
  *
  * The secret comes from the BWEND_SESSION_SECRET env var (set in Convex dashboard).
  * Lifetime is 24 hours — matches the iOS app's session expectations.
@@ -24,7 +24,6 @@ interface SessionPayload {
 
 export interface SessionIdentity {
   spotifyUserId: string;
-  name?: string;
 }
 
 function getSecret(): string {
@@ -72,13 +71,11 @@ function base64UrlEncodeString(str: string): string {
  * Mint a fresh session token for a Spotify user.
  */
 export async function issueSession(
-  spotifyUserId: string,
-  displayName: string | null
+  spotifyUserId: string
 ): Promise<string> {
   const now = Date.now();
   const payload: SessionPayload = {
     sub: spotifyUserId,
-    name: displayName ?? undefined,
     iss: ISSUER,
     iat: Math.floor(now / 1000),
     exp: Math.floor((now + LIFETIME_MS) / 1000),
@@ -139,5 +136,5 @@ export async function verifySession(token: string): Promise<SessionIdentity> {
     throw new Error(`Wrong issuer: expected "${ISSUER}", got "${payload.iss}"`);
   }
 
-  return { spotifyUserId: payload.sub, name: payload.name };
+  return { spotifyUserId: payload.sub };
 }

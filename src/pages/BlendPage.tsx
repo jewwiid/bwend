@@ -15,6 +15,9 @@ import {
   creditLine,
   durationText,
   ApiError,
+  deleteAccount,
+  disconnectSpotify,
+  exportAccountData,
   type BlendResponse,
   type TimeRange,
 } from '../lib/api';
@@ -37,6 +40,7 @@ export function BlendPage() {
   const [inviteUrl, setInviteUrl] = useState<string | null>(null);
   const [creatingInvite, setCreatingInvite] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [privacyBusy, setPrivacyBusy] = useState(false);
 
   const session = loadSession();
 
@@ -100,6 +104,52 @@ export function BlendPage() {
       setTimeout(() => setCopied(false), 2000);
     } catch {
       // Clipboard can be blocked by permissions; the URL is on screen to copy manually.
+    }
+  }
+
+  async function onExport() {
+    setPrivacyBusy(true);
+    setError(null);
+    try {
+      const snapshot = await exportAccountData();
+      const url = URL.createObjectURL(
+        new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json' }),
+      );
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'bwend-data-export.json';
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not export your data.');
+    } finally {
+      setPrivacyBusy(false);
+    }
+  }
+
+  async function onDisconnect() {
+    if (!window.confirm('Disconnect Spotify now? Your remaining Bwend data will be erased after 30 days unless you reconnect.')) return;
+    setPrivacyBusy(true);
+    try {
+      await disconnectSpotify();
+      clearSession();
+      navigate('/', { replace: true });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not disconnect Spotify.');
+      setPrivacyBusy(false);
+    }
+  }
+
+  async function onDelete() {
+    if (!window.confirm('Permanently delete your Bwend account and shared blend reveals? This cannot be undone.')) return;
+    setPrivacyBusy(true);
+    try {
+      await deleteAccount();
+      clearSession();
+      navigate('/', { replace: true });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not delete your account.');
+      setPrivacyBusy(false);
     }
   }
 
@@ -284,6 +334,42 @@ export function BlendPage() {
               </dl>
             </section>
           )}
+
+          <section className="space-y-4">
+            <SectionLabel>Privacy & data</SectionLabel>
+            <div className="rounded-2xl bg-[var(--color-bg-card)] p-5">
+              <p className="text-ds-sm text-[var(--color-text-secondary)]">
+                Bwend has no public dating profile or people search. Your Taste Card appears
+                only in blends you choose to send or claim.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  disabled={privacyBusy}
+                  onClick={onExport}
+                  className="rounded-full border border-[var(--color-border)] px-4 py-2 text-ds-sm font-semibold disabled:opacity-50"
+                >
+                  Export my data
+                </button>
+                <button
+                  type="button"
+                  disabled={privacyBusy}
+                  onClick={onDisconnect}
+                  className="rounded-full border border-[var(--color-border)] px-4 py-2 text-ds-sm font-semibold disabled:opacity-50"
+                >
+                  Disconnect Spotify
+                </button>
+                <button
+                  type="button"
+                  disabled={privacyBusy}
+                  onClick={onDelete}
+                  className="rounded-full px-4 py-2 text-ds-sm font-semibold text-red-600 disabled:opacity-50"
+                >
+                  Delete account
+                </button>
+              </div>
+            </div>
+          </section>
         </div>
       )}
     </AppShell>

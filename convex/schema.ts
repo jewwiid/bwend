@@ -57,10 +57,16 @@ export default defineSchema({
       clock: v.union(v.array(v.number()), v.null()),
     }),
     spotifyTokenBlob: v.union(v.string(), v.null()),
+    // Added as optional fields so existing profiles can migrate safely on reconnect.
+    identityVersion: v.optional(v.number()),
+    privacyConsentVersion: v.optional(v.string()),
+    privacyConsentedAt: v.optional(v.number()),
+    disconnectedAt: v.optional(v.union(v.number(), v.null())),
     createdAt: v.number(),
     updatedAt: v.number(),
   })
-    .index("by_spotify_user_id", ["spotifyUserId"]),
+    .index("by_spotify_user_id", ["spotifyUserId"])
+    .index("by_disconnected_at", ["disconnectedAt"]),
 
   // Artist enrichment cache — the signal Spotify stopped providing, sourced from MusicBrainz
   // (genres, country) and ListenBrainz (similar artists).
@@ -117,7 +123,9 @@ export default defineSchema({
     expiresAt: v.number(),
   })
     .index("by_code", ["code"])
-    .index("by_inviter", ["inviterSpotifyUserId"]),
+    .index("by_inviter", ["inviterSpotifyUserId"])
+    .index("by_invitee", ["inviteeSpotifyUserId"])
+    .index("by_status_and_expires_at", ["status", "expiresAt"]),
 
   // Completed pairings with frozen reveal data.
   matches: defineTable({
@@ -164,6 +172,7 @@ export default defineSchema({
     createdAt: v.number(),
   })
     .index("by_match_and_user", ["matchId", "spotifyUserId"])
+    .index("by_match", ["matchId"])
     .index("by_spotify_user_id", ["spotifyUserId"]),
 
   // APNs device registrations. Tokens are opaque and may rotate, so the server upserts every

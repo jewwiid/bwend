@@ -51,11 +51,34 @@ export async function requireFreshSpotifySession(
     throw new SpotifySessionError("Your Spotify connection expired. Reconnect to continue.");
   }
 
-  let tokens = decodeTokenBlob(profile.spotifyTokenBlob);
+  let tokens = await decodeTokenBlob(profile.spotifyTokenBlob);
   if (!tokens) {
     throw new SpotifySessionError("Your Spotify connection expired. Reconnect to continue.");
   }
-  if (!isTokenExpired(tokens)) return { profile, tokens };
+  if (!isTokenExpired(tokens)) {
+    if (tokens.storageVersion === "legacy") {
+      const spotifyTokenBlob = await encodeTokenBlob({
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+        scope: tokens.scope,
+        tokenType: "Bearer",
+        expiresIn: Math.max(
+          1,
+          Math.floor(((tokens.expiresAt ?? Date.now() + 60_000) - Date.now()) / 1000)
+        ),
+      });
+      await ctx.runMutation(internal.bwendProfileMutations.updateTokenBlob, {
+        spotifyUserId,
+        spotifyTokenBlob,
+      });
+      const migrated = await decodeTokenBlob(spotifyTokenBlob);
+      if (!migrated) {
+        throw new SpotifySessionError("Your Spotify connection expired. Reconnect to continue.");
+      }
+      tokens = migrated;
+    }
+    return { profile, tokens };
+  }
 
   const refreshToken = tokens.refreshToken;
   const clientId = process.env.SPOTIFY_CLIENT_ID;
@@ -68,7 +91,7 @@ export async function requireFreshSpotifySession(
     const refreshed = await refreshAccessToken(refreshToken, clientId, clientSecret);
     const nextRefreshToken = refreshed.refreshToken ?? refreshToken;
     const nextScope = refreshed.scope ?? tokens.scope;
-    const spotifyTokenBlob = encodeTokenBlob({
+    const spotifyTokenBlob = await encodeTokenBlob({
       accessToken: refreshed.accessToken,
       tokenType: refreshed.tokenType,
       expiresIn: refreshed.expiresIn,
@@ -86,6 +109,7 @@ export async function requireFreshSpotifySession(
       refreshToken: nextRefreshToken,
       scope: nextScope,
       expiresAt: Date.now() + refreshed.expiresIn * 1000,
+      storageVersion: "encrypted",
     };
     return { profile, tokens };
   } catch {

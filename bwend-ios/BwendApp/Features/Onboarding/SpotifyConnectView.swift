@@ -7,12 +7,15 @@ import SwiftUI
 // we route them back to the invite preview after connect completes.
 
 struct SpotifyConnectView: View {
+    static let privacyVersion = "2026-07-29"
     @EnvironmentObject var auth: AuthManager
     @EnvironmentObject var api: APIClient
     @EnvironmentObject var router: Router
 
     @State private var connecting = false
     @State private var errorMessage: String?
+    @State private var privacyConsentGranted = false
+    @State private var showingPrivacyNotice = false
     private let spotifyAuth = SpotifyAuth()
 
     var body: some View {
@@ -45,6 +48,20 @@ struct SpotifyConnectView: View {
                 Spacer()
 
                 VStack(spacing: 12) {
+                    Toggle(isOn: $privacyConsentGranted) {
+                        Text("I agree to Bwend using my Spotify listening data only to create private Taste Cards and blends I choose to share.")
+                            .font(.bwend(size: 12))
+                            .foregroundColor(Color.bwendTextSecondary)
+                            .lineSpacing(3)
+                    }
+                    .toggleStyle(.switch)
+
+                    Button("Read the privacy notice") {
+                        showingPrivacyNotice = true
+                    }
+                    .font(.bwend(size: 12, weight: .medium))
+                    .foregroundColor(Color.Accent.cta)
+
                     PrimaryButton(
                         "Connect Spotify",
                         loading: connecting,
@@ -52,6 +69,7 @@ struct SpotifyConnectView: View {
                     ) {
                         Task { await connect() }
                     }
+                    .disabled(!privacyConsentGranted)
 
                     if let errorMessage {
                         Text(errorMessage)
@@ -71,6 +89,9 @@ struct SpotifyConnectView: View {
             .padding(.vertical, 60)
         }
         .animation(.bwendSmooth, value: errorMessage)
+        .sheet(isPresented: $showingPrivacyNotice) {
+            PrivacyNoticeView()
+        }
     }
 
     @MainActor
@@ -81,8 +102,16 @@ struct SpotifyConnectView: View {
 
         do {
             let result = try await spotifyAuth.authorize()
-            let response = try await api.connectSpotify(code: result.code, codeVerifier: result.codeVerifier)
-            auth.applySession(token: response.token, displayName: response.displayName)
+            guard privacyConsentGranted else {
+                errorMessage = "Review and accept the privacy notice before connecting."
+                return
+            }
+            let response = try await api.connectSpotify(
+                code: result.code,
+                codeVerifier: result.codeVerifier,
+                privacyConsentVersion: Self.privacyVersion
+            )
+            try await auth.applySession(token: response.token, displayName: response.displayName)
 
             // If the user arrived from a deep link (e.g. a Hinge match sent them bwend.xyz/m/abc),
             // route them straight to the invite preview instead of the start screen.

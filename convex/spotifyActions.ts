@@ -20,6 +20,8 @@ import {
 } from "./lib/spotify";
 import { buildTasteProfile, describeSignals } from "./lib/vibeScore";
 import { issueSession } from "./lib/jwt";
+import { privateAlias, pseudonymousUserId } from "./lib/privacy";
+import { CURRENT_PRIVACY_VERSION } from "./lib/privacyConstants";
 
 /**
  * Redirect URIs this backend will complete a token exchange for.
@@ -49,6 +51,7 @@ export const connect = internalAction({
     codeVerifier: v.string(),
     // Optional: older app builds don't send it and get the default (iOS) URI.
     redirectUri: v.optional(v.string()),
+    privacyConsentVersion: v.string(),
   },
   returns: v.any(),
   handler: async (ctx, args) => {
@@ -67,6 +70,9 @@ export const connect = internalAction({
 
     if (!clientId || !clientSecret) {
       return { status: 500, error: "Spotify credentials not configured.", data: null };
+    }
+    if (args.privacyConsentVersion !== CURRENT_PRIVACY_VERSION) {
+      return { status: 400, error: "The privacy notice has changed. Review it again.", data: null };
     }
 
     // 1. Exchange the auth code for tokens (PKCE — verifier must match the challenge).
@@ -106,32 +112,41 @@ export const connect = internalAction({
         longTermArtists,
         playedAt: recent?.playedAt,
       });
-      const displayName = meResp.display_name ?? meResp.id;
-      const tokenBlob = encodeTokenBlob(tokens);
+      const bwendUserId = await pseudonymousUserId(meResp.id);
+      const displayName = privateAlias(bwendUserId);
+      const tokenBlob = await encodeTokenBlob(tokens);
 
       // Records which signals Spotify actually returned for this app. Genres and popularity
       // are being withdrawn on some object types, and the scorer drops whichever are absent.
       console.log(`spotify connect signals · ${describeSignals(tracks, artists, tasteProfile)}`);
 
-      // 3. Upsert the profile.
+      // 3. Replace any legacy raw Spotify identifier throughout Bwend, then upsert the
+      // pseudonymous profile. Spotify's display name and raw account id are never persisted.
+      await ctx.runMutation(internal.bwendProfileMutations.migrateIdentity, {
+        legacySpotifyUserId: meResp.id,
+        bwendUserId,
+        alias: displayName,
+      });
       await ctx.runMutation(internal.bwendProfileMutations.upsert, {
-        spotifyUserId: meResp.id,
+        spotifyUserId: bwendUserId,
         displayName,
         topTracks: tracks,
         topArtists: artists,
         tasteProfile,
         spotifyTokenBlob: tokenBlob,
+        privacyConsentVersion: args.privacyConsentVersion,
+        privacyConsentedAt: Date.now(),
       });
 
       // 4. Mint the session JWT.
-      const sessionToken = await issueSession(meResp.id, displayName);
+      const sessionToken = await issueSession(bwendUserId);
 
       return {
         status: 200,
         error: null,
         data: {
           token: sessionToken,
-          spotifyId: meResp.id,
+          userId: bwendUserId,
           displayName,
           topTrackCount: tracks.length,
           topArtistCount: artists.length,

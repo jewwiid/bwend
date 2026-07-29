@@ -254,10 +254,9 @@ struct StartView: View {
                 Spacer()
 
                 Button {
-                    auth.signOut()
-                    router.reset(to: .spotifyConnect)
+                    router.route(to: .accountPrivacy)
                 } label: {
-                    Text("Reconnect")
+                    Text("Privacy & data")
                         .font(.bwend(size: 13, weight: .medium))
                         .foregroundColor(Color.Accent.cta)
                         .padding(.horizontal, 14)
@@ -267,7 +266,7 @@ struct StartView: View {
                         )
                 }
                 .buttonStyle(.plain)
-                .accessibilityIdentifier("reconnectSpotifyButton")
+                .accessibilityIdentifier("privacyDataButton")
             }
         }
         .padding(.top, 8)

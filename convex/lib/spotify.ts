@@ -540,7 +540,38 @@ export async function refreshAccessToken(
   };
 }
 
-// MARK: - Token blob helpers (base64 JSON)
+// MARK: - Token blob helpers (AES-256-GCM)
+
+const TOKEN_BLOB_PREFIX = "enc.v1";
+
+async function tokenEncryptionKey(): Promise<CryptoKey> {
+  const encoded = process.env.SPOTIFY_TOKEN_ENCRYPTION_KEY;
+  if (!encoded) throw new Error("SPOTIFY_TOKEN_ENCRYPTION_KEY is not configured.");
+  const normalized = encoded.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = normalized + "=".repeat((4 - (normalized.length % 4)) % 4);
+  const binary = atob(padded);
+  const keyBytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+  if (keyBytes.length !== 32) {
+    throw new Error("SPOTIFY_TOKEN_ENCRYPTION_KEY must decode to exactly 32 bytes.");
+  }
+  return await crypto.subtle.importKey("raw", keyBytes, "AES-GCM", false, [
+    "encrypt",
+    "decrypt",
+  ]);
+}
+
+function bytesToBase64URL(bytes: Uint8Array): string {
+  return btoa(String.fromCharCode(...bytes))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+function base64URLToBytes(value: string): Uint8Array {
+  const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = normalized + "=".repeat((4 - (normalized.length % 4)) % 4);
+  return Uint8Array.from(atob(padded), (character) => character.charCodeAt(0));
+}
 
 /**
  * Serialize tokens for storage.
@@ -548,14 +579,31 @@ export async function refreshAccessToken(
  * `expiresAt` is an ABSOLUTE epoch-ms timestamp, not the duration Spotify returns — a
  * stored duration is meaningless once written, since there is nothing to measure it from.
  */
-export function encodeTokenBlob(tokens: SpotifyTokenResponse): string {
+export async function encodeTokenBlob(tokens: SpotifyTokenResponse): Promise<string> {
   const payload: Record<string, string> = {
     access: tokens.accessToken,
     expiresAt: String(Date.now() + tokens.expiresIn * 1000),
   };
   if (tokens.refreshToken) payload.refresh = tokens.refreshToken;
   if (tokens.scope) payload.scope = tokens.scope;
-  return btoa(JSON.stringify(payload));
+  const nonce = crypto.getRandomValues(new Uint8Array(12));
+  const ciphertextAndTag = new Uint8Array(
+    await crypto.subtle.encrypt(
+      {
+        name: "AES-GCM",
+        iv: nonce,
+        additionalData: new TextEncoder().encode(TOKEN_BLOB_PREFIX),
+        tagLength: 128,
+      },
+      await tokenEncryptionKey(),
+      new TextEncoder().encode(JSON.stringify(payload))
+    )
+  );
+  return [
+    TOKEN_BLOB_PREFIX,
+    bytesToBase64URL(nonce),
+    bytesToBase64URL(ciphertextAndTag),
+  ].join(".");
 }
 
 export interface StoredTokens {
@@ -564,17 +612,43 @@ export interface StoredTokens {
   scope?: string;
   /** Epoch ms. Null for blobs written before absolute expiry was stored. */
   expiresAt: number | null;
+  /** Legacy blobs are accepted once and encrypted on their next authenticated read. */
+  storageVersion: "encrypted" | "legacy";
 }
 
-export function decodeTokenBlob(blob: string): StoredTokens | null {
+export async function decodeTokenBlob(blob: string): Promise<StoredTokens | null> {
   try {
-    const dict = JSON.parse(atob(blob));
+    let dict: Record<string, string>;
+    let storageVersion: StoredTokens["storageVersion"];
+    if (blob.startsWith(`${TOKEN_BLOB_PREFIX}.`)) {
+      const parts = blob.split(".");
+      if (parts.length !== 4) return null;
+      const nonce = base64URLToBytes(parts[2]).slice().buffer;
+      const ciphertextAndTag = base64URLToBytes(parts[3]).slice().buffer;
+      const plaintext = await crypto.subtle.decrypt(
+        {
+          name: "AES-GCM",
+          iv: nonce,
+          additionalData: new TextEncoder().encode(TOKEN_BLOB_PREFIX),
+          tagLength: 128,
+        },
+        await tokenEncryptionKey(),
+        ciphertextAndTag
+      );
+      dict = JSON.parse(new TextDecoder().decode(plaintext));
+      storageVersion = "encrypted";
+    } else {
+      // Migration only. New writes never use this reversible base64 format.
+      dict = JSON.parse(atob(blob));
+      storageVersion = "legacy";
+    }
     const expiresAt = dict.expiresAt ? parseInt(dict.expiresAt, 10) : NaN;
     return {
       accessToken: dict.access ?? "",
       refreshToken: dict.refresh,
       scope: dict.scope,
       expiresAt: Number.isFinite(expiresAt) ? expiresAt : null,
+      storageVersion,
     };
   } catch {
     return null;

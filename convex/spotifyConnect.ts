@@ -7,6 +7,7 @@
 import { httpAction } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { corsHeaders } from "./auth";
+import { CURRENT_PRIVACY_VERSION } from "./lib/privacyConstants";
 
 // Local helper rather than auth.ts's jsonResponse: this module deliberately avoids importing
 // the JWT verification path, since connect is the endpoint that issues the session in the
@@ -19,7 +20,13 @@ function json(status: number, body: unknown, request: Request): Response {
 }
 
 export const handleSpotifyConnect = httpAction(async (ctx, request) => {
-  let body: { code?: string; codeVerifier?: string; redirectUri?: string };
+  let body: {
+    code?: string;
+    codeVerifier?: string;
+    redirectUri?: string;
+    privacyConsentVersion?: string;
+    privacyConsentGranted?: boolean;
+  };
   try {
     body = await request.json();
   } catch {
@@ -31,6 +38,20 @@ export const handleSpotifyConnect = httpAction(async (ctx, request) => {
   if (!code || !codeVerifier) {
     return json(400, { reason: "Missing 'code' or 'codeVerifier' in request body." }, request);
   }
+  if (
+    body.privacyConsentGranted !== true ||
+    body.privacyConsentVersion !== CURRENT_PRIVACY_VERSION
+  ) {
+    return json(
+      400,
+      {
+        reason: "Review and accept the current Bwend privacy notice before connecting Spotify.",
+        code: "privacy_consent_required",
+        privacyVersion: CURRENT_PRIVACY_VERSION,
+      },
+      request
+    );
+  }
 
   try {
     const result: any = await ctx.runAction(internal.spotifyActions.connect, {
@@ -38,6 +59,7 @@ export const handleSpotifyConnect = httpAction(async (ctx, request) => {
       codeVerifier,
       // Omitted by older iOS builds; the action falls back to the default (iOS) URI.
       redirectUri: body.redirectUri,
+      privacyConsentVersion: body.privacyConsentVersion,
     });
     if (result.error) {
       return json(result.status, { reason: result.error }, request);

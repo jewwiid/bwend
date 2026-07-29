@@ -12,4 +12,18 @@ crons.interval(
   {}
 );
 
+crons.daily(
+  "privacy retention cleanup",
+  { hourUTC: 3, minuteUTC: 15 },
+  internal.accountMutations.cleanupExpiredInvites,
+  {}
+);
+
+crons.daily(
+  "disconnected account cleanup",
+  { hourUTC: 3, minuteUTC: 30 },
+  internal.accountMutations.cleanupDisconnectedAccounts,
+  {}
+);
+
 export default crons;

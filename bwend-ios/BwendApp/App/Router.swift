@@ -23,6 +23,7 @@ final class Router: ObservableObject {
         case shareInvite(code: String)
         case invitePreview(code: String)
         case trackInviteSearch
+        case accountPrivacy
         case revealMoment(matchId: String)
         case revealAnchor(matchId: String)
         case revealDetail(matchId: String)

@@ -96,7 +96,7 @@ export const handleFetchMatch = httpAction(async (ctx, request) => {
     id: match._id,
     vibeScore: match.vibeScore,
     breakdown: match.breakdown,
-    myName: myProfile?.displayName ?? identity.name ?? null,
+    myName: myProfile?.displayName ?? null,
     partnerName: partnerProfile?.displayName ?? null,
     anchorTrack: match.anchorTrack,
     sharedTopArtistNames: match.sharedTopArtistNames,

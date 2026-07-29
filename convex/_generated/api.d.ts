@@ -8,6 +8,9 @@
  * @module
  */
 
+import type * as account from "../account.js";
+import type * as accountMutations from "../accountMutations.js";
+import type * as accountQueries from "../accountQueries.js";
 import type * as artistEnrichmentActions from "../artistEnrichmentActions.js";
 import type * as artistMutations from "../artistMutations.js";
 import type * as auth from "../auth.js";
@@ -25,6 +28,8 @@ import type * as lib_compatibilityReader from "../lib/compatibilityReader.js";
 import type * as lib_inviteCode from "../lib/inviteCode.js";
 import type * as lib_jwt from "../lib/jwt.js";
 import type * as lib_musicGraph from "../lib/musicGraph.js";
+import type * as lib_privacy from "../lib/privacy.js";
+import type * as lib_privacyConstants from "../lib/privacyConstants.js";
 import type * as lib_spotify from "../lib/spotify.js";
 import type * as lib_spotifySession from "../lib/spotifySession.js";
 import type * as lib_vibeScore from "../lib/vibeScore.js";
@@ -36,6 +41,7 @@ import type * as notifications from "../notifications.js";
 import type * as playlistActions from "../playlistActions.js";
 import type * as playlistRecords from "../playlistRecords.js";
 import type * as playlists from "../playlists.js";
+import type * as privacyActions from "../privacyActions.js";
 import type * as pushSubscriptions from "../pushSubscriptions.js";
 import type * as spotifyActions from "../spotifyActions.js";
 import type * as spotifyConnect from "../spotifyConnect.js";
@@ -50,6 +56,9 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  account: typeof account;
+  accountMutations: typeof accountMutations;
+  accountQueries: typeof accountQueries;
   artistEnrichmentActions: typeof artistEnrichmentActions;
   artistMutations: typeof artistMutations;
   auth: typeof auth;
@@ -67,6 +76,8 @@ declare const fullApi: ApiFromModules<{
   "lib/inviteCode": typeof lib_inviteCode;
   "lib/jwt": typeof lib_jwt;
   "lib/musicGraph": typeof lib_musicGraph;
+  "lib/privacy": typeof lib_privacy;
+  "lib/privacyConstants": typeof lib_privacyConstants;
   "lib/spotify": typeof lib_spotify;
   "lib/spotifySession": typeof lib_spotifySession;
   "lib/vibeScore": typeof lib_vibeScore;
@@ -78,6 +89,7 @@ declare const fullApi: ApiFromModules<{
   playlistActions: typeof playlistActions;
   playlistRecords: typeof playlistRecords;
   playlists: typeof playlists;
+  privacyActions: typeof privacyActions;
   pushSubscriptions: typeof pushSubscriptions;
   spotifyActions: typeof spotifyActions;
   spotifyConnect: typeof spotifyConnect;

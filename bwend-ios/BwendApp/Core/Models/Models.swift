@@ -8,10 +8,15 @@ import Foundation
 /// Response from POST /auth/spotify. Contains the Bwend session JWT + basic profile.
 struct SpotifyConnectResponse: Codable, Equatable {
     let token: String
-    let spotifyId: String
+    let userId: String
     let displayName: String?
     let topTrackCount: Int
     let topArtistCount: Int
+}
+
+struct AccountActionResponse: Codable, Equatable {
+    let ok: Bool
+    let disconnected: Bool?
 }
 
 /// Response from POST /invites. The shareable code + URL.

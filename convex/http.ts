@@ -27,6 +27,11 @@ import {
   handleDisablePushDevice,
   handleRegisterPushDevice,
 } from "./notifications";
+import {
+  handleDeleteAccount,
+  handleDisconnectSpotify,
+  handleExportAccount,
+} from "./account";
 
 const http = httpRouter();
 
@@ -36,6 +41,24 @@ http.route({
   handler: httpAction(async () => {
     return new Response("ok", { status: 200 });
   }),
+});
+
+http.route({
+  path: "/api/account/export",
+  method: "GET",
+  handler: handleExportAccount,
+});
+
+http.route({
+  path: "/api/account/disconnect",
+  method: "POST",
+  handler: handleDisconnectSpotify,
+});
+
+http.route({
+  path: "/api/account/delete",
+  method: "POST",
+  handler: handleDeleteAccount,
 });
 
 // Auth entry point — public (no existing session needed).
@@ -146,6 +169,9 @@ for (const path of [
   "/api/notifications/device/disable",
   "/api/invites",
   "/api/matches",
+  "/api/account/export",
+  "/api/account/disconnect",
+  "/api/account/delete",
 ]) {
   http.route({ path, method: "OPTIONS", handler: preflight });
 }

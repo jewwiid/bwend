@@ -11,6 +11,7 @@
  */
 
 const AUTHORIZE_URL = "https://accounts.spotify.com/authorize";
+export const CURRENT_PRIVACY_VERSION = "2026-07-29";
 
 /** Same scopes as iOS, so a user's profile is identical whichever client they connect from. */
 export const SPOTIFY_SCOPES = [
@@ -41,6 +42,13 @@ export function redirectUri(): string {
  * /m/abc123 should come back to that invite after connecting, not to a generic home screen.
  */
 export async function beginSpotifyLogin(returnTo?: string): Promise<void> {
+  const accepted = window.confirm(
+    "Bwend will use your Spotify listening data only to create a private Taste Card and blends you choose to share. Bwend does not create a public dating profile, import data from dating apps, or infer sensitive traits. You can export or delete your data at any time. Continue?",
+  );
+  if (!accepted) {
+    throw new Error("Spotify was not connected because the privacy notice was not accepted.");
+  }
+
   const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
   if (!clientId) {
     throw new Error(

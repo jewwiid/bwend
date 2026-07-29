@@ -95,8 +95,21 @@ final class APIClient: ObservableObject {
     /// POST /auth/spotify — the auth entry point. Sends the Spotify auth code + PKCE verifier,
     /// receives a Bwend session JWT + the user's basic profile. NOT authed (no existing token yet
     /// — this is where you get one).
-    func connectSpotify(code: String, codeVerifier: String) async throws -> SpotifyConnectResponse {
-        try await post("/auth/spotify", body: ["code": code, "codeVerifier": codeVerifier], authed: false)
+    func connectSpotify(
+        code: String,
+        codeVerifier: String,
+        privacyConsentVersion: String
+    ) async throws -> SpotifyConnectResponse {
+        try await post(
+            "/auth/spotify",
+            body: [
+                "code": code,
+                "codeVerifier": codeVerifier,
+                "privacyConsentVersion": privacyConsentVersion,
+                "privacyConsentGranted": true,
+            ],
+            authed: false
+        )
     }
 
     /// GET /me/blend — the caller's own listening profile for the given window.
@@ -194,6 +207,18 @@ final class APIClient: ObservableObject {
         )
     }
 
+    func exportAccountData() async throws -> Data {
+        try await performData("GET", "/account/export", body: nil, authed: true)
+    }
+
+    func disconnectSpotify() async throws -> AccountActionResponse {
+        try await post("/account/disconnect", body: [:], authed: true)
+    }
+
+    func deleteAccount() async throws -> AccountActionResponse {
+        try await post("/account/delete", body: [:], authed: true)
+    }
+
     // MARK: - Internals
 
     private func get<T: Decodable>(_ path: String) async throws -> T {
@@ -245,6 +270,41 @@ final class APIClient: ObservableObject {
         } catch {
             throw APIError.decoding(error)
         }
+    }
+
+    private func performData(
+        _ method: String,
+        _ path: String,
+        body: [String: Any]?,
+        authed: Bool
+    ) async throws -> Data {
+        guard let url = URL(string: Self.baseURL + path) else { throw APIError.invalidURL }
+        var request = URLRequest(url: url)
+        request.httpMethod = method
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if authed {
+            guard let token = authManager?.sessionToken else { throw APIError.noSession }
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        if let body {
+            request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        }
+        let (data, response): (Data, URLResponse)
+        do {
+            (data, response) = try await session.data(for: request)
+        } catch {
+            throw APIError.transport(error)
+        }
+        guard let http = response as? HTTPURLResponse else {
+            throw APIError.http(status: 0, body: String(data: data, encoding: .utf8) ?? "")
+        }
+        guard (200..<300).contains(http.statusCode) else {
+            throw APIError.http(
+                status: http.statusCode,
+                body: String(data: data, encoding: .utf8) ?? ""
+            )
+        }
+        return data
     }
 }
 

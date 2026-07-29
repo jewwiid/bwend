@@ -7,7 +7,11 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { consumeCallback, redirectUri } from '../lib/spotifyAuth';
+import {
+  consumeCallback,
+  CURRENT_PRIVACY_VERSION,
+  redirectUri,
+} from '../lib/spotifyAuth';
 import { connectSpotify, saveSession } from '../lib/api';
 import { AppShell, Spinner, ErrorCard, PrimaryButton } from '../components/AppShell';
 
@@ -27,11 +31,16 @@ export function CallbackPage() {
     (async () => {
       try {
         const { code, codeVerifier, returnTo } = consumeCallback(search.toString());
-        const response = await connectSpotify(code, codeVerifier, redirectUri());
+        const response = await connectSpotify(
+          code,
+          codeVerifier,
+          redirectUri(),
+          CURRENT_PRIVACY_VERSION,
+        );
         saveSession({
           token: response.token,
           displayName: response.displayName,
-          spotifyId: response.spotifyId,
+          userId: response.userId,
         });
         navigate(returnTo ?? '/blend', { replace: true });
       } catch (e) {

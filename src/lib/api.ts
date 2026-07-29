@@ -13,7 +13,7 @@ const SESSION_KEY = "bwend.session";
 export interface Session {
   token: string;
   displayName: string | null;
-  spotifyId: string;
+  userId: string;
 }
 
 export function loadSession(): Session | null {
@@ -37,7 +37,7 @@ export function clearSession(): void {
 
 export interface SpotifyConnectResponse {
   token: string;
-  spotifyId: string;
+  userId: string;
   displayName: string | null;
   topTrackCount: number;
   topArtistCount: number;
@@ -227,10 +227,20 @@ export function connectSpotify(
   code: string,
   codeVerifier: string,
   redirectUri: string,
+  privacyConsentVersion: string,
 ): Promise<SpotifyConnectResponse> {
   return request(
     "/auth/spotify",
-    { method: "POST", body: JSON.stringify({ code, codeVerifier, redirectUri }) },
+    {
+      method: "POST",
+      body: JSON.stringify({
+        code,
+        codeVerifier,
+        redirectUri,
+        privacyConsentVersion,
+        privacyConsentGranted: true,
+      }),
+    },
     false,
   );
 }
@@ -273,6 +283,18 @@ export function fetchMatch(id: string): Promise<PublicMatch> {
 
 export function myMatches(): Promise<MatchSummary[]> {
   return request("/matches");
+}
+
+export function exportAccountData(): Promise<unknown> {
+  return request("/account/export");
+}
+
+export function disconnectSpotify(): Promise<{ ok: boolean; disconnected: boolean }> {
+  return request("/account/disconnect", { method: "POST", body: "{}" });
+}
+
+export function deleteAccount(): Promise<{ ok: boolean }> {
+  return request("/account/delete", { method: "POST", body: "{}" });
 }
 
 // MARK: - Formatting helpers
