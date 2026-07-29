@@ -23,7 +23,7 @@ xcodebuild -project Bwend.xcodeproj -scheme Bwend \
 
 `project.yml` is the source of truth. It configures bundle ID `com.bwend.app`, Apple team
 `7JSY6J5R99`, the production Convex HTTP endpoint, Spotify client ID, push entitlement, and
-`applinks:bwend.xyz`.
+the `www.bwend.xyz` associated domain.
 
 ## Current flow
 
@@ -59,7 +59,7 @@ production environment. Without them, notification delivery safely no-ops.
 
 ## Universal Links
 
-Invite URLs use `https://bwend.xyz/m/<code>`. The deployed AASA file must contain
+Invite URLs use `https://www.bwend.xyz/m/<code>`. The deployed AASA file must contain
 `7JSY6J5R99.com.bwend.app`, match the app entitlement, and be served without redirects at
 `/.well-known/apple-app-site-association`.
 

@@ -39,7 +39,7 @@ export const handleCreateInvite = httpAction(async (ctx, request) => {
     expiresAt,
   });
 
-  const publicBaseURL = process.env.PUBLIC_BASE_URL ?? "https://bwend.xyz";
+  const publicBaseURL = process.env.PUBLIC_BASE_URL ?? "https://www.bwend.xyz";
   return jsonResponse(200, {
     code,
     url: `${publicBaseURL}/m/${code}`,

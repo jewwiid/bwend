@@ -4,10 +4,11 @@
 <dict>
 	<key>aps-environment</key>
 	<string>development</string>
-	<!-- Universal Links: tapping bwend.xyz/m/<code> in Messages, Hinge, etc. opens the app
-	     directly instead of Safari. Requires apple-app-site-association at bwend.xyz. -->
+	<!-- New invite links use www because the apex redirects there. The apex entitlement keeps
+	     compatibility with links created before that migration. -->
 	<key>com.apple.developer.associated-domains</key>
 	<array>
+		<string>applinks:www.bwend.xyz</string>
 		<string>applinks:bwend.xyz</string>
 	</array>
 </dict>

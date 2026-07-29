@@ -113,7 +113,7 @@ struct SpotifyConnectView: View {
             )
             try await auth.applySession(token: response.token, displayName: response.displayName)
 
-            // If the user arrived from a deep link (e.g. a Hinge match sent them bwend.xyz/m/abc),
+            // If the user arrived from a deep link (e.g. someone sent them www.bwend.xyz/m/abc),
             // route them straight to the invite preview instead of the start screen.
             if let pendingCode = router.pendingInviteCode {
                 router.pendingInviteCode = nil

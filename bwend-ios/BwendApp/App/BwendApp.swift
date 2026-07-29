@@ -35,7 +35,7 @@ struct BwendApp: App {
         }
     }
 
-    /// Route incoming Universal Links (`https://bwend.xyz/m/<code>`) and custom-scheme callbacks
+    /// Route incoming Universal Links (`https://www.bwend.xyz/m/<code>`) and custom-scheme callbacks
     /// (`bwend://m/<code>`) to the invite preview.
     ///
     /// Two cases:
@@ -57,7 +57,7 @@ struct BwendApp: App {
 
 private extension URL {
     /// Extract the invite code from a URL of the form:
-    ///   https://bwend.xyz/m/<code>
+    ///   https://www.bwend.xyz/m/<code>
     ///   bwend://m/<code>
     var inviteCode: String? {
         let path = self.path

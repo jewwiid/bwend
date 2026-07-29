@@ -199,7 +199,7 @@ struct ShareView: View {
     @State private var presentShareSheet = false
 
     private var shareURL: URL? {
-        URL(string: "https://bwend.xyz/m/\(inviteCode)")
+        URL(string: "https://www.bwend.xyz/m/\(inviteCode)")
     }
 
     var body: some View {
