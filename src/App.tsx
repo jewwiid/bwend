@@ -4,13 +4,15 @@ import { CallbackPage } from './pages/CallbackPage';
 import { BlendPage } from './pages/BlendPage';
 import { InvitePage } from './pages/InvitePage';
 import { MatchPage } from './pages/MatchPage';
+import { PrivacyPage } from './pages/PrivacyPage';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Marketing site — unchanged. */}
+        {/* Public product and privacy surfaces. */}
         <Route path="/" element={<BwendLandingPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
 
         {/* App. /m/:code is the shared invite link; when the iOS app is installed,
             Universal Links means iOS opens it before the browser gets here. */}

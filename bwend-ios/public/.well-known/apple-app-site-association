@@ -3,7 +3,7 @@
         "details": [
             {
                 "appIDs": [
-                    "TEAM_ID.com.bwend.app"
+                    "7JSY6J5R99.com.bwend.app"
                 ],
                 "components": [
                     {
@@ -20,7 +20,7 @@
     },
     "webcredentials": {
         "apps": [
-            "TEAM_ID.com.bwend.app"
+            "7JSY6J5R99.com.bwend.app"
         ]
     }
 }

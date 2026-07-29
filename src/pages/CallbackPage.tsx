@@ -20,7 +20,7 @@ export function CallbackPage() {
   const [search] = useSearchParams();
   const [error, setError] = useState<string | null>(null);
 
-  // The authorization code is single-use. React 18 StrictMode double-invokes effects in
+  // The authorization code is single-use. React StrictMode may double-invoke effects in
   // dev, and a second exchange with the same code fails — so guard to exactly one attempt.
   const started = useRef(false);
 

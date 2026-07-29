@@ -9,14 +9,14 @@ import CryptoKit
 
 @MainActor
 final class SpotifyAuth: NSObject, ASWebAuthenticationPresentationContextProviding {
-    /// The scopes we need. All read-only — the app never writes to anyone's Spotify account.
+    /// The scopes we need. Listening and library access is read-only. The sole write scope is
+    /// used only after an explicit "Save to my Spotify" action.
     ///
     /// Everything below `user-top-read` powers the Blend screen. They're requested together
     /// so the user consents once; each is independently optional at read time, so someone who
     /// connected before these existed still gets their top artists and tracks.
     static let scopes = [
         "user-read-private",
-        "user-read-email",
         "user-top-read",
         "user-read-recently-played",   // "what you've been on lately"
         "user-library-read",           // saved songs + albums counts

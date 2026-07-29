@@ -32,7 +32,7 @@ platform :ios do
   #
   # Prerequisites (one-time, see README § ASC setup):
   #   - App ID + bundle id com.bwend.app registered in developer portal
-  #   - Sign in with Apple capability enabled for the bundle id
+  #   - Push Notifications capability enabled for the bundle id
   #   - App record created in App Store Connect
   #   - Provisioning profile + distribution cert in `fastlane/match` repo
   #   - ASC_API_KEY_ID + ASC_API_ISSUER_ID + ASC_API_KEY_FILEPATH env vars set

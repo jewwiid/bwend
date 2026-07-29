@@ -16,7 +16,6 @@ export const CURRENT_PRIVACY_VERSION = "2026-07-29";
 /** Same scopes as iOS, so a user's profile is identical whichever client they connect from. */
 export const SPOTIFY_SCOPES = [
   "user-read-private",
-  "user-read-email",
   "user-top-read",
   "user-read-recently-played",
   "user-library-read",

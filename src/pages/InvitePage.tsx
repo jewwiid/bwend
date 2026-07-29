@@ -92,7 +92,8 @@ export function InvitePage() {
             Connect Spotify
           </PrimaryButton>
           <p className="text-ds-xs text-[var(--color-text-muted)]">
-            Read-only. Bwend never posts or changes anything in your Spotify.
+            Listening access is read-only. A private playlist is created only when you
+            explicitly save one.
           </p>
         </div>
       </AppShell>

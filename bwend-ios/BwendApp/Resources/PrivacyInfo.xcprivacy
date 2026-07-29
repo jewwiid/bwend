@@ -2,9 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <!-- Bwend collects no data about the user's device, activity, or location beyond what's
-         strictly needed to provide the matching + blend service. All collected data is
-         "Linked to the User" because it's tied to their Apple ID and Spotify account.
+    <!-- Bwend collects no data about the user's location, contacts, or dating identity.
+         Collected data is linked to the pseudonymous Bwend account needed for the blend.
 
          No tracking. No third-party SDKs. No data broker sharing. -->
 
@@ -16,21 +15,7 @@
 
     <key>NSPrivacyCollectedDataTypes</key>
     <array>
-        <!-- Email — from Apple Sign In (or Apple's private relay). Used for support + invite links. -->
-        <dict>
-            <key>NSPrivacyCollectedDataType</key>
-            <string>NSPrivacyCollectedDataTypeEmailAddress</string>
-            <key>NSPrivacyCollectedDataTypeLinked</key>
-            <true/>
-            <key>NSPrivacyCollectedDataTypeTracking</key>
-            <false/>
-            <key>NSPrivacyCollectedDataTypePurposes</key>
-            <array>
-                <string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
-            </array>
-        </dict>
-
-        <!-- User ID — our internal UUID. -->
+        <!-- User ID — the pseudonymous Bwend identifier. -->
         <dict>
             <key>NSPrivacyCollectedDataType</key>
             <string>NSPrivacyCollectedDataTypeUserID</string>
@@ -59,23 +44,10 @@
             </array>
         </dict>
 
-        <!-- Other user content — the mood tags the user picks in onboarding/settings. -->
-        <dict>
-            <key>NSPrivacyCollectedDataType</key>
-            <string>NSPrivacyCollectedDataTypeOtherUserContent</string>
-            <key>NSPrivacyCollectedDataTypeLinked</key>
-            <true/>
-            <key>NSPrivacyCollectedDataTypeTracking</key>
-            <false/>
-            <key>NSPrivacyCollectedDataTypePurposes</key>
-            <array>
-                <string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
-            </array>
-        </dict>
     </array>
 
     <!-- Reasons for the Required Reason APIs we use.
-         UserDefaults: storing the user's preferred color scheme + display-name draft locally. -->
+         UserDefaults: storing local onboarding and notification preferences. -->
     <key>NSPrivacyAccessedAPITypes</key>
     <array>
         <dict>

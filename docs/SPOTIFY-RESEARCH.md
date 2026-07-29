@@ -78,7 +78,6 @@ From `src/lib/spotifyAuth.ts`:
 
 ```
 user-read-private
-user-read-email
 user-top-read
 user-read-recently-played
 user-library-read
@@ -89,8 +88,8 @@ user-read-playback-state
 playlist-modify-private
 ```
 
-The first nine are read-only. `playlist-modify-private` is used only after
-the user taps **Save to my Spotify**; bwend does not modify playback.
+All except `playlist-modify-private` are read-only. That write scope is used only after
+the user taps **Save to my Spotify**; Bwend does not modify playback.
 
 ---
 
@@ -212,16 +211,9 @@ In priority order, sorted by what is cheapest and most user-visible:
 
 1. **Rewrite the "Decibels, BPM" paragraph** in `LabsSection` to match
    the real scorer. ~5 minutes. Touches one file.
-2. **Refresh `README.md`** — it's wildly out of date. It still claims
-   React 18, claims the only project structure is the marketing page,
-   doesn't mention the `convex/` backend, the invite flow, the
-   `/blend`/`/match`/`/m/:code` routes, the env vars the iOS app needs.
-   This is the first thing an interested dev reads.
-3. **Refresh `AGENTS.md` / `CLAUDE.md`** — the Key Sections list at
-   the top still describes a v0 marketing-only product. The How It
-   Works section still says "Connect → See → Share → Turn into moment"
-   — none of those are wired except Connect. Update to match what's
-   actually in the repo.
+2. ✅ **Refresh `README.md`** to document the web, Convex, and iPhone apps.
+3. ✅ **Refresh `AGENTS.md` / `CLAUDE.md`** with the current private
+   connection-companion product boundary.
 
 ### P1 — finish the product the marketing already promises
 

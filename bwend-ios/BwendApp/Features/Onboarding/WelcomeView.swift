@@ -3,7 +3,7 @@ import SwiftUI
 // MARK: - WelcomeView
 //
 // The launch screen. One job: get the user to connect Spotify, because that IS the sign-in.
-// Real hero copy from src/BwendLandingPage.tsx: "The dating app / designed to be heard."
+// Product language mirrors the private connection-companion boundary on the web.
 
 struct WelcomeView: View {
     @EnvironmentObject var router: Router
@@ -30,7 +30,7 @@ struct WelcomeView: View {
                         .padding(.bottom, 8)
 
                         VStack(alignment: .leading, spacing: -4) {
-                            Text("The dating app")
+                            Text("The music layer")
                                 .font(.bwend(size: 44, weight: .bold))
                             HStack(spacing: 8) {
                                 Text("designed to be")
@@ -42,7 +42,7 @@ struct WelcomeView: View {
                         }
                         .foregroundColor(Color.bwendText)
 
-                        Text("Connect Spotify, share a link, and find your vibe with someone. See your match score, the song that brings you together, and exactly what you have in common.")
+                        Text("After you meet or match elsewhere, connect Spotify and share one private link. See your music overlap, an anchor track, and what you already have in common.")
                             .font(.bwend(size: 16))
                             .foregroundColor(Color.bwendTextSecondary)
                             .lineSpacing(5)
@@ -61,7 +61,7 @@ struct WelcomeView: View {
                         SectionLabel("How it works")
                         VStack(alignment: .leading, spacing: 8) {
                             PillarRow(text: "Connect your Spotify")
-                            PillarRow(text: "Share a link with someone")
+                            PillarRow(text: "Share with someone you already met")
                             PillarRow(text: "See your vibe score + what you share")
                         }
                     }
