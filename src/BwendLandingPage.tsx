@@ -368,15 +368,14 @@ function HeroSection({
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 lg:px-24 w-full">
         <div className="translate-y-4 animate-fade-in">
-          <SectionLabel className="text-white/60 mb-8">Pre-launch. Gathering interest.</SectionLabel>
+          <SectionLabel className="text-white/60 mb-8">Spotify sign-in is open.</SectionLabel>
           <h1 className="font-display text-[clamp(3.5rem,10vw,8rem)] text-white font-semibold leading-[0.85] tracking-[-0.06em]">
             The dating app <br />
             <span className="italic font-serif">designed</span> to <br />
             be heard.
           </h1>
           <p className="mt-12 text-white/70 text-lg md:text-xl lg:text-2xl max-w-xl font-normal leading-relaxed tracking-normal">
-            We connect through the music you actually love, <br className="hidden md:block" />
-            before looks enter the picture. Connect Spotify to build your blend.
+            Start with what you actually play. Bwend reads your Spotify taste and turns it into one clear way to meet someone.
           </p>
 
           <div className="mt-10 max-w-xl">
@@ -390,7 +389,7 @@ function HeroSection({
                 href="#waitlist"
                 className="inline-flex justify-center rounded-full border border-white/25 bg-white/10 px-8 py-4 text-[0.75rem] font-bold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all hover:bg-white/15"
               >
-                Join email list
+                Join by email
               </a>
             </div>
             {access.error ? (
@@ -399,7 +398,7 @@ function HeroSection({
               </p>
             ) : null}
             <p className="mt-3 text-xs text-white/45">
-              Read-only Spotify access. We never post, change, or sell your listening data.
+              Read-only Spotify access. We do not post, edit playlists, or sell your listening data.
             </p>
           </div>
 
@@ -408,7 +407,7 @@ function HeroSection({
               href="#waitlist"
               className="inline-flex w-fit items-center justify-center rounded-full border border-white/25 bg-white/10 px-8 py-3.5 text-[0.75rem] font-bold uppercase tracking-[0.2em] text-white backdrop-blur-md transition-all hover:bg-white/15"
             >
-              Email fallback
+              Use email instead
             </a>
             <a
               href="#how"
@@ -434,13 +433,13 @@ function AppShowcaseSection() {
     >
       <div className="max-w-7xl mx-auto px-4 md:px-10 grid lg:grid-cols-2 gap-20 items-center">
         <div>
-          <SectionLabel className="mb-6">The Experience</SectionLabel>
+          <SectionLabel className="mb-6">First signal</SectionLabel>
           <h2 className="font-display text-4xl md:text-5xl lg:text-[4.5rem] font-semibold text-[var(--color-text-primary)] leading-[0.95] tracking-tight">
             Hear the vibe. <br />
             Before you see the face.
           </h2>
           <p className="mt-10 text-[var(--color-text-secondary)] text-xl leading-relaxed max-w-md font-normal">
-            Your top tracks, moods, and late-night repeats become the conversation. It feels closer to meeting through friends, with better playlists.
+            Your top tracks, moods, and late-night repeats give the first impression. It feels less like a profile and more like getting handed the aux.
           </p>
           <div className="mt-12 flex flex-col gap-6">
             <div className="flex items-start gap-4">
@@ -448,8 +447,8 @@ function AppShowcaseSection() {
                 <Icons.music className="w-5 h-5 text-[var(--color-accent-coral)]" />
               </div>
               <div>
-                <h4 className="font-bold text-sm uppercase tracking-widest text-[var(--color-text-primary)]">Ritual-based matching</h4>
-                <p className="mt-1 text-sm text-[var(--color-text-secondary)]">One blend a day, picked on purpose. Not another night of swiping.</p>
+                <h4 className="font-bold text-sm uppercase tracking-widest text-[var(--color-text-primary)]">One blend a day</h4>
+                <p className="mt-1 text-sm text-[var(--color-text-secondary)]">A smaller queue, chosen with more care.</p>
               </div>
             </div>
             <div className="flex items-start gap-4">
@@ -457,8 +456,8 @@ function AppShowcaseSection() {
                 <Icons.spark className="w-5 h-5 text-[var(--color-accent-coral)]" />
               </div>
               <div>
-                <h4 className="font-bold text-sm uppercase tracking-widest text-[var(--color-text-primary)]">Spotify Native</h4>
-                <p className="mt-1 text-sm text-[var(--color-text-secondary)]">Your real listening habits, not a curated list of "cool" bands.</p>
+                <h4 className="font-bold text-sm uppercase tracking-widest text-[var(--color-text-primary)]">Built from Spotify</h4>
+                <p className="mt-1 text-sm text-[var(--color-text-secondary)]">Real listening history, not a hand-picked list of bands you think sound impressive.</p>
               </div>
             </div>
           </div>
@@ -473,7 +472,7 @@ function AppShowcaseSection() {
                   <div className="h-6 w-3/4 bg-[var(--color-border)] rounded-full animate-pulse" />
                   <div className="h-4 w-1/2 bg-[var(--color-border)] opacity-60 rounded-full" />
                   <div className="pt-8 h-40 rounded-2xl border-2 border-dashed border-[var(--color-border)] flex flex-col items-center justify-center gap-2">
-                     <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-muted)]">Your Blend is ready</span>
+                     <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-muted)]">Your blend is ready</span>
                      <div className="flex -space-x-4">
                         <div className="w-12 h-12 rounded-full bg-[var(--color-accent-coral)] border-4 border-[var(--color-bg-secondary)]" />
                         <div className="w-12 h-12 rounded-full bg-[var(--color-accent-lavender)] border-4 border-[var(--color-bg-secondary)]" />
@@ -491,11 +490,11 @@ function AppShowcaseSection() {
 }
 
 function LogoBar() {
-  const pillars = ['Music-first matching', 'One blend at a time', 'Spotify-connected'];
+  const pillars = ['Music before photos', 'One blend at a time', 'Spotify connected'];
   return (
     <section className="py-12 md:py-14 px-6 border-b border-[var(--color-border)] bg-[var(--color-bg-secondary)]/50">
       <p className="text-center text-xs uppercase tracking-[0.25em] text-[var(--color-text-muted)] mb-8">
-        What we&apos;re building
+        What we are building
       </p>
       <div className="max-w-5xl mx-auto flex flex-wrap justify-center items-center gap-x-10 gap-y-4">
         {pillars.map((name) => (
@@ -516,7 +515,7 @@ function PhilosophySection({ access }: { access: SpotifyAccess }) {
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-24 items-center">
           <div className={`transition-all duration-1000 ${ref.inView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'}`}>
-            <SectionLabel className="mb-8">Our Ethos</SectionLabel>
+            <SectionLabel className="mb-8">Why music first</SectionLabel>
             <h2 className="font-display text-5xl md:text-7xl lg:text-[5rem] font-semibold text-[var(--color-text-primary)] leading-[0.9] tracking-tighter">
               Go on your <br />
               <span className="hand-drawn-circle italic font-serif">last</span> <br />
@@ -524,10 +523,10 @@ function PhilosophySection({ access }: { access: SpotifyAccess }) {
             </h2>
             <div className="mt-14 space-y-8 text-[var(--color-text-secondary)] text-xl leading-relaxed font-normal max-w-md">
               <p>
-                People spend hours curating the perfect "face," but 30 seconds of their most-played track says more than a bio ever could.
+                Profiles are easy to polish. Your most-played songs are harder to fake.
               </p>
               <p>
-                Bwend is for people who let the music speak first. Shared energy, track by track.
+                Bwend lets taste make the introduction before anyone starts performing for a match.
               </p>
             </div>
             <div className="mt-12">
@@ -537,7 +536,7 @@ function PhilosophySection({ access }: { access: SpotifyAccess }) {
                 disabled={access.connecting}
                 className="group inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] disabled:cursor-wait disabled:opacity-60"
               >
-                {access.signedIn ? 'Open your blend' : 'Join the ritual'}
+                {access.signedIn ? 'Open your blend' : 'Start with Spotify'}
                 <Icons.arrow className="w-4 h-4 transition-transform group-hover:translate-x-2" />
               </button>
             </div>
@@ -574,16 +573,16 @@ function LabsSection() {
             </div>
           </div>
           <div className={`order-1 lg:order-2 transition-all duration-1000 delay-300 ${ref.inView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'}`}>
-            <SectionLabel className="mb-8">Bwend Labs</SectionLabel>
+            <SectionLabel className="mb-8">How matching works</SectionLabel>
             <h2 className="font-display text-5xl md:text-6xl font-semibold text-[var(--color-text-primary)] leading-[0.9] tracking-tighter">
-              We're vibe <br />
-              <span className="italic font-serif">scientists.</span>
+              Taste tells <br />
+              <span className="italic font-serif">the truth.</span>
             </h2>
             <p className="mt-12 text-[var(--color-text-secondary)] text-xl leading-relaxed font-normal max-w-md">
-              The matching layer starts from what you actually listen to, not who you say you are.
+              The matching layer starts from what you actually listen to, not the version of yourself you put in a bio.
             </p>
             <p className="mt-8 text-[var(--color-text-muted)] text-base leading-relaxed max-w-md">
-              Decibels, BPM, acoustic range: signals that point to someone on your wavelength, whether that&apos;s lo-fi mornings or techno nights.
+              Tempo, era, energy, and repeat behavior help point to someone who hears the world in a similar way.
             </p>
           </div>
         </div>
@@ -597,20 +596,20 @@ function HowItWorksSection({ access }: { access: SpotifyAccess }) {
   const steps = [
     {
       id: '01',
-      title: 'Sync your taste',
-      body: 'Connect your Spotify. We analyze your library to find the patterns in your replay history.',
+      title: 'Connect Spotify',
+      body: 'Sign in with read-only access. Bwend looks at the artists, tracks, and patterns you actually return to.',
       color: 'var(--color-accent-peach)',
     },
     {
       id: '02',
-      title: 'Join a Ritual',
-      body: 'Each day you get one Blend: a person whose playlist mirrors your taste.',
+      title: 'Get one blend',
+      body: 'You see one person at a time, matched through the way you listen rather than a stack of photos.',
       color: 'var(--color-accent-lavender)',
     },
     {
       id: '03',
-      title: 'Match & Melt',
-      body: 'React to their tracks first. The conversation starts with something you both already like.',
+      title: 'Start with a song',
+      body: 'React to the tracks first. The opener is already there because the overlap is real.',
       color: 'var(--color-accent-coral)',
     },
   ];
@@ -619,9 +618,9 @@ function HowItWorksSection({ access }: { access: SpotifyAccess }) {
     <section id="how" ref={ref.ref} className="section-spread bg-[var(--color-bg-primary)]">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-24">
-          <SectionLabel className="mb-6">The Ritual</SectionLabel>
+          <SectionLabel className="mb-6">How it works</SectionLabel>
           <h2 className="font-display text-5xl md:text-7xl font-semibold text-[var(--color-text-primary)] tracking-tight">
-            Three steps. <br />One shared wavelength.
+            Connect once. <br />Meet through music.
           </h2>
         </div>
 
@@ -650,7 +649,7 @@ function HowItWorksSection({ access }: { access: SpotifyAccess }) {
               ref.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
             } disabled:cursor-wait disabled:opacity-60`}
           >
-            <span>{access.signedIn ? 'Your blend is ready' : 'Ready to start?'}</span>
+            <span>{access.signedIn ? 'Your blend is ready' : 'Start here'}</span>
             <span className="h-1 w-1 rounded-full bg-[#14120f]/50" aria-hidden="true" />
             <span>{access.signedIn ? 'Open the app' : 'Connect Spotify'}</span>
             <Icons.arrow className="h-4 w-4" aria-hidden="true" />
@@ -666,7 +665,7 @@ function MidCTASection({ access }: { access: SpotifyAccess }) {
     <section className="py-16 md:py-20 px-6">
       <div className="mid-cta-surface max-w-4xl mx-auto rounded-[999px] px-8 py-12 md:py-16 text-center border border-[var(--color-border)] shadow-sm">
         <h2 className="font-display text-2xl md:text-3xl font-semibold text-[var(--color-text-primary)]">
-          Build your blend from the songs you actually replay.
+          Build your blend from the songs you keep coming back to.
         </h2>
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
           <SpotifyAccessButton
@@ -678,7 +677,7 @@ function MidCTASection({ access }: { access: SpotifyAccess }) {
             href="#waitlist"
             className="w-full sm:w-auto inline-flex justify-center px-8 py-3.5 rounded-full bg-[var(--color-bg-card)]/85 border border-[var(--color-border)] text-[var(--color-text-primary)] font-semibold text-sm hover:bg-[var(--color-bg-elevated)] transition-colors"
           >
-            Email fallback
+            Join by email
           </a>
         </div>
       </div>
@@ -691,19 +690,19 @@ function FeaturesSection() {
   const rows = [
     {
       title: 'Your Blend',
-      body: 'A playlist that belongs to both of you. It grows as you do.',
+      body: 'The tracks, artists, and listening patterns you share, brought into one place.',
       img: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1200&q=80',
       align: 'left' as const,
     },
     {
       title: 'Vibe Score',
-      body: 'Compatibility from how you listen: energy, era, emotional range. The person who hears what you hear.',
+      body: 'Compatibility drawn from how you listen: energy, era, pace, and the artists you keep replaying.',
       img: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=80',
       align: 'right' as const,
     },
     {
       title: 'Music-first chat',
-      body: 'React to tracks, swap songs, skip the opener. The conversation starts with something you both actually care about.',
+      body: 'React to tracks, swap songs, and skip the blank opener. The first message has somewhere to go.',
       img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=1200&q=80',
       align: 'left' as const,
     },
@@ -719,9 +718,9 @@ function FeaturesSection() {
     >
       <div className="max-w-7xl mx-auto px-4 md:px-10">
         <div className="mb-24">
-          <SectionLabel className="mb-6">The Rituals</SectionLabel>
+          <SectionLabel className="mb-6">Inside a blend</SectionLabel>
           <h2 className="font-display text-4xl md:text-5xl lg:text-[4rem] font-semibold text-[var(--color-text-primary)] leading-[1.0] tracking-tight max-w-2xl">
-            Built for connection. <br />Not for swiping.
+            More to say. <br />Less to perform.
           </h2>
         </div>
 
@@ -760,7 +759,7 @@ function StatsSection() {
   const stats = [
     { value: 'Soon', label: 'First cities TBA', icon: Icons.spark },
     { value: 'Open', label: 'Waitlist', icon: Icons.wifi },
-    { value: 'You', label: 'Help shape the launch', icon: Icons.heart },
+    { value: 'You', label: 'Shape the launch', icon: Icons.heart },
   ];
 
   return (
@@ -804,12 +803,12 @@ function MoodsSection() {
     >
       <div className="max-w-7xl mx-auto px-4 md:px-10">
         <div className="text-center mb-24">
-          <SectionLabel className="mb-6">The Prompts</SectionLabel>
+          <SectionLabel className="mb-6">Moods</SectionLabel>
           <h2 className="font-display text-4xl md:text-5xl lg:text-[4rem] font-semibold text-[var(--color-text-primary)] tracking-tight">
             What moves you?
           </h2>
           <p className="mt-8 text-[var(--color-text-secondary)] text-xl max-w-xl mx-auto">
-            Pick the moods that match you. Tell us which ones to build around first.
+            Tell us which listening moods feel like you. We will use them to shape the first matches.
           </p>
         </div>
         <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
@@ -838,7 +837,7 @@ function ComparisonSection() {
     <section className="section-spread bg-[var(--color-bg-primary)]">
       <div className="max-w-7xl mx-auto" ref={ref.ref}>
         <div className="text-center mb-24">
-          <SectionLabel className="mb-6">The Difference</SectionLabel>
+          <SectionLabel className="mb-6">Why it feels different</SectionLabel>
           <h2 className="font-display text-5xl md:text-7xl font-semibold text-[var(--color-text-primary)] tracking-tight">
             Start with a track.
           </h2>
@@ -846,40 +845,40 @@ function ComparisonSection() {
 
         <div className="grid md:grid-cols-2 gap-12 lg:gap-16">
           <div className={`p-12 md:p-16 rounded-[3rem] bg-[var(--color-bg-secondary)] border border-[var(--color-border)] transition-all duration-1000 ${ref.inView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'}`}>
-            <h3 className="text-[0.625rem] font-bold uppercase tracking-[0.3em] text-[var(--color-text-muted)] mb-12">The Status Quo</h3>
+            <h3 className="text-[0.625rem] font-bold uppercase tracking-[0.3em] text-[var(--color-text-muted)] mb-12">Most dating apps</h3>
             <ul className="space-y-10">
               <li className="flex gap-6 items-start">
                 <Icons.x className="w-5 h-5 text-red-400 mt-1" />
                 <div>
-                  <p className="text-xl font-medium text-[var(--color-text-primary)]">The Endless Scroll</p>
-                  <p className="mt-3 text-[var(--color-text-secondary)] font-normal leading-relaxed">Swiping on thumbnails of faces until they all start to look the same.</p>
+                  <p className="text-xl font-medium text-[var(--color-text-primary)]">Too many profiles</p>
+                  <p className="mt-3 text-[var(--color-text-secondary)] font-normal leading-relaxed">Swipe long enough and every profile starts to blur into the next one.</p>
                 </div>
               </li>
               <li className="flex gap-6 items-start">
                 <Icons.x className="w-5 h-5 text-red-400 mt-1" />
                 <div>
-                  <p className="text-xl font-medium text-[var(--color-text-primary)]">Small Talk Fatigue</p>
-                  <p className="mt-3 text-[var(--color-text-secondary)] font-normal leading-relaxed">Starting ten conversations with "Hey, how's your week?" and ending ten.</p>
+                  <p className="text-xl font-medium text-[var(--color-text-primary)]">Forced small talk</p>
+                  <p className="mt-3 text-[var(--color-text-secondary)] font-normal leading-relaxed">Starting with "Hey, how&apos;s your week?" because nothing better is on the table.</p>
                 </div>
               </li>
             </ul>
           </div>
 
           <div className={`p-12 md:p-16 rounded-[3rem] bg-[var(--color-ink)] text-[var(--color-bg-primary)] shadow-2xl transition-all duration-1000 delay-300 ${ref.inView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'}`}>
-            <h3 className="text-[0.625rem] font-bold uppercase tracking-[0.3em] text-[var(--color-bg-primary)] opacity-40 mb-12">The Bwend Way</h3>
+            <h3 className="text-[0.625rem] font-bold uppercase tracking-[0.3em] text-[var(--color-bg-primary)] opacity-40 mb-12">Bwend</h3>
             <ul className="space-y-10">
               <li className="flex gap-6 items-start">
                 <Icons.check className="w-5 h-5 text-[var(--color-accent-peach)] mt-1" />
                 <div>
-                  <p className="text-xl font-medium text-[var(--color-bg-primary)]">The Daily Blend</p>
-                  <p className="mt-3 text-[var(--color-bg-primary)] opacity-70 font-normal leading-relaxed">One high-intent connection a day. Your attention goes to the person, not the queue.</p>
+                  <p className="text-xl font-medium text-[var(--color-bg-primary)]">One person at a time</p>
+                  <p className="mt-3 text-[var(--color-bg-primary)] opacity-70 font-normal leading-relaxed">Your attention goes to one blend, not an endless queue.</p>
                 </div>
               </li>
               <li className="flex gap-6 items-start">
                 <Icons.check className="w-5 h-5 text-[var(--color-accent-peach)] mt-1" />
                 <div>
-                  <p className="text-xl font-medium text-[var(--color-bg-primary)]">Music-first Momentum</p>
-                  <p className="mt-3 text-[var(--color-bg-primary)] opacity-70 font-normal leading-relaxed">Start with a track you both already love. The small talk is already over.</p>
+                  <p className="text-xl font-medium text-[var(--color-bg-primary)]">A real opener</p>
+                  <p className="mt-3 text-[var(--color-bg-primary)] opacity-70 font-normal leading-relaxed">Start with a track you both know. The conversation already has a reason to exist.</p>
                 </div>
               </li>
             </ul>
@@ -903,12 +902,12 @@ function TestimonialsSection() {
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-32">
-          <SectionLabel className="text-white/40 mb-10">Before we launch</SectionLabel>
+          <SectionLabel className="text-white/40 mb-10">What we are aiming for</SectionLabel>
           <h2 className="font-display text-5xl md:text-7xl lg:text-[6rem] font-semibold tracking-tighter leading-[0.85]">
-            The moments <br />we&apos;re designing for.
+            The first messages <br />we want to make easier.
           </h2>
           <p className="mt-8 text-white/50 text-lg max-w-2xl mx-auto font-normal">
-            No reviews yet. Here&apos;s what we&apos;re building toward.
+            Not testimonials. Just the kind of dating app we wish existed.
           </p>
         </div>
 
@@ -918,19 +917,19 @@ function TestimonialsSection() {
              <p className="text-2xl md:text-3xl font-medium leading-[1.1] tracking-tight italic opacity-95">
                &ldquo;I want the opener to be a song, not a pickup line.&rdquo;
              </p>
-             <p className="mt-12 text-[0.625rem] font-bold uppercase tracking-[0.3em] text-white/40">Product north star</p>
+             <p className="mt-12 text-[0.625rem] font-bold uppercase tracking-[0.3em] text-white/40">Better openers</p>
           </div>
           <div className="relative">
              <p className="text-2xl md:text-3xl font-medium leading-[1.1] tracking-tight italic opacity-95">
                &ldquo;I&apos;m tired of swiping on faces. I want to know if we hear the same world.&rdquo;
              </p>
-             <p className="mt-12 text-[0.625rem] font-bold uppercase tracking-[0.3em] text-white/40">Why taste first</p>
+             <p className="mt-12 text-[0.625rem] font-bold uppercase tracking-[0.3em] text-white/40">Taste first</p>
           </div>
           <div className="relative">
              <p className="text-2xl md:text-3xl font-medium leading-[1.1] tracking-tight italic opacity-95">
                &ldquo;If our playlists overlap in a weird way, that&apos;s a better first signal than small talk.&rdquo;
              </p>
-             <p className="mt-12 text-[0.625rem] font-bold uppercase tracking-[0.3em] text-white/40">Shared energy</p>
+             <p className="mt-12 text-[0.625rem] font-bold uppercase tracking-[0.3em] text-white/40">Real overlap</p>
           </div>
         </div>
       </div>
@@ -950,7 +949,7 @@ function FinalCTASection({
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-32 items-center">
           <div className="order-2 lg:order-1">
-            <SectionLabel className="mb-10">Start with Spotify</SectionLabel>
+            <SectionLabel className="mb-10">Try the blend</SectionLabel>
             <h2 className="font-display text-6xl md:text-7xl lg:text-[7rem] font-semibold text-[var(--color-text-primary)] leading-[0.8] tracking-tighter">
               Build <br />
               your <br />
@@ -958,7 +957,7 @@ function FinalCTASection({
               <span className="italic font-serif">blend.</span>
             </h2>
             <p className="mt-14 text-[var(--color-text-secondary)] text-xl leading-relaxed max-w-sm font-normal">
-              Connect Spotify to see your music profile and create an invite link. Prefer not to connect yet? Leave your email and we&apos;ll keep you posted.
+              Connect Spotify to see your music profile and make an invite link. Not ready to connect yet? Leave your email and we&apos;ll keep you in the loop.
             </p>
 
             <div className="mt-12">
@@ -977,7 +976,7 @@ function FinalCTASection({
             {waitlist.submitted ? (
               <div className="mt-12 inline-flex items-center gap-4 px-8 py-5 rounded-full bg-[var(--color-accent-coral)]/10 border border-[var(--color-accent-coral)]/20 shadow-sm animate-fade-in">
                 <Icons.check className="w-5 h-5 text-[var(--color-accent-coral)]" />
-                <span className="text-[0.625rem] font-bold uppercase tracking-[0.2em]">email saved.</span>
+                <span className="text-[0.625rem] font-bold uppercase tracking-[0.2em]">Email saved.</span>
               </div>
             ) : (
               <div className="mt-14 max-w-xl">
@@ -999,7 +998,7 @@ function FinalCTASection({
                     disabled={waitlist.loading}
                     className={`ds-btn ds-btn-primary whitespace-nowrap text-[0.625rem] font-bold uppercase tracking-[0.2em] px-12 shadow-xl ${waitlist.loading ? 'ds-btn-loading' : ''}`}
                   >
-                    {waitlist.loading ? 'Joining…' : 'Join Waitlist'}
+                    {waitlist.loading ? 'Joining…' : 'Join waitlist'}
                   </button>
                 </form>
                 {waitlist.error ? (
@@ -1034,7 +1033,7 @@ function Footer() {
           <div className="col-span-2 md:col-span-2">
             <img src={logoDark} alt="Bwend" className="h-8 mb-8 dark:opacity-90" />
             <p className="text-lg md:text-xl text-[var(--color-text-secondary)] max-w-xs leading-relaxed font-normal">
-              The dating app <br />designed for the playlist you actually replay.
+              The dating app <br />for the songs you actually replay.
             </p>
           </div>
           <div>
@@ -1054,8 +1053,8 @@ function Footer() {
             </ul>
           </div>
           <div className="col-span-2 md:col-span-2">
-            <h3 className="text-[0.625rem] font-bold uppercase tracking-[0.3em] text-[var(--color-text-muted)] mb-8">Newsletter</h3>
-            <p className="text-sm text-[var(--color-text-secondary)] mb-6">City launches and early access.</p>
+            <h3 className="text-[0.625rem] font-bold uppercase tracking-[0.3em] text-[var(--color-text-muted)] mb-8">Updates</h3>
+            <p className="text-sm text-[var(--color-text-secondary)] mb-6">Launch notes, city rollouts, and early access.</p>
             <div className="flex gap-2">
               <input
                 type="email"
