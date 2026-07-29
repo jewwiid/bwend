@@ -35,7 +35,7 @@ Set `VITE_SPOTIFY_CLIENT_ID` in `.env.local`. The Convex development deployment 
 - `SPOTIFY_TOKEN_ENCRYPTION_KEY` (32 random bytes encoded as base64)
 - `PUBLIC_BASE_URL`
 - `OPENAI_API_KEY` (server-only; optional Listening Portrait generation)
-- `OPENAI_MODEL` (optional; defaults to `gpt-5.6-sol`)
+- `OPENAI_MODEL` (optional; defaults to `gpt-5.6-luna`)
 
 APNs delivery additionally needs `APNS_KEY_ID`, `APNS_TEAM_ID`, and `APNS_PRIVATE_KEY`.
 `APNS_BUNDLE_ID` defaults to `com.bwend.app`.

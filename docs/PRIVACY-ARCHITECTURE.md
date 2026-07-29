@@ -104,7 +104,7 @@ Development and production deployments need independent secrets:
 - `SPOTIFY_TOKEN_ENCRYPTION_KEY` — 32 random bytes encoded as base64url.
 - `BWEND_SESSION_SECRET` — existing session-signing secret.
 - `OPENAI_API_KEY` — server-only key for optional portrait generation.
-- `OPENAI_MODEL` — optional model override; defaults to `gpt-5.6-sol`.
+- `OPENAI_MODEL` — optional model override; defaults to `gpt-5.6-luna`.
 
 Never rotate the identity secret without a planned identity migration. Token-encryption-key
 rotation needs a decrypt-old/encrypt-new migration before the old key is removed.

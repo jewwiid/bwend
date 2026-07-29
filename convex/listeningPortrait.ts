@@ -184,7 +184,7 @@ async function generateWithOpenAI(
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) throw new Error("Listening Portrait generation is not configured.");
 
-  const model = process.env.OPENAI_MODEL?.trim() || "gpt-5.6-sol";
+  const model = process.env.OPENAI_MODEL?.trim() || "gpt-5.6-luna";
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
     headers: {
