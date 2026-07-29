@@ -456,6 +456,27 @@ html:not(.dark) {
     background-color: var(--color-bg-secondary);
   }
 
+  .site-nav-solid {
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-bg-primary);
+  }
+
+  .site-mobile-nav-panel {
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+  }
+
+  .site-mobile-nav-link {
+    transition:
+      background-color var(--duration-ds-base) var(--ease-in-out-smooth),
+      color var(--duration-ds-base) var(--ease-in-out-smooth);
+  }
+
+  .site-mobile-nav-link:hover {
+    background-color: var(--color-bg-secondary);
+  }
+
   .reveal {
     opacity: 0;
     transform: translateY(30px);
