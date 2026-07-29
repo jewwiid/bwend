@@ -17,6 +17,8 @@ import {
   topArtists,
   recentlyPlayed,
   encodeTokenBlob,
+  SpotifyAPIError,
+  spotifyRateLimitFailure,
 } from "./lib/spotify";
 import { buildTasteProfile, describeSignals } from "./lib/vibeScore";
 import { issueSession } from "./lib/jwt";
@@ -159,9 +161,22 @@ export const connect = internalAction({
         },
       };
     } catch (e) {
+      const rateFailure = spotifyRateLimitFailure(e);
+      if (rateFailure) {
+        return { ...rateFailure, data: null };
+      }
+      if (e instanceof SpotifyAPIError && e.status === 403) {
+        return {
+          status: 403,
+          error: "This Spotify account is not approved for Bwend's current private beta.",
+          code: "spotify_beta_access_required",
+          data: null,
+        };
+      }
       return {
         status: 502,
-        error: `Spotify data fetch failed: ${(e as Error).message}`,
+        error: "Couldn't read this Spotify account right now. Please try again.",
+        code: null,
         data: null,
       };
     }

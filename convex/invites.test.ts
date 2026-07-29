@@ -89,8 +89,10 @@ describe("invite lifecycle", () => {
     const t = convexTest(schema, modules);
     await insertPendingInvite(t, "TOOLATE", "inviter", Date.now() - 1);
 
+    const now = Date.now();
     const invites = await t.query(internal.inviteQueries.listByInviter, {
       spotifyUserId: "inviter",
+      now,
     });
 
     expect(invites).toHaveLength(1);

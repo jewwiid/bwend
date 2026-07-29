@@ -43,7 +43,8 @@ Listening data is used only to:
 2. calculate a blend the user intentionally sends or claims;
 3. create a Spotify playlist after an explicit save action;
 4. show the user's own Spotify playback context; and
-5. send a daily notification the user explicitly enables.
+5. send a daily notification the user explicitly enables after the feature is enabled in a
+   future release. Push registration and controls are disabled in the current beta binary.
 
 Bwend must not infer health, ethnicity, religion, politics, sexuality, or other sensitive
 traits from music.

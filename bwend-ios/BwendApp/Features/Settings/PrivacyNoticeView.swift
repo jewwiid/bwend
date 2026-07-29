@@ -13,7 +13,7 @@ struct PrivacyNoticeView: View {
 
                     noticeSection(
                         "What Bwend keeps",
-                        "A Bwend-only identifier, an encrypted Spotify connection, your top music and a derived taste fingerprint, the blends you intentionally create, and notification settings you enable."
+                        "A Bwend-only identifier, an encrypted Spotify connection, your top music and a derived taste fingerprint, and the blends you intentionally create."
                     )
                     noticeSection(
                         "What Bwend does not build",

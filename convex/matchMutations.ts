@@ -26,37 +26,6 @@ const anchorTrackValidator = v.union(
   })
 );
 
-/** Create a new match with frozen reveal data. */
-export const create = internalMutation({
-  args: {
-    inviteId: v.id("invites"),
-    userASpotifyUserId: v.string(),
-    userBSpotifyUserId: v.string(),
-    vibeScore: v.number(),
-    breakdown: breakdownValidator,
-    anchorTrack: anchorTrackValidator,
-    sharedTopArtistNames: v.array(v.string()),
-    sharedTopTrackNames: v.array(v.string()),
-    compatibilityRead: v.string(),
-    createdAt: v.number(),
-  },
-  returns: v.id("matches"),
-  handler: async (ctx, args) => {
-    return await ctx.db.insert("matches", {
-      inviteId: args.inviteId,
-      userASpotifyUserId: args.userASpotifyUserId,
-      userBSpotifyUserId: args.userBSpotifyUserId,
-      vibeScore: args.vibeScore,
-      breakdown: args.breakdown,
-      anchorTrack: args.anchorTrack,
-      sharedTopArtistNames: args.sharedTopArtistNames,
-      sharedTopTrackNames: args.sharedTopTrackNames,
-      compatibilityRead: args.compatibilityRead,
-      createdAt: args.createdAt,
-    });
-  },
-});
-
 /**
  * Atomically consume a pending invite and create its match.
  *

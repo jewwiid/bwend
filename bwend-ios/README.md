@@ -22,8 +22,8 @@ xcodebuild -project Bwend.xcodeproj -scheme Bwend \
 ```
 
 `project.yml` is the source of truth. It configures bundle ID `com.bwend.app`, Apple team
-`7JSY6J5R99`, the production Convex HTTP endpoint, Spotify client ID, push entitlement, and
-the `www.bwend.xyz` associated domain.
+`7JSY6J5R99`, the production Convex HTTP endpoint, Spotify client ID, and the `www.bwend.xyz`
+associated domain. The current release is iPhone-only and portrait-only.
 
 ## Current flow
 
@@ -51,15 +51,14 @@ Register `bwend://spotify-callback` in the Spotify developer dashboard.
 
 - The session JWT is stored with `kSecAttrAccessibleWhenUnlockedThisDeviceOnly`.
 - Account & Privacy provides export, disconnect, and immediate deletion.
-- Notification permission is requested only after the user enables daily blends.
-- APNs registration is stored server-side and can be disabled from the app.
+- Notification permission and APNs registration are disabled in the current beta binary.
 - `PrivacyInfo.xcprivacy` declares no tracking and the Bwend user ID, music data, and optional
   Listening Portrait content used for app functionality.
 
 Server delivery requires `APNS_KEY_ID`, `APNS_TEAM_ID`, and `APNS_PRIVATE_KEY` in the Convex
-production environment. The beta build keeps `BWEND_NOTIFICATIONS_ENABLED` false until those
-credentials and real-device delivery have been verified; the notification controls remain
-hidden while the flag is off.
+production environment. The beta build keeps `BWEND_NOTIFICATIONS_ENABLED` false and excludes
+the push entitlement until those credentials and real-device delivery have been verified.
+The notification controls remain hidden while the flag is off.
 
 ## Universal Links
 
@@ -71,10 +70,11 @@ Invite URLs use `https://www.bwend.xyz/m/<code>`. The deployed AASA file must co
 
 The repository includes `fastlane beta`, but upload requires external Apple account setup:
 
-- registered App ID with Associated Domains and Push Notifications;
+- registered App ID with Associated Domains;
 - App Store Connect app record;
 - distribution certificate and provisioning profile;
 - private Match repository and `MATCH_PASSWORD`;
+- `MATCH_GIT_URL` for that private signing repository;
 - `ASC_API_KEY_ID`, `ASC_API_ISSUER_ID`, and `ASC_API_KEY_FILEPATH`;
 - `SPOTIFY_CLIENT_ID` and `BWEND_API_URL`.
 
@@ -87,4 +87,5 @@ fastlane beta
 
 Use Music as the primary App Store category and Social Networking as secondary. Bwend is not a
 Dating-category service. App Store privacy answers must match the manifest and the final,
-counsel-reviewed public privacy notice.
+counsel-reviewed public privacy notice. Copy the reviewer walkthrough and submission checklist
+from [`../docs/APP-STORE-REVIEW.md`](../docs/APP-STORE-REVIEW.md).

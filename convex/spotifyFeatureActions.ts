@@ -18,6 +18,7 @@ import {
   playbackState,
   searchTracks,
   SpotifyAPIError,
+  spotifyRateLimitFailure,
 } from "./lib/spotify";
 import {
   requireFreshSpotifySession,
@@ -204,6 +205,10 @@ function featureError(error: unknown, fallback: string) {
       code: error.code,
       data: null,
     } as const;
+  }
+  const rateFailure = spotifyRateLimitFailure(error);
+  if (rateFailure) {
+    return { ...rateFailure, data: null } as const;
   }
   if (error instanceof SpotifyAPIError) {
     return {

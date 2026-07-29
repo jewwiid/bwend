@@ -429,6 +429,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				BWEND_API_URL = "https://helpful-owl-232.eu-west-1.convex.site/api";
 				CODE_SIGN_ENTITLEMENTS = BwendApp/Bwend.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = BwendApp/Info.plist;
@@ -439,7 +440,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.bwend.app;
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SPOTIFY_CLIENT_ID = 593e4f5104c8411885d53b88223f3db2;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -508,6 +510,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				BWEND_API_URL = "https://helpful-owl-232.eu-west-1.convex.site/api";
 				CODE_SIGN_ENTITLEMENTS = BwendApp/Bwend.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = BwendApp/Info.plist;
@@ -518,7 +521,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.bwend.app;
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SPOTIFY_CLIENT_ID = 593e4f5104c8411885d53b88223f3db2;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

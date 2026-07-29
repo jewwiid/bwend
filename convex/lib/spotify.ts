@@ -37,13 +37,77 @@ const API_BASE = "https://api.spotify.com/v1";
 export class SpotifyAPIError extends Error {
   readonly status: number;
   readonly endpoint: string;
+  readonly reason: string | null;
+  readonly retryAfterSeconds: number | null;
 
-  constructor(endpoint: string, status: number, detail = "") {
+  constructor(
+    endpoint: string,
+    status: number,
+    detail = "",
+    reason: string | null = null,
+    retryAfterSeconds: number | null = null
+  ) {
     super(`Spotify ${endpoint} failed: ${status}${detail ? ` ${detail}` : ""}`);
     this.name = "SpotifyAPIError";
     this.endpoint = endpoint;
     this.status = status;
+    this.reason = reason;
+    this.retryAfterSeconds = retryAfterSeconds;
   }
+}
+
+/**
+ * Preserve Spotify's machine-readable quota reason without exposing raw upstream bodies to
+ * clients. Development Mode now distinguishes QUOTA_EXCEEDED from ordinary rate limiting.
+ */
+export async function spotifyAPIError(
+  endpoint: string,
+  response: Response
+): Promise<SpotifyAPIError> {
+  const raw = await response.text().catch(() => "");
+  let reason: string | null = null;
+  let detail = "";
+  try {
+    const body = JSON.parse(raw);
+    reason = typeof body?.error?.reason === "string" ? body.error.reason : null;
+    detail = typeof body?.error?.message === "string" ? body.error.message.slice(0, 200) : "";
+  } catch {
+    detail = raw.slice(0, 200);
+  }
+
+  const retryHeader = response.headers.get("Retry-After");
+  const parsedRetry = retryHeader ? Number.parseInt(retryHeader, 10) : Number.NaN;
+  return new SpotifyAPIError(
+    endpoint,
+    response.status,
+    detail,
+    reason,
+    Number.isFinite(parsedRetry) && parsedRetry >= 0 ? parsedRetry : null
+  );
+}
+
+export function spotifyRateLimitFailure(error: unknown): {
+  status: 429;
+  error: string;
+  code: "spotify_quota_exceeded" | "spotify_rate_limited";
+} | null {
+  if (!(error instanceof SpotifyAPIError) || error.status !== 429) return null;
+  if (error.reason === "QUOTA_EXCEEDED") {
+    return {
+      status: 429,
+      error: "Bwend has reached Spotify's current private-beta quota. Please try again later.",
+      code: "spotify_quota_exceeded",
+    };
+  }
+  const retryCopy =
+    error.retryAfterSeconds !== null
+      ? ` Try again in about ${error.retryAfterSeconds} seconds.`
+      : " Please try again shortly.";
+  return {
+    status: 429,
+    error: `Spotify is temporarily rate limiting requests.${retryCopy}`,
+    code: "spotify_rate_limited",
+  };
 }
 
 /** Spotify's three top-read windows: ~4 weeks, ~6 months, ~1 year+. */
@@ -116,7 +180,7 @@ export async function me(token: string): Promise<SpotifyMeResponse> {
   const resp = await fetch(`${API_BASE}/me`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (!resp.ok) throw new Error(`Spotify /me failed: ${resp.status}`);
+  if (!resp.ok) throw await spotifyAPIError("/me", resp);
   return await resp.json();
 }
 
@@ -132,7 +196,7 @@ export async function topTracks(
     `${API_BASE}/me/top/tracks?limit=50&time_range=${timeRange}`,
     { headers: { Authorization: `Bearer ${token}` } }
   );
-  if (!resp.ok) throw new Error(`Spotify /top/tracks failed: ${resp.status}`);
+  if (!resp.ok) throw await spotifyAPIError("/me/top/tracks", resp);
   const data = await resp.json();
   return (data.items ?? []).map(mapTrack);
 }
@@ -146,7 +210,7 @@ export async function topArtists(
     `${API_BASE}/me/top/artists?limit=50&time_range=${timeRange}`,
     { headers: { Authorization: `Bearer ${token}` } }
   );
-  if (!resp.ok) throw new Error(`Spotify /top/artists failed: ${resp.status}`);
+  if (!resp.ok) throw await spotifyAPIError("/me/top/artists", resp);
   const data = await resp.json();
   return (data.items ?? []).map(mapArtist);
 }
@@ -205,7 +269,7 @@ export async function recentlyPlayed(token: string, limit = 50): Promise<RecentP
   const resp = await fetch(`${API_BASE}/me/player/recently-played?limit=${limit}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (!resp.ok) throw new Error(`Spotify /recently-played failed: ${resp.status}`);
+  if (!resp.ok) throw await spotifyAPIError("/me/player/recently-played", resp);
   const data = await resp.json();
 
   const seen = new Set<string>();
@@ -233,7 +297,7 @@ export async function currentlyPlaying(token: string): Promise<NowPlaying | null
     headers: { Authorization: `Bearer ${token}` },
   });
   if (resp.status === 204) return null;
-  if (!resp.ok) throw new SpotifyAPIError("/me/player/currently-playing", resp.status);
+  if (!resp.ok) throw await spotifyAPIError("/me/player/currently-playing", resp);
   const data = await resp.json();
   const item = data?.item;
   return {
@@ -250,7 +314,7 @@ export async function playbackState(token: string): Promise<PlaybackState | null
     headers: { Authorization: `Bearer ${token}` },
   });
   if (resp.status === 204) return null;
-  if (!resp.ok) throw new SpotifyAPIError("/me/player", resp.status);
+  if (!resp.ok) throw await spotifyAPIError("/me/player", resp);
   const data = await resp.json();
   const item = data?.item;
   const device = data?.device;
@@ -277,7 +341,7 @@ export async function availableDevices(token: string): Promise<SpotifyDevice[]> 
   const resp = await fetch(`${API_BASE}/me/player/devices`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (!resp.ok) throw new SpotifyAPIError("/me/player/devices", resp.status);
+  if (!resp.ok) throw await spotifyAPIError("/me/player/devices", resp);
   const data = await resp.json();
   return (Array.isArray(data?.devices) ? data.devices : []).map((device: any) => ({
     id: typeof device.id === "string" ? device.id : null,
@@ -298,12 +362,13 @@ export async function searchTracks(
   const params = new URLSearchParams({
     q: query,
     type: "track",
-    limit: String(Math.max(1, Math.min(limit, 20))),
+    // Development Mode reduced the search maximum to 10 in February 2026.
+    limit: String(Math.max(1, Math.min(limit, 10))),
   });
   const resp = await fetch(`${API_BASE}/search?${params.toString()}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (!resp.ok) throw new SpotifyAPIError("/search", resp.status);
+  if (!resp.ok) throw await spotifyAPIError("/search", resp);
   const data = await resp.json();
   return (data?.tracks?.items ?? [])
     .filter((item: any) => item?.id && item?.name)
@@ -325,8 +390,7 @@ export async function createPrivatePlaylist(
     body: JSON.stringify({ name, description, public: false }),
   });
   if (!resp.ok) {
-    const detail = await resp.text().catch(() => "");
-    throw new SpotifyAPIError("/me/playlists", resp.status, detail);
+    throw await spotifyAPIError("/me/playlists", resp);
   }
   const data = await resp.json();
   if (!data?.id || !data?.external_urls?.spotify) {
@@ -355,8 +419,7 @@ export async function addPlaylistItems(
     body: JSON.stringify({ uris }),
   });
   if (!resp.ok) {
-    const detail = await resp.text().catch(() => "");
-    throw new SpotifyAPIError(`/playlists/${playlistId}/items`, resp.status, detail);
+    throw await spotifyAPIError(`/playlists/${playlistId}/items`, resp);
   }
 }
 
@@ -400,9 +463,9 @@ export async function discovery(token: string): Promise<SpotifyDiscoveryItem[]> 
     }
   }
   if (items.length === 0 && (!albumsResponse.ok || !playlistsResponse.ok)) {
-    throw new SpotifyAPIError(
+    throw await spotifyAPIError(
       "/browse",
-      !albumsResponse.ok ? albumsResponse.status : playlistsResponse.status
+      !albumsResponse.ok ? albumsResponse : playlistsResponse
     );
   }
   return items;

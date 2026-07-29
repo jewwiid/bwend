@@ -1,4 +1,4 @@
 app_identifier("com.bwend.app")
-# apple_id("your-apple-id@example.com")    # Personal Apple ID forsign in to developer portal
-# team_id("7JSY6J5R99")                    # Developer Portal team id
+team_id("7JSY6J5R99")
+# apple_id("your-apple-id@example.com")    # Optional when using an ASC API key
 # itc_team_id("TEAM_ID")                   # App Store Connect team id

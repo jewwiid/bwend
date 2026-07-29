@@ -43,6 +43,10 @@ import {
   handleGenerateListeningPortrait,
   handleGetListeningPortrait,
 } from "./listeningPortrait";
+import {
+  CURRENT_PRIVACY_VERSION,
+  CURRENT_TERMS_VERSION,
+} from "./lib/privacyConstants";
 
 const http = httpRouter();
 
@@ -50,7 +54,21 @@ http.route({
   path: "/api/health",
   method: "GET",
   handler: httpAction(async () => {
-    return new Response("ok", { status: 200 });
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        service: "bwend-api",
+        privacyVersion: CURRENT_PRIVACY_VERSION,
+        termsVersion: CURRENT_TERMS_VERSION,
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store",
+        },
+      }
+    );
   }),
 });
 

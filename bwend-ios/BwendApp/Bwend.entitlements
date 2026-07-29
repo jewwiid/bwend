@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>aps-environment</key>
-	<string>development</string>
 	<!-- New invite links use www because the apex redirects there. The apex entitlement keeps
 	     compatibility with links created before that migration. -->
 	<key>com.apple.developer.associated-domains</key>

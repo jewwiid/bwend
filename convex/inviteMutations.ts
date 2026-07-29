@@ -50,23 +50,6 @@ export const updateStatus = internalMutation({
   },
 });
 
-/** Mark an invite as claimed. */
-export const markClaimed = internalMutation({
-  args: {
-    inviteId: v.id("invites"),
-    inviteeSpotifyUserId: v.string(),
-    claimedAt: v.number(),
-  },
-  returns: v.null(),
-  handler: async (ctx, args) => {
-    await ctx.db.patch(args.inviteId, {
-      status: "claimed",
-      inviteeSpotifyUserId: args.inviteeSpotifyUserId,
-      claimedAt: args.claimedAt,
-    });
-  },
-});
-
 /**
  * Revoke an unused invite. Deleting the row makes the shared URL stop working immediately and
  * avoids retaining a cancelled connection attempt.

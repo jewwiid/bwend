@@ -13,6 +13,19 @@ const selectedTrackValidator = v.object({
   spotifyURL: v.union(v.string(), v.null()),
 });
 
+const inviteValidator = v.object({
+  _id: v.id("invites"),
+  _creationTime: v.number(),
+  code: v.string(),
+  inviterSpotifyUserId: v.string(),
+  inviteeSpotifyUserId: v.union(v.string(), v.null()),
+  selectedTrack: v.optional(selectedTrackValidator),
+  status: v.union(v.literal("pending"), v.literal("claimed"), v.literal("expired")),
+  createdAt: v.number(),
+  claimedAt: v.union(v.number(), v.null()),
+  expiresAt: v.number(),
+});
+
 /** Get all invite codes (for collision avoidance when creating new codes). */
 export const allCodes = internalQuery({
   args: {},
@@ -27,7 +40,7 @@ export const allCodes = internalQuery({
 /** Get an invite by its code. */
 export const getByCode = internalQuery({
   args: { code: v.string() },
-  returns: v.union(v.null(), v.any()),
+  returns: v.union(v.null(), inviteValidator),
   handler: async (ctx, args) => {
     return await ctx.db
       .query("invites")
@@ -38,7 +51,10 @@ export const getByCode = internalQuery({
 
 /** List the caller's sent invites, newest first, with enough context to manage them. */
 export const listByInviter = internalQuery({
-  args: { spotifyUserId: v.string() },
+  args: {
+    spotifyUserId: v.string(),
+    now: v.number(),
+  },
   returns: v.array(
     v.object({
       code: v.string(),
@@ -61,7 +77,7 @@ export const listByInviter = internalQuery({
     return await Promise.all(
       invites.map(async (invite) => {
         const effectiveStatus =
-          invite.status === "pending" && invite.expiresAt < Date.now()
+          invite.status === "pending" && invite.expiresAt < args.now
             ? "expired"
             : invite.status;
         const match =

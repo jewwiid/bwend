@@ -13,6 +13,7 @@ import {
   createPrivatePlaylist,
   hasScope,
   SpotifyAPIError,
+  spotifyRateLimitFailure,
 } from "./lib/spotify";
 import {
   requireFreshSpotifySession,
@@ -136,6 +137,10 @@ export const saveMatchPlaylist = internalAction({
     } catch (error) {
       if (error instanceof SpotifySessionError) {
         return failure(error.status, error.message, error.code);
+      }
+      const rateFailure = spotifyRateLimitFailure(error);
+      if (rateFailure) {
+        return failure(rateFailure.status, rateFailure.error, rateFailure.code);
       }
       if (error instanceof SpotifyAPIError) {
         return failure(

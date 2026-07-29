@@ -39,19 +39,10 @@ targets:
           UIColorName: "bg-primary"
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
-          - UIInterfaceOrientationPortraitUpsideDown
-          - UIInterfaceOrientationLandscapeLeft
-          - UIInterfaceOrientationLandscapeRight
-        UISupportedInterfaceOrientations~ipad:
-          - UIInterfaceOrientationPortrait
-          - UIInterfaceOrientationPortraitUpsideDown
-          - UIInterfaceOrientationLandscapeLeft
-          - UIInterfaceOrientationLandscapeRight
         UIBackgroundModes: []
         ITSAppUsesNonExemptEncryption: false
         NSAppTransportSecurity:
           NSAllowsArbitraryLoads: false
-        NSAppleMusicUsageDescription: "Bwend uses MusicKit to play previews of the tracks you share."
         LSApplicationQueriesSchemes:
           - spotify
         CFBundleURLTypes:
@@ -61,15 +52,17 @@ targets:
               - bwend
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
-        SPOTIFY_CLIENT_ID: 593e4f5104c8411885d53b88223f3db2
-        BWEND_API_URL: https://helpful-owl-232.eu-west-1.convex.site/api
+        SPOTIFY_CLIENT_ID: $(SPOTIFY_CLIENT_ID)
+        BWEND_API_URL: $(BWEND_API_URL)
         BWEND_NOTIFICATIONS_ENABLED: false
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.bwend.app
         INFOPLIST_FILE: BwendApp/Info.plist
+        SPOTIFY_CLIENT_ID: 593e4f5104c8411885d53b88223f3db2
+        BWEND_API_URL: https://helpful-owl-232.eu-west-1.convex.site/api
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        TARGETED_DEVICE_FAMILY: "1,2"
+        TARGETED_DEVICE_FAMILY: "1"
         IPHONEOS_DEPLOYMENT_TARGET: "17.0"
         CODE_SIGN_ENTITLEMENTS: BwendApp/Bwend.entitlements
 

@@ -13,6 +13,8 @@
     "deploy:prod": "npm run deploy:convex:prod && npm run deploy:vercel",
     "lint": "eslint .",
     "test": "vitest run",
+    "release:audit": "node scripts/audit-release-config.mjs",
+    "release:check": "./scripts/release-check.sh",
     "preview": "vite preview"
   },
   "dependencies": {

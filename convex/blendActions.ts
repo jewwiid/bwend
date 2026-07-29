@@ -21,6 +21,7 @@ import {
   libraryCounts,
   hasScope,
   asTimeRange,
+  spotifyRateLimitFailure,
 } from "./lib/spotify";
 import { meanReleaseYear } from "./lib/vibeScore";
 import {
@@ -68,9 +69,14 @@ export const myBlend = internalAction({
         topTracks(tokens.accessToken, timeRange),
       ]);
     } catch (e) {
+      const rateFailure = spotifyRateLimitFailure(e);
+      if (rateFailure) {
+        return { ...rateFailure, data: null };
+      }
       return {
         status: 502,
-        error: `Couldn't reach Spotify: ${(e as Error).message}`,
+        error: "Couldn't reach Spotify right now. Please try again.",
+        code: null,
         data: null,
       };
     }

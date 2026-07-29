@@ -22,14 +22,15 @@ The first native iPhone slice is now implemented end-to-end:
    save an idempotent, interleaved match playlist to their own account.
 4. **Post-match discovery** — new releases and featured playlists appear
    as a lightweight "Listen next" rail.
-5. **Daily Bwend notifications** — APNs registration, foreground and tap
-   handling, match deep links, per-user local-time scheduling, invalid-token
-   cleanup, and an hourly Convex cron are implemented last in the sequence.
+5. **Daily Bwend notifications** — server and client infrastructure exists, but
+   the current beta binary deliberately hides the controls and excludes the push
+   entitlement until APNs is configured and verified on physical devices.
 
-The remaining launch work is operational: install the APNs key/team
-credentials in Convex, reconnect existing Spotify users so they grant the
-new read/player and private-playlist scopes, and verify the Spotify Player,
-Search, Browse, and Playlist endpoints against the app's live quota mode.
+The remaining beta work is operational: reconnect existing Spotify users so
+they grant the current read/player and private-playlist scopes, verify the
+Spotify Player, Search, Browse, and Playlist endpoints against the app's live
+quota mode, and complete the two-phone acceptance test. APNs is not a blocker
+for the current release.
 
 **Deliberately out of scope:** chat / messaging. The landing page's
 "Music-first chat" line and the iOS-style "React to their tracks first"
@@ -235,8 +236,8 @@ needs to be cut before launch.
    is persisted on the invite and becomes the claim anchor.
 8. ✅ **Daily Bwend notification infrastructure.** Implemented with an
    hourly bounded Convex fanout, local-time deduplication, APNs token
-   lifecycle, and reveal deep links. APNs production credentials are the
-   remaining operational step.
+   lifecycle, and reveal deep links. It is feature-gated out of the current
+   beta binary; enabling it requires a separate APNs and real-device release gate.
 9. ✅ **Discovery rail on the native match page.** Implemented with new
    releases and featured playlists; failure is intentionally non-blocking.
 

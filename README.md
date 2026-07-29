@@ -11,7 +11,7 @@ personal biography, location, contacts import, or sensitive-trait inference.
 ## Apps and services
 
 - Web: React 19, TypeScript, Vite, Tailwind CSS 4
-- iPhone: SwiftUI, iOS 17+, Spotify PKCE, Universal Links, APNs
+- iPhone: SwiftUI, iOS 17+, Spotify PKCE, Universal Links
 - Backend: Convex functions, HTTP actions, database, crons
 - Hosting: Vercel for the web and Convex for the API
 
@@ -37,7 +37,8 @@ Set `VITE_SPOTIFY_CLIENT_ID` in `.env.local`. The Convex development deployment 
 - `OPENAI_API_KEY` (server-only; optional Listening Portrait generation)
 - `OPENAI_MODEL` (optional; defaults to `gpt-5.6-luna`)
 
-APNs delivery additionally needs `APNS_KEY_ID`, `APNS_TEAM_ID`, and `APNS_PRIVATE_KEY`.
+Push notifications are feature-gated out of the current beta binary. When re-enabled later,
+APNs delivery additionally needs `APNS_KEY_ID`, `APNS_TEAM_ID`, and `APNS_PRIVATE_KEY`;
 `APNS_BUNDLE_ID` defaults to `com.bwend.app`.
 
 ## Verification
@@ -46,6 +47,7 @@ APNs delivery additionally needs `APNS_KEY_ID`, `APNS_TEAM_ID`, and `APNS_PRIVAT
 npm run lint
 npm run build
 npm test
+npm run release:audit
 npx tsc --noEmit
 npx convex dev --once
 npx convex run privacyActions:selfCheck '{}'
@@ -87,3 +89,12 @@ npm run deploy:vercel
 Production uses `.env.production` for the public Convex URLs. Secret backend variables belong
 in the production Convex deployment, never in Vite variables or source control. Development
 and production Convex deployments require their own `OPENAI_API_KEY` values.
+
+Release owners should use [`docs/BETA-OPERATIONS.md`](docs/BETA-OPERATIONS.md) for the
+five-person Spotify test protocol and [`docs/APP-STORE-REVIEW.md`](docs/APP-STORE-REVIEW.md)
+for submission notes, privacy labels, screenshots and remaining external blockers. Run the
+complete local release gate with:
+
+```bash
+npm run release:check
+```

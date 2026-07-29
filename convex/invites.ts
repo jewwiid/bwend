@@ -55,6 +55,7 @@ export const handleListInvites = httpAction(async (ctx, request) => {
 
   const invites = await ctx.runQuery(internal.inviteQueries.listByInviter, {
     spotifyUserId: authResult.spotifyUserId,
+    now: Date.now(),
   });
   const publicBaseURL = process.env.PUBLIC_BASE_URL ?? "https://www.bwend.xyz";
 

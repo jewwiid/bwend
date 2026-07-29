@@ -12,14 +12,14 @@ const sections = [
   {
     title: 'Data we use',
     body: [
-      'When you connect Spotify, Bwend stores a pseudonymous Bwend identifier, an encrypted Spotify connection, your top music and a derived taste fingerprint, the blends you intentionally create or join, playlist-save records, and notification settings you enable. If you separately opt into a Listening Portrait, Bwend also stores your questionnaire answers, the generated portrait, and its AI consent record.',
+      'When you connect Spotify, Bwend stores a pseudonymous Bwend identifier, an encrypted Spotify connection, your top music and a derived taste fingerprint, the blends you intentionally create or join, and playlist-save records. If you separately opt into a Listening Portrait, Bwend also stores your questionnaire answers, the generated portrait, and its AI consent record.',
       'Spotify display names are not stored. OAuth credentials are encrypted at rest and are never included in an account export. Pseudonymous records are still treated as personal data.',
     ],
   },
   {
     title: 'Why we use it',
     body: [
-      'Listening data is used only to build your private Taste Card, calculate a blend you intentionally send or claim, create a Spotify playlist after you ask us to, show your own Spotify playback context, and send notifications you explicitly enable.',
+      'Listening data is used only to build your private Taste Card, calculate a blend you intentionally send or claim, create a Spotify playlist after you ask us to, and show your own Spotify playback context.',
       'Bwend does not use music to infer health, ethnicity, religion, politics, sexuality, or other sensitive traits. Bwend does not sell your listening data.',
     ],
   },
@@ -34,7 +34,7 @@ const sections = [
     title: 'Sharing and retention',
     body: [
       'Your Taste Card or blend is shared only through a private link you choose to send. A Listening Portrait remains visible only to you. Unclaimed invite links expire after seven days.',
-      'You can delete a Listening Portrait and its questionnaire answers immediately without deleting your account. Disconnecting Spotify immediately removes the stored Spotify credential and disables push notifications. The disconnected Taste Card and related data are deleted after a 30-day recovery window. Choosing Delete account removes Bwend data immediately. A playlist already saved to Spotify remains there until you delete it in Spotify.',
+      'You can delete a Listening Portrait and its questionnaire answers immediately without deleting your account. Disconnecting Spotify immediately removes the stored Spotify credential. The disconnected Taste Card and related data are deleted after a 30-day recovery window. Choosing Delete account removes Bwend data immediately. A playlist already saved to Spotify remains there until you delete it in Spotify.',
     ],
   },
   {
