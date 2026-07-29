@@ -4,5 +4,18 @@
   "installCommand": "npm ci",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "headers": [
+    {
+      "source": "/.well-known/apple-app-site-association",
+      "headers": [
+        { "key": "Content-Type", "value": "application/json" }
+      ]
+    }
+  ],
+  "rewrites": [
+    { "source": "/.well-known/(.*)", "destination": "/.well-known/$1" },
+    { "source": "/m/redirect.html", "destination": "/m/redirect.html" },
+    { "source": "/m/:code", "destination": "/m/redirect.html" },
+    { "source": "/((?!\\.well-known|m/).*)", "destination": "/index.html" }
+  ]
 }

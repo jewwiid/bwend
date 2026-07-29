@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["TEAMID.com.bwend.app"],
+        "components": [
+          {
+            "/": "/m/*",
+            "comment": "Bwend invite links — opens the app directly when tapped in Messages, Hinge, etc."
+          }
+        ]
+      }
+    ]
+  }
+}
