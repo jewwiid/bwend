@@ -255,6 +255,8 @@ function Navigation({ access }: { access: SpotifyAccess }) {
   const [lightOnHero, setLightOnHero] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const onHero = lightOnHero;
+  const navIsLight = onHero && !mobileOpen;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -263,6 +265,7 @@ function Navigation({ access }: { access: SpotifyAccess }) {
       setLightOnHero(window.scrollY < window.innerHeight * 0.8);
     };
 
+    handleScroll();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -280,21 +283,25 @@ function Navigation({ access }: { access: SpotifyAccess }) {
   }, [darkMode]);
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 bg-transparent transition-all duration-700 ${
-      scrolled ? 'py-4' : 'py-8'
-    }`}>
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        onHero
+          ? 'bg-transparent'
+          : 'border-b border-[var(--color-border)] bg-[var(--color-bg-primary)] shadow-sm'
+      } ${scrolled ? 'py-4' : 'py-8'}`}
+    >
       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
         <div className="flex items-center justify-between">
           <a href="#" className="flex items-center gap-2 group">
             <img
-              src={darkMode || (lightOnHero && !scrolled) ? logoLight : logoDark}
+              src={darkMode || navIsLight ? logoLight : logoDark}
               alt="Bwend"
-              className="h-6 md:h-7 transition-all duration-500"
+              className="h-7 w-7 md:h-8 md:w-8 transition-all duration-500"
             />
           </a>
 
-          <div className={`hidden md:flex items-center gap-12 text-[0.6875rem] font-bold uppercase tracking-[0.25em] ${
-            lightOnHero && !scrolled ? 'text-white' : 'text-[var(--color-text-primary)]'
+          <div className={`hidden md:flex items-center gap-8 lg:gap-12 text-[0.6875rem] font-bold uppercase tracking-[0.25em] ${
+            navIsLight ? 'text-white' : 'text-[var(--color-text-primary)]'
           }`}>
             <a href="#how" className="hover:opacity-50 transition-opacity">How it works</a>
             <a href="#philosophy" className="hover:opacity-50 transition-opacity">Philosophy</a>
@@ -309,15 +316,15 @@ function Navigation({ access }: { access: SpotifyAccess }) {
             </button>
             <SpotifyAccessButton
               access={access}
-              variant={lightOnHero && !scrolled ? 'light' : 'dark'}
-              className="px-6 py-3"
+              variant={navIsLight ? 'light' : 'dark'}
+              className="px-5 py-3 lg:px-6"
             />
           </div>
 
           <button
             type="button"
             onClick={() => setMobileOpen((open) => !open)}
-            className={`md:hidden p-2 ${lightOnHero && !scrolled ? 'text-white' : 'text-[var(--color-text-primary)]'}`}
+            className={`md:hidden p-2 ${navIsLight ? 'text-white' : 'text-[var(--color-text-primary)]'}`}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileOpen}
           >
@@ -325,15 +332,15 @@ function Navigation({ access }: { access: SpotifyAccess }) {
           </button>
         </div>
         {mobileOpen ? (
-          <div className="mt-5 rounded-2xl border border-white/15 bg-black/80 p-4 text-white shadow-2xl md:hidden">
+          <div className="mt-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-primary)] p-4 text-[var(--color-text-primary)] shadow-2xl md:hidden">
             <div className="grid gap-3 text-xs font-bold uppercase tracking-[0.2em]">
-              <a href="#how" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-2 hover:bg-white/10">How it works</a>
-              <a href="#philosophy" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-2 hover:bg-white/10">Philosophy</a>
-              <a href="#stories" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-2 hover:bg-white/10">Stories</a>
+              <a href="#how" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-2 hover:bg-[var(--color-bg-secondary)]">How it works</a>
+              <a href="#philosophy" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-2 hover:bg-[var(--color-bg-secondary)]">Philosophy</a>
+              <a href="#stories" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-2 hover:bg-[var(--color-bg-secondary)]">Stories</a>
               <SpotifyAccessButton
                 access={access}
                 variant="accent"
-                className="mt-1 px-5 py-3 text-[0.6875rem] font-bold uppercase tracking-[0.18em]"
+                className="mt-1 w-full px-5 py-3 text-[0.6875rem] font-bold uppercase tracking-[0.18em]"
               />
             </div>
           </div>
