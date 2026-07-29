@@ -18,7 +18,7 @@ async function eraseUserData(ctx: MutationCtx, spotifyUserId: string) {
     .withIndex("by_spotify_user_id", (q) => q.eq("spotifyUserId", spotifyUserId))
     .first();
 
-  const [invitesAsInviter, invitesAsInvitee, matchesAsA, matchesAsB, userPlaylists, pushes] =
+  const [invitesAsInviter, invitesAsInvitee, matchesAsA, matchesAsB, userPlaylists, pushes, portrait] =
     await Promise.all([
       bounded(
         ctx.db
@@ -56,6 +56,10 @@ async function eraseUserData(ctx: MutationCtx, spotifyUserId: string) {
           .withIndex("by_spotify_user_id", (q) => q.eq("spotifyUserId", spotifyUserId))
           .take(MAX_USER_RECORDS + 1)
       ),
+      ctx.db
+        .query("listeningPortraits")
+        .withIndex("by_spotify_user_id", (q) => q.eq("spotifyUserId", spotifyUserId))
+        .first(),
     ]);
 
   const matches = [...matchesAsA, ...matchesAsB];
@@ -81,6 +85,7 @@ async function eraseUserData(ctx: MutationCtx, spotifyUserId: string) {
     await ctx.db.delete(row._id);
   }
   for (const row of pushes) await ctx.db.delete(row._id);
+  if (portrait) await ctx.db.delete(portrait._id);
   if (profile) await ctx.db.delete(profile._id);
 
   return {
@@ -88,6 +93,7 @@ async function eraseUserData(ctx: MutationCtx, spotifyUserId: string) {
     matches: ids(matches).size,
     playlists: ids([...userPlaylists, ...matchPlaylists.flat()]).size,
     pushSubscriptions: pushes.length,
+    listeningPortraits: portrait ? 1 : 0,
   };
 }
 

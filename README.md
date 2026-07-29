@@ -34,6 +34,8 @@ Set `VITE_SPOTIFY_CLIENT_ID` in `.env.local`. The Convex development deployment 
 - `BWEND_ID_SECRET`
 - `SPOTIFY_TOKEN_ENCRYPTION_KEY` (32 random bytes encoded as base64)
 - `PUBLIC_BASE_URL`
+- `OPENAI_API_KEY` (server-only; optional Listening Portrait generation)
+- `OPENAI_MODEL` (optional; defaults to `gpt-5.6-sol`)
 
 APNs delivery additionally needs `APNS_KEY_ID`, `APNS_TEAM_ID`, and `APNS_PRIVATE_KEY`.
 `APNS_BUNDLE_ID` defaults to `com.bwend.app`.
@@ -46,6 +48,7 @@ npm run build
 npx tsc --noEmit
 npx convex dev --once
 npx convex run privacyActions:selfCheck '{}'
+npx convex run listeningPortrait:selfCheck '{}'
 
 cd bwend-ios
 xcodegen generate
@@ -68,7 +71,9 @@ xcodebuild -project Bwend.xcodeproj -scheme Bwend \
 Spotify's raw account identifier is converted to a Bwend-only HMAC identifier before
 persistence. OAuth credentials are encrypted with AES-256-GCM. Users can export their data,
 disconnect Spotify, or delete their account from both clients. Unclaimed invites expire after
-seven days; disconnected accounts are deleted after 30 days. See
+seven days; disconnected accounts are deleted after 30 days. The optional private Listening
+Portrait uses only separately consented questionnaire answers—never Spotify content or lyrics—
+and can be regenerated or deleted independently. See
 [`docs/PRIVACY-ARCHITECTURE.md`](docs/PRIVACY-ARCHITECTURE.md).
 
 ## Deployment
@@ -79,4 +84,5 @@ npm run deploy:vercel
 ```
 
 Production uses `.env.production` for the public Convex URLs. Secret backend variables belong
-in the production Convex deployment, never in Vite variables or source control.
+in the production Convex deployment, never in Vite variables or source control. Development
+and production Convex deployments require their own `OPENAI_API_KEY` values.

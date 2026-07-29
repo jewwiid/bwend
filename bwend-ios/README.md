@@ -30,9 +30,11 @@ the `www.bwend.xyz` associated domain.
 1. Review the privacy notice and connect Spotify through a system authentication session.
 2. See a private Taste Card derived from ranked tracks, artists, era, discovery, and listening
    hours when Spotify provides those signals.
-3. Choose a track, create a seven-day link, and share it with someone already met elsewhere.
-4. The recipient connects Spotify and claims the link.
-5. Both people see the same reveal and may independently save a private playlist to Spotify.
+3. Optionally create a private AI Listening Portrait from a separate three-question form.
+   Spotify tracks, artists, history, and lyrics are not sent to the AI provider.
+4. Choose a track, create a seven-day link, and share it with someone already met elsewhere.
+5. The recipient connects Spotify and claims the link.
+6. Both people see the same reveal and may independently save a private playlist to Spotify.
 
 There is no public profile, discovery feed, photo, biography, location, contacts access, or
 dating-app import.
@@ -51,8 +53,8 @@ Register `bwend://spotify-callback` in the Spotify developer dashboard.
 - Account & Privacy provides export, disconnect, and immediate deletion.
 - Notification permission is requested only after the user enables daily blends.
 - APNs registration is stored server-side and can be disabled from the app.
-- `PrivacyInfo.xcprivacy` declares no tracking and only the Bwend user ID and music data used
-  for app functionality.
+- `PrivacyInfo.xcprivacy` declares no tracking and the Bwend user ID, music data, and optional
+  Listening Portrait content used for app functionality.
 
 Server delivery requires `APNS_KEY_ID`, `APNS_TEAM_ID`, and `APNS_PRIVATE_KEY` in the Convex
 production environment. Without them, notification delivery safely no-ops.

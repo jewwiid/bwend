@@ -19,6 +19,83 @@ struct AccountActionResponse: Codable, Equatable {
     let disconnected: Bool?
 }
 
+enum MusicRole: String, Codable, CaseIterable, Identifiable {
+    case escape, connection, focus, energy, reflection
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .escape: return "Escape"
+        case .connection: return "Connection"
+        case .focus: return "Focus"
+        case .energy: return "Energy"
+        case .reflection: return "Reflection"
+        }
+    }
+}
+
+enum ListeningMoment: String, Codable, CaseIterable, Identifiable {
+    case morning, movement, work
+    case lateNight = "late-night"
+    case social
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .morning: return "Slow mornings"
+        case .movement: return "On the move"
+        case .work: return "Work or study"
+        case .lateNight: return "Late nights"
+        case .social: return "With people"
+        }
+    }
+}
+
+enum DiscoveryStyle: String, Codable, CaseIterable, Identifiable {
+    case comfort, balanced, explorer
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .comfort: return "Familiar favourites"
+        case .balanced: return "A bit of both"
+        case .explorer: return "Always exploring"
+        }
+    }
+}
+
+struct ListeningPortraitAnswers: Codable, Equatable {
+    let musicRole: MusicRole
+    let listeningMoment: ListeningMoment
+    let discoveryStyle: DiscoveryStyle
+    let ownWords: String
+}
+
+struct ListeningPortraitTrait: Codable, Equatable, Identifiable {
+    let label: String
+    let explanation: String
+
+    var id: String { label }
+}
+
+struct ListeningPortrait: Codable, Equatable {
+    let answers: ListeningPortraitAnswers
+    let title: String
+    let summary: String
+    let traits: [ListeningPortraitTrait]
+    let conversationStarters: [String]
+    let generatedAt: Date
+    let updatedAt: Date
+}
+
+struct ListeningPortraitDeleteResponse: Codable, Equatable {
+    let ok: Bool
+    let deleted: Bool
+}
+
 /// Response from POST /invites. The shareable code + URL.
 struct CreateInviteResponse: Codable, Equatable {
     let code: String

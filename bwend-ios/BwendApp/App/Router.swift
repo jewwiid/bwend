@@ -20,6 +20,7 @@ final class Router: ObservableObject {
         case spotifyConnect
         case start
         case blend
+        case listeningPortrait
         case shareInvite(code: String)
         case invitePreview(code: String)
         case trackInviteSearch

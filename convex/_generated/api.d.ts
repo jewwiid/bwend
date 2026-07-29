@@ -33,6 +33,7 @@ import type * as lib_privacyConstants from "../lib/privacyConstants.js";
 import type * as lib_spotify from "../lib/spotify.js";
 import type * as lib_spotifySession from "../lib/spotifySession.js";
 import type * as lib_vibeScore from "../lib/vibeScore.js";
+import type * as listeningPortrait from "../listeningPortrait.js";
 import type * as matchMutations from "../matchMutations.js";
 import type * as matchQueries from "../matchQueries.js";
 import type * as matches from "../matches.js";
@@ -81,6 +82,7 @@ declare const fullApi: ApiFromModules<{
   "lib/spotify": typeof lib_spotify;
   "lib/spotifySession": typeof lib_spotifySession;
   "lib/vibeScore": typeof lib_vibeScore;
+  listeningPortrait: typeof listeningPortrait;
   matchMutations: typeof matchMutations;
   matchQueries: typeof matchQueries;
   matches: typeof matches;

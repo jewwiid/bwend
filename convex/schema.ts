@@ -68,6 +68,53 @@ export default defineSchema({
     .index("by_spotify_user_id", ["spotifyUserId"])
     .index("by_disconnected_at", ["disconnectedAt"]),
 
+  // A private, first-party Listening Portrait. This is deliberately isolated from the
+  // Spotify-derived Taste Card: only questionnaire answers authored or selected by the user
+  // may be sent to OpenAI. Spotify tracks, artists, listening history, and lyrics never enter
+  // this table's generation pipeline.
+  listeningPortraits: defineTable({
+    spotifyUserId: v.string(),
+    answers: v.object({
+      musicRole: v.union(
+        v.literal("escape"),
+        v.literal("connection"),
+        v.literal("focus"),
+        v.literal("energy"),
+        v.literal("reflection")
+      ),
+      listeningMoment: v.union(
+        v.literal("morning"),
+        v.literal("movement"),
+        v.literal("work"),
+        v.literal("late-night"),
+        v.literal("social")
+      ),
+      discoveryStyle: v.union(
+        v.literal("comfort"),
+        v.literal("balanced"),
+        v.literal("explorer")
+      ),
+      ownWords: v.string(),
+    }),
+    portrait: v.object({
+      title: v.string(),
+      summary: v.string(),
+      traits: v.array(
+        v.object({
+          label: v.string(),
+          explanation: v.string(),
+        })
+      ),
+      conversationStarters: v.array(v.string()),
+    }),
+    model: v.string(),
+    promptVersion: v.string(),
+    aiConsentVersion: v.string(),
+    aiConsentedAt: v.number(),
+    generatedAt: v.number(),
+    updatedAt: v.number(),
+  }).index("by_spotify_user_id", ["spotifyUserId"]),
+
   // Artist enrichment cache — the signal Spotify stopped providing, sourced from MusicBrainz
   // (genres, country) and ListenBrainz (similar artists).
   //

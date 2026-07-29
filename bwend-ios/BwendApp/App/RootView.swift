@@ -37,6 +37,8 @@ struct RootView: View {
             StartView()
         case .blend:
             BlendView()
+        case .listeningPortrait:
+            ListeningPortraitView()
         case .shareInvite(let code):
             ShareView(inviteCode: code)
         case .trackInviteSearch:

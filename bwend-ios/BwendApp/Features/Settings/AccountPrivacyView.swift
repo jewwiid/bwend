@@ -28,7 +28,7 @@ struct AccountPrivacyView: View {
                 controlCard(
                     icon: "square.and.arrow.up",
                     title: "Export my data",
-                    body: "Download your Taste Card, consent record, invites, blends, and settings as JSON."
+                    body: "Download your Taste Card, optional Listening Portrait, consent records, invites, blends, and settings as JSON."
                 ) {
                     Task { await exportData() }
                 }
@@ -52,7 +52,7 @@ struct AccountPrivacyView: View {
                 controlCard(
                     icon: "trash",
                     title: "Delete my Bwend account",
-                    body: "Immediately erases your Taste Card, invites, blends, saved-playlist records, and push registrations from Bwend."
+                    body: "Immediately erases your Taste Card, Listening Portrait, questionnaire answers, invites, blends, saved-playlist records, and push registrations from Bwend."
                 ) {
                     confirmDelete = true
                 }

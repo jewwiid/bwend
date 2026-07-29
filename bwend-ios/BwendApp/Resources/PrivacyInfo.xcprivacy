@@ -5,7 +5,8 @@
     <!-- Bwend collects no data about the user's location, contacts, or dating identity.
          Collected data is linked to the pseudonymous Bwend account needed for the blend.
 
-         No tracking. No third-party SDKs. No data broker sharing. -->
+         No tracking. No data broker sharing. The optional Listening Portrait sends only
+         user-entered questionnaire answers to OpenAI after separate consent. -->
 
     <key>NSPrivacyTracking</key>
     <false/>
@@ -34,6 +35,21 @@
         <dict>
             <key>NSPrivacyCollectedDataType</key>
             <string>NSPrivacyCollectedDataTypeAudioData</string>
+            <key>NSPrivacyCollectedDataTypeLinked</key>
+            <true/>
+            <key>NSPrivacyCollectedDataTypeTracking</key>
+            <false/>
+            <key>NSPrivacyCollectedDataTypePurposes</key>
+            <array>
+                <string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+            </array>
+        </dict>
+
+        <!-- Other user content — optional Listening Portrait questionnaire answers and the
+             private generated result. Linked to the account for app functionality only. -->
+        <dict>
+            <key>NSPrivacyCollectedDataType</key>
+            <string>NSPrivacyCollectedDataTypeOtherUserContent</string>
             <key>NSPrivacyCollectedDataTypeLinked</key>
             <true/>
             <key>NSPrivacyCollectedDataTypeTracking</key>

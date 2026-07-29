@@ -22,6 +22,7 @@ import {
   type TimeRange,
 } from '../lib/api';
 import { AppShell, SectionLabel, Artwork, Spinner, ErrorCard } from '../components/AppShell';
+import { ListeningPortraitSection } from '../components/ListeningPortraitSection';
 
 const RANGES: { value: TimeRange; label: string }[] = [
   { value: 'short_term', label: 'Last month' },
@@ -334,6 +335,8 @@ export function BlendPage() {
               </dl>
             </section>
           )}
+
+          <ListeningPortraitSection />
 
           <section className="space-y-4">
             <SectionLabel>Privacy & data</SectionLabel>

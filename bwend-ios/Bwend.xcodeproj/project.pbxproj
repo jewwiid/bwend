@@ -13,6 +13,7 @@
 		1400A01B7B1D56CED7033BE3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E696CA0D1D6AA2202E5148AF /* PrivacyInfo.xcprivacy */; };
 		1C4A7E3C9F81F4BB512E520E /* RevealDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE1C0C155F9ED6090EC3100 /* RevealDetailView.swift */; };
 		217D3F81613762DE9BDEEC31 /* RevealAnchorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 828BDBAABA554104C00AB625 /* RevealAnchorView.swift */; };
+		2B2A567EDCE9C2D07A7D8CD3 /* ListeningPortraitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1C7D43E6118B5461A9E9A1 /* ListeningPortraitView.swift */; };
 		2C27F9D980941B8F51CAFA0F /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 298B63660F8F6D836EB68802 /* Router.swift */; };
 		2F6EF0132F7493A018D64407 /* BwendApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FC3A18CE425B837013D2C2 /* BwendApp.swift */; };
 		314D9E03F4798C4E79733DE4 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E499C58AF6297343FE9BAF /* RootView.swift */; };
@@ -43,6 +44,7 @@
 		298B63660F8F6D836EB68802 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		40233528AF8B98FAAEE4718F /* ShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareView.swift; sourceTree = "<group>"; };
 		4391CCDA57470052AA938A62 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		4A1C7D43E6118B5461A9E9A1 /* ListeningPortraitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListeningPortraitView.swift; sourceTree = "<group>"; };
 		4D81F1C10E76687F7DEA9C02 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		53D945EB445B81E5D581E906 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		55D26C219CEDE43284B71B1D /* bwend-logo.svg */ = {isa = PBXFileReference; path = "bwend-logo.svg"; sourceTree = "<group>"; };
@@ -68,6 +70,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		04358A1F9644358EC829AA0E /* Portrait */ = {
+			isa = PBXGroup;
+			children = (
+				4A1C7D43E6118B5461A9E9A1 /* ListeningPortraitView.swift */,
+			);
+			path = Portrait;
+			sourceTree = "<group>";
+		};
 		12F1FF04CAA7612C31FA8409 /* Core */ = {
 			isa = PBXGroup;
 			children = (
@@ -166,6 +176,7 @@
 			children = (
 				1F68DA3B268598C58477D6E8 /* Blend */,
 				4DF5253EF100D3EEC07E1BFB /* Onboarding */,
+				04358A1F9644358EC829AA0E /* Portrait */,
 				DD50171D1AA91DFB6DC7A5CC /* Reveal */,
 				F795B33500C35665EE6A5E21 /* Settings */,
 				F74EA183910B1F17B626DA0C /* Share */,
@@ -326,6 +337,7 @@
 				461224A4BAEF211A815AA0CF /* BlendView.swift in Sources */,
 				2F6EF0132F7493A018D64407 /* BwendApp.swift in Sources */,
 				5CD3B43407137C00C05B4AAA /* Components.swift in Sources */,
+				2B2A567EDCE9C2D07A7D8CD3 /* ListeningPortraitView.swift in Sources */,
 				8B538553380D9E13C6990021 /* Models.swift in Sources */,
 				01F48590B2E50AD4703A272F /* NotificationManager.swift in Sources */,
 				504E5E579B0BBCE8B7A5551B /* PrivacyNoticeView.swift in Sources */,

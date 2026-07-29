@@ -153,6 +153,34 @@ export interface MatchSummary {
 
 export type TimeRange = "short_term" | "medium_term" | "long_term";
 
+export type MusicRole = "escape" | "connection" | "focus" | "energy" | "reflection";
+export type ListeningMoment = "morning" | "movement" | "work" | "late-night" | "social";
+export type DiscoveryStyle = "comfort" | "balanced" | "explorer";
+
+export interface ListeningPortraitAnswers {
+  musicRole: MusicRole;
+  listeningMoment: ListeningMoment;
+  discoveryStyle: DiscoveryStyle;
+  ownWords: string;
+}
+
+export interface ListeningPortraitTrait {
+  label: string;
+  explanation: string;
+}
+
+export interface ListeningPortrait {
+  answers: ListeningPortraitAnswers;
+  title: string;
+  summary: string;
+  traits: ListeningPortraitTrait[];
+  conversationStarters: string[];
+  generatedAt: string;
+  updatedAt: string;
+}
+
+export const LISTENING_PORTRAIT_CONSENT_VERSION = "2026-07-29.ai-portrait.v1";
+
 /** An API failure carrying the server's `reason` where one was provided. */
 export class ApiError extends Error {
   // Declared and assigned separately rather than as constructor parameter properties —
@@ -247,6 +275,27 @@ export function connectSpotify(
 
 export function myBlend(timeRange: TimeRange = "medium_term"): Promise<BlendResponse> {
   return request(`/me/blend?time_range=${timeRange}`);
+}
+
+export function getListeningPortrait(): Promise<ListeningPortrait | null> {
+  return request("/me/listening-portrait");
+}
+
+export function generateListeningPortrait(
+  answers: ListeningPortraitAnswers,
+): Promise<ListeningPortrait> {
+  return request("/me/listening-portrait", {
+    method: "POST",
+    body: JSON.stringify({
+      answers,
+      aiConsentVersion: LISTENING_PORTRAIT_CONSENT_VERSION,
+      aiConsentGranted: true,
+    }),
+  });
+}
+
+export function deleteListeningPortrait(): Promise<{ ok: boolean; deleted: boolean }> {
+  return request("/me/listening-portrait", { method: "DELETE" });
 }
 
 export function createInvite(selectedTrack?: BlendTrack): Promise<CreateInviteResponse> {

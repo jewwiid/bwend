@@ -31,6 +31,10 @@ struct PrivacyNoticeView: View {
                         "Sensitive inferences",
                         "Bwend does not use music to infer health, ethnicity, religion, politics, sexuality, or other sensitive traits. The score describes music overlap only."
                     )
+                    noticeSection(
+                        "Optional AI Listening Portrait",
+                        "If you opt in, Bwend sends only the questionnaire answers you select or write to OpenAI. Spotify songs, artists, listening history, and lyrics are never sent. The result is private, editable, exportable, and deletable. OpenAI may retain API abuse-monitoring logs for up to 30 days."
+                    )
 
                     Text("Privacy notice version \(SpotifyConnectView.privacyVersion)")
                         .font(.bwend(size: 11))

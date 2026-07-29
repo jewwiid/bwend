@@ -32,6 +32,11 @@ import {
   handleDisconnectSpotify,
   handleExportAccount,
 } from "./account";
+import {
+  handleDeleteListeningPortrait,
+  handleGenerateListeningPortrait,
+  handleGetListeningPortrait,
+} from "./listeningPortrait";
 
 const http = httpRouter();
 
@@ -73,6 +78,24 @@ http.route({
   path: "/api/me/blend",
   method: "GET",
   handler: handleMyBlend,
+});
+
+http.route({
+  path: "/api/me/listening-portrait",
+  method: "GET",
+  handler: handleGetListeningPortrait,
+});
+
+http.route({
+  path: "/api/me/listening-portrait",
+  method: "POST",
+  handler: handleGenerateListeningPortrait,
+});
+
+http.route({
+  path: "/api/me/listening-portrait",
+  method: "DELETE",
+  handler: handleDeleteListeningPortrait,
 });
 
 http.route({
@@ -161,6 +184,7 @@ const preflight = httpAction(async (_ctx, request) => preflightResponse(request)
 for (const path of [
   "/api/auth/spotify",
   "/api/me/blend",
+  "/api/me/listening-portrait",
   "/api/me/now-playing",
   "/api/me/player",
   "/api/search/tracks",

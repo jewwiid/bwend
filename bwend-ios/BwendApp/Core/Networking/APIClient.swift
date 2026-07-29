@@ -73,6 +73,8 @@ private struct ServerReason: Decodable {
 
 @MainActor
 final class APIClient: ObservableObject {
+    static let listeningPortraitConsentVersion = "2026-07-29.ai-portrait.v1"
+
     /// Base URL. Configure via Info.plist `BWEND_API_URL` or default to local dev.
     static let baseURL = Bundle.main.object(forInfoDictionaryKey: "BWEND_API_URL") as? String
         ?? "http://localhost:8080"
@@ -115,6 +117,36 @@ final class APIClient: ObservableObject {
     /// GET /me/blend — the caller's own listening profile for the given window.
     func myBlend(timeRange: BlendTimeRange = .medium) async throws -> BlendResponse {
         try await get("/me/blend?time_range=\(timeRange.rawValue)")
+    }
+
+    func listeningPortrait() async throws -> ListeningPortrait? {
+        try await get("/me/listening-portrait")
+    }
+
+    func generateListeningPortrait(
+        musicRole: MusicRole,
+        listeningMoment: ListeningMoment,
+        discoveryStyle: DiscoveryStyle,
+        ownWords: String
+    ) async throws -> ListeningPortrait {
+        try await post(
+            "/me/listening-portrait",
+            body: [
+                "answers": [
+                    "musicRole": musicRole.rawValue,
+                    "listeningMoment": listeningMoment.rawValue,
+                    "discoveryStyle": discoveryStyle.rawValue,
+                    "ownWords": ownWords,
+                ],
+                "aiConsentVersion": Self.listeningPortraitConsentVersion,
+                "aiConsentGranted": true,
+            ],
+            authed: true
+        )
+    }
+
+    func deleteListeningPortrait() async throws -> ListeningPortraitDeleteResponse {
+        try await perform("DELETE", "/me/listening-portrait", body: nil, authed: true)
     }
 
     /// GET /me/now-playing. The server returns JSON null when Spotify reports HTTP 204.

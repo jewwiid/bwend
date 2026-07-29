@@ -28,6 +28,8 @@ struct StartView: View {
 
                     blendCard
 
+                    listeningPortraitCard
+
                     startCard
 
                     Button {
@@ -124,6 +126,42 @@ struct StartView: View {
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier("yourBlendCard")
+    }
+
+    @ViewBuilder
+    private var listeningPortraitCard: some View {
+        Button {
+            router.route(to: .listeningPortrait)
+        } label: {
+            HStack(spacing: 14) {
+                Image(systemName: "waveform.badge.magnifyingglass")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(Color.Accent.cta)
+                    .frame(width: 42, height: 42)
+                    .background(Circle().fill(Color.Accent.lavender.opacity(0.2)))
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Your Listening Portrait")
+                        .font(.bwend(size: 15, weight: .bold))
+                        .foregroundColor(Color.bwendText)
+                    Text("A private reflection from answers you choose to share.")
+                        .font(.bwend(size: 12))
+                        .foregroundColor(Color.bwendTextSecondary)
+                        .multilineTextAlignment(.leading)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(Color.bwendTextMuted)
+            }
+            .padding(18)
+            .background(Color.bwendBgCard)
+            .cornerRadius(BwendRadius.lg)
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("listeningPortraitCard")
     }
 
     @ViewBuilder

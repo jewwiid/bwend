@@ -14,7 +14,7 @@ export const exportSnapshot = internalQuery({
       .first();
     if (!profile) return null;
 
-    const [invitesAsInviter, invitesAsInvitee, matchesAsA, matchesAsB, playlists, pushes] =
+    const [invitesAsInviter, invitesAsInvitee, matchesAsA, matchesAsB, playlists, pushes, portrait] =
       await Promise.all([
         ctx.db
           .query("invites")
@@ -42,6 +42,10 @@ export const exportSnapshot = internalQuery({
           .query("pushSubscriptions")
           .withIndex("by_spotify_user_id", (q) => q.eq("spotifyUserId", args.spotifyUserId))
           .take(EXPORT_LIMIT),
+        ctx.db
+          .query("listeningPortraits")
+          .withIndex("by_spotify_user_id", (q) => q.eq("spotifyUserId", args.spotifyUserId))
+          .first(),
       ]);
 
     return {
@@ -105,6 +109,21 @@ export const exportSnapshot = internalQuery({
         enabled: push.enabled,
         updatedAt: new Date(push.updatedAt).toISOString(),
       })),
+      listeningPortrait: portrait
+        ? {
+            answers: portrait.answers,
+            title: portrait.portrait.title,
+            summary: portrait.portrait.summary,
+            traits: portrait.portrait.traits,
+            conversationStarters: portrait.portrait.conversationStarters,
+            model: portrait.model,
+            promptVersion: portrait.promptVersion,
+            aiConsentVersion: portrait.aiConsentVersion,
+            aiConsentedAt: new Date(portrait.aiConsentedAt).toISOString(),
+            generatedAt: new Date(portrait.generatedAt).toISOString(),
+            updatedAt: new Date(portrait.updatedAt).toISOString(),
+          }
+        : null,
       excludedSecrets: ["Spotify access token", "Spotify refresh token", "APNs device token"],
     };
   },
