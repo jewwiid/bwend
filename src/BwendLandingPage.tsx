@@ -1,8 +1,11 @@
 import { useEffect, useState, useRef, type SVGProps } from 'react';
 import { useMutation } from 'convex/react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../convex/_generated/api';
 import logoLight from './assets/logo_light.svg';
 import logoDark from './assets/logo_dark.svg';
+import { loadSession } from './lib/api';
+import { beginSpotifyLogin } from './lib/spotifyAuth';
 
 type IconProps = SVGProps<SVGSVGElement>;
 
@@ -124,6 +127,13 @@ export type WaitlistSignup = {
   submit: (e?: React.FormEvent) => Promise<void>;
 };
 
+type SpotifyAccess = {
+  signedIn: boolean;
+  connecting: boolean;
+  error: string | null;
+  connect: () => Promise<void>;
+};
+
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
@@ -174,10 +184,77 @@ function useWaitlistSignup(): WaitlistSignup {
   return { email, setEmail, submitted, loading, error, submit };
 }
 
-function Navigation() {
+function useSpotifyAccess(): SpotifyAccess {
+  const navigate = useNavigate();
+  const [signedIn, setSignedIn] = useState(() => loadSession() !== null);
+  const [connecting, setConnecting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const connect = async () => {
+    const session = loadSession();
+    if (session) {
+      setSignedIn(true);
+      navigate('/blend');
+      return;
+    }
+
+    setConnecting(true);
+    setError(null);
+    try {
+      await beginSpotifyLogin('/blend');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not start Spotify sign-in.');
+      setConnecting(false);
+    }
+  };
+
+  return { signedIn, connecting, error, connect };
+}
+
+function SpotifyAccessButton({
+  access,
+  variant = 'dark',
+  className = '',
+}: {
+  access: SpotifyAccess;
+  variant?: 'dark' | 'light' | 'accent' | 'outline';
+  className?: string;
+}) {
+  const variants = {
+    dark: 'bg-[var(--color-ink)] text-[var(--color-bg-primary)] hover:opacity-90',
+    light: 'bg-white text-black hover:bg-white/90',
+    accent: 'bg-[var(--color-accent-cta)] text-[#14120f] hover:brightness-105',
+    outline: 'border border-white/25 bg-white/10 text-white hover:bg-white/15',
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={() => void access.connect()}
+      disabled={access.connecting}
+      className={`inline-flex items-center justify-center gap-3 rounded-full transition-all disabled:cursor-wait disabled:opacity-60 ${variants[variant]} ${className}`}
+    >
+      {access.signedIn ? (
+        <Icons.arrow className="h-4 w-4" aria-hidden="true" />
+      ) : (
+        <Icons.spotify className="h-4 w-4" aria-hidden="true" />
+      )}
+      <span>
+        {access.connecting
+          ? 'Opening Spotify…'
+          : access.signedIn
+            ? 'Open your blend'
+            : 'Continue with Spotify'}
+      </span>
+    </button>
+  );
+}
+
+function Navigation({ access }: { access: SpotifyAccess }) {
   const [scrolled, setScrolled] = useState(false);
   const [lightOnHero, setLightOnHero] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -224,34 +301,53 @@ function Navigation() {
             <a href="#stories" className="hover:opacity-50 transition-opacity">Stories</a>
             <button 
               onClick={() => setDarkMode(!darkMode)}
+              type="button"
               className="p-2 -mr-2 hover:opacity-50 transition-opacity"
+              aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               {darkMode ? <Icons.sun className="w-4 h-4" /> : <Icons.moon className="w-4 h-4" />}
             </button>
-            <a 
-              href="#waitlist" 
-              className={`px-6 py-3 rounded-full transition-all duration-500 ${
-                lightOnHero && !scrolled 
-                  ? 'bg-white text-black hover:bg-white/90' 
-                  : 'bg-[var(--color-ink)] text-[var(--color-bg-primary)] hover:opacity-90'
-              }`}
-            >
-              Join the list
-            </a>
+            <SpotifyAccessButton
+              access={access}
+              variant={lightOnHero && !scrolled ? 'light' : 'dark'}
+              className="px-6 py-3"
+            />
           </div>
 
-          <button className={`md:hidden p-2 ${lightOnHero && !scrolled ? 'text-white' : 'text-[var(--color-text-primary)]'}`}>
-            <Icons.menu className="w-6 h-6" />
+          <button
+            type="button"
+            onClick={() => setMobileOpen((open) => !open)}
+            className={`md:hidden p-2 ${lightOnHero && !scrolled ? 'text-white' : 'text-[var(--color-text-primary)]'}`}
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileOpen}
+          >
+            {mobileOpen ? <Icons.x className="w-6 h-6" /> : <Icons.menu className="w-6 h-6" />}
           </button>
         </div>
+        {mobileOpen ? (
+          <div className="mt-5 rounded-2xl border border-white/15 bg-black/80 p-4 text-white shadow-2xl md:hidden">
+            <div className="grid gap-3 text-xs font-bold uppercase tracking-[0.2em]">
+              <a href="#how" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-2 hover:bg-white/10">How it works</a>
+              <a href="#philosophy" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-2 hover:bg-white/10">Philosophy</a>
+              <a href="#stories" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-2 hover:bg-white/10">Stories</a>
+              <SpotifyAccessButton
+                access={access}
+                variant="accent"
+                className="mt-1 px-5 py-3 text-[0.6875rem] font-bold uppercase tracking-[0.18em]"
+              />
+            </div>
+          </div>
+        ) : null}
       </div>
     </nav>
   );
 }
 
-function HeroSection({ waitlist }: { waitlist: WaitlistSignup }) {
-  const heroErrorId = 'hero-waitlist-error';
-
+function HeroSection({
+  access,
+}: {
+  access: SpotifyAccess;
+}) {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-black pt-24 pb-16 md:pb-24">
       <div className="absolute inset-0 z-0">
@@ -273,51 +369,31 @@ function HeroSection({ waitlist }: { waitlist: WaitlistSignup }) {
           </h1>
           <p className="mt-12 text-white/70 text-lg md:text-xl lg:text-2xl max-w-xl font-normal leading-relaxed tracking-normal">
             We connect through the music you actually love, <br className="hidden md:block" />
-            before looks enter the picture. Join the list for early access.
+            before looks enter the picture. Connect Spotify to build your blend.
           </p>
 
           <div className="mt-10 max-w-xl">
-            {waitlist.submitted ? (
-              <div className="inline-flex items-center gap-3 rounded-full border border-white/25 bg-white/10 px-6 py-3.5 text-white backdrop-blur-md">
-                <Icons.check className="h-5 w-5 shrink-0 text-emerald-400" />
-                <span className="text-sm font-medium tracking-wide">You&apos;re on the list. We&apos;ll be in touch.</span>
-              </div>
-            ) : (
-              <form
-                onSubmit={waitlist.submit}
-                className="flex flex-col gap-3 sm:flex-row sm:items-stretch"
-                aria-label="Join the waitlist"
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <SpotifyAccessButton
+                access={access}
+                variant="accent"
+                className="px-8 py-4 text-[0.75rem] font-bold uppercase tracking-[0.18em] shadow-xl"
+              />
+              <a
+                href="#waitlist"
+                className="inline-flex justify-center rounded-full border border-white/25 bg-white/10 px-8 py-4 text-[0.75rem] font-bold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all hover:bg-white/15"
               >
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email for early access"
-                  value={waitlist.email}
-                  onChange={(e) => waitlist.setEmail(e.target.value)}
-                  required
-                  disabled={waitlist.loading}
-                  autoComplete="email"
-                  aria-invalid={waitlist.error ? true : undefined}
-                  aria-describedby={waitlist.error ? heroErrorId : undefined}
-                  className={`min-w-0 flex-1 rounded-full border bg-white/10 px-5 py-3.5 text-sm text-white placeholder:text-white/45 backdrop-blur-md transition-colors focus:outline-none focus:ring-2 focus:ring-white/30 disabled:opacity-60 ${
-                    waitlist.error ? 'border-red-400/80' : 'border-white/25 focus:border-white/45'
-                  }`}
-                />
-                <button
-                  type="submit"
-                  disabled={waitlist.loading}
-                  className="shrink-0 rounded-full border-0 bg-[var(--color-accent-cta)] px-8 py-3.5 text-[0.75rem] font-bold uppercase tracking-[0.2em] text-[#14120f] shadow-xl transition-all hover:brightness-105 disabled:opacity-60"
-                >
-                  {waitlist.loading ? 'Joining…' : 'Sign up'}
-                </button>
-              </form>
-            )}
-            {waitlist.error && !waitlist.submitted ? (
-              <p id={heroErrorId} className="mt-3 text-sm text-red-300" role="alert">
-                {waitlist.error}
+                Join email list
+              </a>
+            </div>
+            {access.error ? (
+              <p className="mt-3 text-sm text-red-300" role="alert">
+                {access.error}
               </p>
             ) : null}
-            <p className="mt-3 text-xs text-white/45">No spam. One line to get on the list.</p>
+            <p className="mt-3 text-xs text-white/45">
+              Read-only Spotify access. We never post, change, or sell your listening data.
+            </p>
           </div>
 
           <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
@@ -325,7 +401,7 @@ function HeroSection({ waitlist }: { waitlist: WaitlistSignup }) {
               href="#waitlist"
               className="inline-flex w-fit items-center justify-center rounded-full border border-white/25 bg-white/10 px-8 py-3.5 text-[0.75rem] font-bold uppercase tracking-[0.2em] text-white backdrop-blur-md transition-all hover:bg-white/15"
             >
-              More about the waitlist
+              Email fallback
             </a>
             <a
               href="#how"
@@ -425,7 +501,7 @@ function LogoBar() {
   );
 }
 
-function PhilosophySection() {
+function PhilosophySection({ access }: { access: SpotifyAccess }) {
   const ref = useInView();
 
   return (
@@ -448,10 +524,15 @@ function PhilosophySection() {
               </p>
             </div>
             <div className="mt-12">
-              <a href="#waitlist" className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] group">
-                Join the ritual
+              <button
+                type="button"
+                onClick={() => void access.connect()}
+                disabled={access.connecting}
+                className="group inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] disabled:cursor-wait disabled:opacity-60"
+              >
+                {access.signedIn ? 'Open your blend' : 'Join the ritual'}
                 <Icons.arrow className="w-4 h-4 transition-transform group-hover:translate-x-2" />
-              </a>
+              </button>
             </div>
           </div>
           <div className={`relative transition-all duration-1000 delay-300 ${ref.inView ? 'opacity-100' : 'opacity-0 scale-95'}`}>
@@ -504,7 +585,7 @@ function LabsSection() {
   );
 }
 
-function HowItWorksSection() {
+function HowItWorksSection({ access }: { access: SpotifyAccess }) {
   const ref = useInView();
   const steps = [
     {
@@ -554,39 +635,43 @@ function HowItWorksSection() {
         </div>
 
         <div className="mt-24 text-center">
-          <a
-            href="#waitlist"
+          <button
+            type="button"
+            onClick={() => void access.connect()}
+            disabled={access.connecting}
             className={`inline-flex items-center justify-center gap-3 rounded-full bg-[var(--color-accent-cta)] px-7 py-3.5 text-[0.6875rem] font-bold uppercase tracking-[0.18em] text-[#14120f] transition-all duration-500 hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-focus-ring)] ${
               ref.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
-            }`}
+            } disabled:cursor-wait disabled:opacity-60`}
           >
-            <span>Want early access?</span>
+            <span>{access.signedIn ? 'Your blend is ready' : 'Ready to start?'}</span>
             <span className="h-1 w-1 rounded-full bg-[#14120f]/50" aria-hidden="true" />
-            <span>Join the waitlist</span>
+            <span>{access.signedIn ? 'Open the app' : 'Connect Spotify'}</span>
             <Icons.arrow className="h-4 w-4" aria-hidden="true" />
-          </a>
+          </button>
         </div>
       </div>
     </section>
   );
 }
 
-function MidCTASection() {
+function MidCTASection({ access }: { access: SpotifyAccess }) {
   return (
     <section className="py-16 md:py-20 px-6">
       <div className="mid-cta-surface max-w-4xl mx-auto rounded-[999px] px-8 py-12 md:py-16 text-center border border-[var(--color-border)] shadow-sm">
         <h2 className="font-display text-2xl md:text-3xl font-semibold text-[var(--color-text-primary)]">
-          Be first when real matches open.
+          Build your blend from the songs you actually replay.
         </h2>
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <a href="#waitlist" className="w-full sm:w-auto inline-flex justify-center px-8 py-3.5 rounded-full bg-[var(--color-accent-cta)] text-[#14120f] font-semibold text-sm hover:brightness-105 transition-all">
-            Join waitlist
-          </a>
+          <SpotifyAccessButton
+            access={access}
+            variant="accent"
+            className="w-full px-8 py-3.5 text-sm font-semibold sm:w-auto"
+          />
           <a
-            href="#philosophy"
+            href="#waitlist"
             className="w-full sm:w-auto inline-flex justify-center px-8 py-3.5 rounded-full bg-[var(--color-bg-card)]/85 border border-[var(--color-border)] text-[var(--color-text-primary)] font-semibold text-sm hover:bg-[var(--color-bg-elevated)] transition-colors"
           >
-            Our philosophy
+            Email fallback
           </a>
         </div>
       </div>
@@ -846,28 +931,46 @@ function TestimonialsSection() {
   );
 }
 
-function FinalCTASection({ waitlist }: { waitlist: WaitlistSignup }) {
+function FinalCTASection({
+  waitlist,
+  access,
+}: {
+  waitlist: WaitlistSignup;
+  access: SpotifyAccess;
+}) {
   return (
     <section id="waitlist" className="section-spread bg-[var(--color-bg-primary)]">
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-32 items-center">
           <div className="order-2 lg:order-1">
-            <SectionLabel className="mb-10">The Waitlist</SectionLabel>
+            <SectionLabel className="mb-10">Start with Spotify</SectionLabel>
             <h2 className="font-display text-6xl md:text-7xl lg:text-[7rem] font-semibold text-[var(--color-text-primary)] leading-[0.8] tracking-tighter">
-              The <br />
-              last app <br />
-              you'll <br />
-              <span className="italic font-serif">ever</span> <br />
-              need.
+              Build <br />
+              your <br />
+              first <br />
+              <span className="italic font-serif">blend.</span>
             </h2>
             <p className="mt-14 text-[var(--color-text-secondary)] text-xl leading-relaxed max-w-sm font-normal">
-              We&apos;re not live yet. Join the list and we&apos;ll email you when we open. One match a day, picked on taste.
+              Connect Spotify to see your music profile and create an invite link. Prefer not to connect yet? Leave your email and we&apos;ll keep you posted.
             </p>
+
+            <div className="mt-12">
+              <SpotifyAccessButton
+                access={access}
+                variant="accent"
+                className="px-8 py-4 text-[0.75rem] font-bold uppercase tracking-[0.18em] shadow-xl"
+              />
+              {access.error ? (
+                <p className="mt-4 text-sm text-[var(--color-semantic-danger)]" role="alert">
+                  {access.error}
+                </p>
+              ) : null}
+            </div>
 
             {waitlist.submitted ? (
               <div className="mt-12 inline-flex items-center gap-4 px-8 py-5 rounded-full bg-[var(--color-accent-coral)]/10 border border-[var(--color-accent-coral)]/20 shadow-sm animate-fade-in">
                 <Icons.check className="w-5 h-5 text-[var(--color-accent-coral)]" />
-                <span className="text-[0.625rem] font-bold uppercase tracking-[0.2em]">on the list.</span>
+                <span className="text-[0.625rem] font-bold uppercase tracking-[0.2em]">email saved.</span>
               </div>
             ) : (
               <div className="mt-14 max-w-xl">
@@ -983,24 +1086,25 @@ function Footer() {
 
 export function BwendLandingPage() {
   const waitlist = useWaitlistSignup();
+  const spotifyAccess = useSpotifyAccess();
 
   return (
     <div className="min-h-screen bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] theme-transition">
-      <Navigation />
+      <Navigation access={spotifyAccess} />
       <main>
-        <HeroSection waitlist={waitlist} />
+        <HeroSection access={spotifyAccess} />
         <AppShowcaseSection />
         <LogoBar />
-        <PhilosophySection />
+        <PhilosophySection access={spotifyAccess} />
         <LabsSection />
-        <HowItWorksSection />
-        <MidCTASection />
+        <HowItWorksSection access={spotifyAccess} />
+        <MidCTASection access={spotifyAccess} />
         <FeaturesSection />
         <StatsSection />
         <MoodsSection />
         <ComparisonSection />
         <TestimonialsSection />
-        <FinalCTASection waitlist={waitlist} />
+        <FinalCTASection waitlist={waitlist} access={spotifyAccess} />
       </main>
       <Footer />
     </div>
