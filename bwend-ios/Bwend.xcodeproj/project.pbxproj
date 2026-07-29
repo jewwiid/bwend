@@ -1,0 +1,537 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		10C3308E3A6D16AB7C206712 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4391CCDA57470052AA938A62 /* WelcomeView.swift */; };
+		1400A01B7B1D56CED7033BE3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E696CA0D1D6AA2202E5148AF /* PrivacyInfo.xcprivacy */; };
+		1C4A7E3C9F81F4BB512E520E /* RevealDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE1C0C155F9ED6090EC3100 /* RevealDetailView.swift */; };
+		217D3F81613762DE9BDEEC31 /* RevealAnchorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 828BDBAABA554104C00AB625 /* RevealAnchorView.swift */; };
+		2C27F9D980941B8F51CAFA0F /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 298B63660F8F6D836EB68802 /* Router.swift */; };
+		2F6EF0132F7493A018D64407 /* BwendApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FC3A18CE425B837013D2C2 /* BwendApp.swift */; };
+		314D9E03F4798C4E79733DE4 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E499C58AF6297343FE9BAF /* RootView.swift */; };
+		3242C405896A17A4EAA42ED9 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0659A046F571A808F7E0104E /* APIClient.swift */; };
+		461224A4BAEF211A815AA0CF /* BlendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071FC51FD4479EF0DABF2A26 /* BlendView.swift */; };
+		58BFB1C93AFDAB1C589F6C19 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 831EA77BE256CB2E545EC9C4 /* AuthManager.swift */; };
+		5CD3B43407137C00C05B4AAA /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8669BE3BCF9F6809EF0F0FB8 /* Components.swift */; };
+		8B538553380D9E13C6990021 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6233EA104C2BC7AEECE21A1 /* Models.swift */; };
+		9AAA897D9FA552CC5658EFA7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4D81F1C10E76687F7DEA9C02 /* Assets.xcassets */; };
+		A6F58EE3EFDCF57A99C93D74 /* SpotifyConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AEF1B8D1B46BE07692B2F28 /* SpotifyConnectView.swift */; };
+		A946DD6F0EACF2926EF863C6 /* SpotifyAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D603CB038EB622AE5CE5259 /* SpotifyAuth.swift */; };
+		B340C98577B56DD5B075E4C7 /* bwend-logo.svg in Resources */ = {isa = PBXBuildFile; fileRef = 55D26C219CEDE43284B71B1D /* bwend-logo.svg */; };
+		CD53CDFFAF28E09D861E7EDC /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23ABE35647D986E734FDB88 /* Theme.swift */; };
+		D606EF0928D05E3EA70CE3DE /* bwend-logo-1024.png in Resources */ = {isa = PBXBuildFile; fileRef = B33D96DF1BC9169F037B27FA /* bwend-logo-1024.png */; };
+		DE98583371F32DE5F2345915 /* ShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40233528AF8B98FAAEE4718F /* ShareView.swift */; };
+		DEA304547CD975FCC5A2FC9D /* RevealMomentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D828EFC144895318FFA24B29 /* RevealMomentView.swift */; };
+		E3CE0E9E57E9774D086E02F1 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 283ED7C0F09C428FEA2E4316 /* Typography.swift */; };
+		FCC3C599CBECCD9EDB55EC62 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867F21DDDAA2AFB9EAB89885 /* StartView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0659A046F571A808F7E0104E /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		071FC51FD4479EF0DABF2A26 /* BlendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlendView.swift; sourceTree = "<group>"; };
+		283ED7C0F09C428FEA2E4316 /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
+		298B63660F8F6D836EB68802 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		40233528AF8B98FAAEE4718F /* ShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareView.swift; sourceTree = "<group>"; };
+		4391CCDA57470052AA938A62 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		4D81F1C10E76687F7DEA9C02 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		55D26C219CEDE43284B71B1D /* bwend-logo.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = "bwend-logo.svg"; sourceTree = "<group>"; };
+		572850A0A6CCA108A204679E /* Bwend.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bwend.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5AEF1B8D1B46BE07692B2F28 /* SpotifyConnectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyConnectView.swift; sourceTree = "<group>"; };
+		7D603CB038EB622AE5CE5259 /* SpotifyAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyAuth.swift; sourceTree = "<group>"; };
+		828BDBAABA554104C00AB625 /* RevealAnchorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevealAnchorView.swift; sourceTree = "<group>"; };
+		831EA77BE256CB2E545EC9C4 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
+		8669BE3BCF9F6809EF0F0FB8 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		867F21DDDAA2AFB9EAB89885 /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
+		88E499C58AF6297343FE9BAF /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		A16CEBA3D294C6760543806C /* Bwend.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Bwend.entitlements; sourceTree = "<group>"; };
+		A7FC3A18CE425B837013D2C2 /* BwendApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BwendApp.swift; sourceTree = "<group>"; };
+		B33D96DF1BC9169F037B27FA /* bwend-logo-1024.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bwend-logo-1024.png"; sourceTree = "<group>"; };
+		D6233EA104C2BC7AEECE21A1 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		D828EFC144895318FFA24B29 /* RevealMomentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevealMomentView.swift; sourceTree = "<group>"; };
+		DDE1C0C155F9ED6090EC3100 /* RevealDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevealDetailView.swift; sourceTree = "<group>"; };
+		E696CA0D1D6AA2202E5148AF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		EA0EC9B334EEA20C7A58E1C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		F23ABE35647D986E734FDB88 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		12F1FF04CAA7612C31FA8409 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				8747EA82E0402FC64DDFCA90 /* Auth */,
+				E7192FE8631FD7453300E31E /* DesignSystem */,
+				CB521C170A75D6ED4EC14325 /* Models */,
+				5AB56362D5232CA34A0611EC /* Networking */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		1D4212273F34D6C1A7AD4FAE /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4D81F1C10E76687F7DEA9C02 /* Assets.xcassets */,
+				E696CA0D1D6AA2202E5148AF /* PrivacyInfo.xcprivacy */,
+				C169686B1962D92889C3D172 /* Brand */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		1D6BD909DE3022040848CF01 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		1F68DA3B268598C58477D6E8 /* Blend */ = {
+			isa = PBXGroup;
+			children = (
+				071FC51FD4479EF0DABF2A26 /* BlendView.swift */,
+			);
+			path = Blend;
+			sourceTree = "<group>";
+		};
+		4DF5253EF100D3EEC07E1BFB /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				5AEF1B8D1B46BE07692B2F28 /* SpotifyConnectView.swift */,
+				4391CCDA57470052AA938A62 /* WelcomeView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		5AB56362D5232CA34A0611EC /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				0659A046F571A808F7E0104E /* APIClient.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		5D1E8E1D2CB179820304C1AD = {
+			isa = PBXGroup;
+			children = (
+				7D1694689E068C35CA9D2B01 /* BwendApp */,
+				76933381209B1E8627C22FA5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		73D17A07FB32552F8EBAD3F3 /* Match */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Match;
+			sourceTree = "<group>";
+		};
+		76933381209B1E8627C22FA5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				572850A0A6CCA108A204679E /* Bwend.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7D1694689E068C35CA9D2B01 /* BwendApp */ = {
+			isa = PBXGroup;
+			children = (
+				A16CEBA3D294C6760543806C /* Bwend.entitlements */,
+				EA0EC9B334EEA20C7A58E1C6 /* Info.plist */,
+				FE78C50A5895348EFB6E1A65 /* App */,
+				12F1FF04CAA7612C31FA8409 /* Core */,
+				AC194CF9095E1C8B538DD011 /* Features */,
+				1D4212273F34D6C1A7AD4FAE /* Resources */,
+			);
+			path = BwendApp;
+			sourceTree = "<group>";
+		};
+		8747EA82E0402FC64DDFCA90 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				831EA77BE256CB2E545EC9C4 /* AuthManager.swift */,
+				7D603CB038EB622AE5CE5259 /* SpotifyAuth.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		917516E988451426B09F49E9 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		ABD978536181E99FBA77D434 /* Start */ = {
+			isa = PBXGroup;
+			children = (
+				867F21DDDAA2AFB9EAB89885 /* StartView.swift */,
+			);
+			path = Start;
+			sourceTree = "<group>";
+		};
+		AC194CF9095E1C8B538DD011 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				1F68DA3B268598C58477D6E8 /* Blend */,
+				917516E988451426B09F49E9 /* Home */,
+				73D17A07FB32552F8EBAD3F3 /* Match */,
+				4DF5253EF100D3EEC07E1BFB /* Onboarding */,
+				DD50171D1AA91DFB6DC7A5CC /* Reveal */,
+				F795B33500C35665EE6A5E21 /* Settings */,
+				F74EA183910B1F17B626DA0C /* Share */,
+				ABD978536181E99FBA77D434 /* Start */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		C169686B1962D92889C3D172 /* Brand */ = {
+			isa = PBXGroup;
+			children = (
+				B33D96DF1BC9169F037B27FA /* bwend-logo-1024.png */,
+				55D26C219CEDE43284B71B1D /* bwend-logo.svg */,
+			);
+			path = Brand;
+			sourceTree = "<group>";
+		};
+		CB521C170A75D6ED4EC14325 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				D6233EA104C2BC7AEECE21A1 /* Models.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		DD50171D1AA91DFB6DC7A5CC /* Reveal */ = {
+			isa = PBXGroup;
+			children = (
+				828BDBAABA554104C00AB625 /* RevealAnchorView.swift */,
+				DDE1C0C155F9ED6090EC3100 /* RevealDetailView.swift */,
+				D828EFC144895318FFA24B29 /* RevealMomentView.swift */,
+			);
+			path = Reveal;
+			sourceTree = "<group>";
+		};
+		E7192FE8631FD7453300E31E /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				8669BE3BCF9F6809EF0F0FB8 /* Components.swift */,
+				F23ABE35647D986E734FDB88 /* Theme.swift */,
+				283ED7C0F09C428FEA2E4316 /* Typography.swift */,
+				1D6BD909DE3022040848CF01 /* Components */,
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		F74EA183910B1F17B626DA0C /* Share */ = {
+			isa = PBXGroup;
+			children = (
+				40233528AF8B98FAAEE4718F /* ShareView.swift */,
+			);
+			path = Share;
+			sourceTree = "<group>";
+		};
+		F795B33500C35665EE6A5E21 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		FE78C50A5895348EFB6E1A65 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				A7FC3A18CE425B837013D2C2 /* BwendApp.swift */,
+				88E499C58AF6297343FE9BAF /* RootView.swift */,
+				298B63660F8F6D836EB68802 /* Router.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E1890BE6DF7CFC8B6B82CB2E /* Bwend */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6406C8D28EE9C6B85BBCBDEF /* Build configuration list for PBXNativeTarget "Bwend" */;
+			buildPhases = (
+				B896102C3EB0ACBDFD629808 /* Sources */,
+				912322AC4995275A6F57E254 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Bwend;
+			packageProductDependencies = (
+			);
+			productName = Bwend;
+			productReference = 572850A0A6CCA108A204679E /* Bwend.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		862DE4DE8987BC08B07F07F9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+			};
+			buildConfigurationList = B1B4E01AA61ACDB8D00E7617 /* Build configuration list for PBXProject "Bwend" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 5D1E8E1D2CB179820304C1AD;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 76933381209B1E8627C22FA5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E1890BE6DF7CFC8B6B82CB2E /* Bwend */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		912322AC4995275A6F57E254 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9AAA897D9FA552CC5658EFA7 /* Assets.xcassets in Resources */,
+				1400A01B7B1D56CED7033BE3 /* PrivacyInfo.xcprivacy in Resources */,
+				D606EF0928D05E3EA70CE3DE /* bwend-logo-1024.png in Resources */,
+				B340C98577B56DD5B075E4C7 /* bwend-logo.svg in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B896102C3EB0ACBDFD629808 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3242C405896A17A4EAA42ED9 /* APIClient.swift in Sources */,
+				58BFB1C93AFDAB1C589F6C19 /* AuthManager.swift in Sources */,
+				461224A4BAEF211A815AA0CF /* BlendView.swift in Sources */,
+				2F6EF0132F7493A018D64407 /* BwendApp.swift in Sources */,
+				5CD3B43407137C00C05B4AAA /* Components.swift in Sources */,
+				8B538553380D9E13C6990021 /* Models.swift in Sources */,
+				217D3F81613762DE9BDEEC31 /* RevealAnchorView.swift in Sources */,
+				1C4A7E3C9F81F4BB512E520E /* RevealDetailView.swift in Sources */,
+				DEA304547CD975FCC5A2FC9D /* RevealMomentView.swift in Sources */,
+				314D9E03F4798C4E79733DE4 /* RootView.swift in Sources */,
+				2C27F9D980941B8F51CAFA0F /* Router.swift in Sources */,
+				DE98583371F32DE5F2345915 /* ShareView.swift in Sources */,
+				A946DD6F0EACF2926EF863C6 /* SpotifyAuth.swift in Sources */,
+				A6F58EE3EFDCF57A99C93D74 /* SpotifyConnectView.swift in Sources */,
+				FCC3C599CBECCD9EDB55EC62 /* StartView.swift in Sources */,
+				CD53CDFFAF28E09D861E7EDC /* Theme.swift in Sources */,
+				E3CE0E9E57E9774D086E02F1 /* Typography.swift in Sources */,
+				10C3308E3A6D16AB7C206712 /* WelcomeView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2AFE95B73B464C1C6D6323E1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = BwendApp/Bwend.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 7JSY6J5R99;
+				INFOPLIST_FILE = BwendApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.bwend.app;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		31342DE212BA6D4D63870B52 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		639C7786455B9CD28636A883 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = BwendApp/Bwend.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 7JSY6J5R99;
+				INFOPLIST_FILE = BwendApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.bwend.app;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		862E306C7EC3A5817AEA4FC9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6406C8D28EE9C6B85BBCBDEF /* Build configuration list for PBXNativeTarget "Bwend" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2AFE95B73B464C1C6D6323E1 /* Debug */,
+				639C7786455B9CD28636A883 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B1B4E01AA61ACDB8D00E7617 /* Build configuration list for PBXProject "Bwend" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				862E306C7EC3A5817AEA4FC9 /* Debug */,
+				31342DE212BA6D4D63870B52 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 862DE4DE8987BC08B07F07F9 /* Project object */;
+}

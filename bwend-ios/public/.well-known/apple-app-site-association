@@ -1,0 +1,26 @@
+{
+    "applinks": {
+        "details": [
+            {
+                "appIDs": [
+                    "TEAM_ID.com.bwend.app"
+                ],
+                "components": [
+                    {
+                        "/": "/m/*",
+                        "comment": "Shareable invite URLs — opens the app to the invite preview"
+                    },
+                    {
+                        "/": "/auth/spotify/callback",
+                        "comment": "Spotify OAuth callback (prod redirect URI)"
+                    }
+                ]
+            }
+        ]
+    },
+    "webcredentials": {
+        "apps": [
+            "TEAM_ID.com.bwend.app"
+        ]
+    }
+}

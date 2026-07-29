@@ -12,9 +12,8 @@ import { internalAction } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { v } from "convex/values";
 import { score } from "./lib/vibeScore";
-import type { AudioProfile } from "./lib/vibeScore";
+import type { SpotifyTrack } from "./lib/vibeScore";
 import { readCompatibility } from "./lib/compatibilityReader";
-import { recommendations, decodeTokenBlob } from "./lib/spotify";
 
 interface ClaimResult {
   status: number;
@@ -70,10 +69,10 @@ export const claim = internalAction({
     const result = score(
       inviterProfile.topTracks,
       inviterProfile.topArtists,
-      inviterProfile.audioProfile,
+      inviterProfile.tasteProfile,
       inviteeProfile.topTracks,
       inviteeProfile.topArtists,
-      inviteeProfile.audioProfile
+      inviteeProfile.tasteProfile
     );
 
     // Compute shared artist + track names.
@@ -91,7 +90,7 @@ export const claim = internalAction({
       .map((t: { name: string }) => t.name);
 
     // Pick the anchor track (best-effort).
-    const anchorTrack = await pickAnchorTrack(inviterProfile, inviteeProfile);
+    const anchorTrack = pickAnchorTrack(inviterProfile, inviteeProfile);
 
     // Generate the compatibility read.
     const compatibilityRead = readCompatibility(result.breakdown, sharedArtistNames);
@@ -132,52 +131,85 @@ export const claim = internalAction({
 
 // MARK: - Anchor track selection
 
-async function pickAnchorTrack(
-  inviterProfile: any,
-  inviteeProfile: any
-): Promise<{ id: string; name: string; artistName: string | null } | null> {
-  const inviterArtistIds: string[] = inviterProfile.topArtists.map((a: { id: string }) => a.id);
-  const inviteeArtistIds: string[] = inviteeProfile.topArtists.map((a: { id: string }) => a.id);
-  const inviteeIdSet = new Set(inviteeArtistIds);
-  const sharedArtistIds = inviterArtistIds.filter((id) => inviteeIdSet.has(id)).slice(0, 5);
+interface AnchorTrack {
+  id: string;
+  name: string;
+  artistName: string | null;
+  imageURL: string | null;
+  spotifyURL: string | null;
+}
 
-  let seedArtistIds = sharedArtistIds;
-  if (seedArtistIds.length === 0) {
-    const combined: string[] = [];
-    const maxLen = Math.max(inviterArtistIds.length, inviteeArtistIds.length);
-    for (let i = 0; i < maxLen; i++) {
-      if (i < inviterArtistIds.length) combined.push(inviterArtistIds[i]);
-      if (i < inviteeArtistIds.length) combined.push(inviteeArtistIds[i]);
-      if (combined.length >= 5) break;
+/**
+ * Pick "the song that brings you together."
+ *
+ * This used to ask Spotify's /recommendations for a track at the midpoint of both users'
+ * audio profiles. That endpoint now 404s for this app (deprecated 2024-11-27), so the
+ * anchor is chosen from the two libraries we already hold. No network call, which also
+ * means it can't fail silently the way the old best-effort version did.
+ *
+ * Preference order, strongest connection first:
+ *   1. A track both users have in their top 50 — literally shared.
+ *   2. A track by an artist both users have in their top 50 — shared taste, one step out.
+ *   3. Each user's single most-played track, preferring the higher-ranked of the two.
+ */
+function pickAnchorTrack(inviterProfile: any, inviteeProfile: any): AnchorTrack | null {
+  const inviterTracks: SpotifyTrack[] = inviterProfile.topTracks ?? [];
+  const inviteeTracks: SpotifyTrack[] = inviteeProfile.topTracks ?? [];
+
+  // 1. Highest-ranked mutually-held track. Rank is summed across both users so a track
+  //    they both rate highly wins over one that's #1 for a single person.
+  const inviteeRank = new Map<string, number>();
+  inviteeTracks.forEach((t, i) => {
+    if (!inviteeRank.has(t.id)) inviteeRank.set(t.id, i);
+  });
+
+  let bestTrack: SpotifyTrack | null = null;
+  let bestRank = Infinity;
+  for (let rank = 0; rank < inviterTracks.length; rank++) {
+    const track = inviterTracks[rank];
+    const other = inviteeRank.get(track.id);
+    if (other === undefined) continue;
+    const combined = rank + other;
+    if (combined < bestRank) {
+      bestTrack = track;
+      bestRank = combined;
     }
-    seedArtistIds = combined.slice(0, 5);
   }
-  if (seedArtistIds.length === 0) return null;
+  if (bestTrack !== null) return toAnchor(bestTrack);
 
-  const a = inviterProfile.audioProfile as AudioProfile;
-  const b = inviteeProfile.audioProfile as AudioProfile;
-  const midpoint: AudioProfile = {
-    energy: (a.energy + b.energy) / 2,
-    valence: (a.valence + b.valence) / 2,
-    tempo: (a.tempo + b.tempo) / 2,
-    danceability: (a.danceability + b.danceability) / 2,
-    era: (a.era + b.era) / 2,
+  // 2. Highest-ranked track by a mutually-held artist, from either library.
+  const inviterArtistIds = new Set<string>(
+    (inviterProfile.topArtists ?? []).map((a: { id: string }) => a.id)
+  );
+  const inviteeArtistIds = new Set<string>(
+    (inviteeProfile.topArtists ?? []).map((a: { id: string }) => a.id)
+  );
+  const sharedArtistIds = new Set(
+    [...inviterArtistIds].filter((id) => inviteeArtistIds.has(id))
+  );
+
+  if (sharedArtistIds.size > 0) {
+    // Walk both libraries in lockstep so neither user is systematically favoured.
+    const maxLen = Math.max(inviterTracks.length, inviteeTracks.length);
+    for (let i = 0; i < maxLen; i++) {
+      for (const track of [inviterTracks[i], inviteeTracks[i]]) {
+        if (!track) continue;
+        if (track.artistIds?.some((id) => sharedArtistIds.has(id))) return toAnchor(track);
+      }
+    }
+  }
+
+  // 3. No shared ground at all — fall back to a top track so the reveal still has a song.
+  return toAnchor(inviterTracks[0] ?? inviteeTracks[0] ?? null);
+}
+
+function toAnchor(track: SpotifyTrack | null): AnchorTrack | null {
+  if (!track || !track.id || !track.name) return null;
+  return {
+    id: track.id,
+    name: track.name,
+    artistName: track.artistName ?? null,
+    imageURL: track.imageURL ?? null,
+    spotifyURL: track.spotifyURL ?? null,
   };
-
-  if (!inviterProfile.spotifyTokenBlob) return null;
-  const tokens = decodeTokenBlob(inviterProfile.spotifyTokenBlob);
-  if (!tokens) return null;
-
-  try {
-    const tracks = await recommendations(seedArtistIds, [], midpoint, 1, tokens.accessToken);
-    const first = tracks[0];
-    if (!first || !first.name || !first.artists?.[0]) return null;
-    return {
-      id: first.id,
-      name: first.name,
-      artistName: first.artists[0].name ?? null,
-    };
-  } catch {
-    return null;
-  }
 }

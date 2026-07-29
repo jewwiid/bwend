@@ -14,8 +14,6 @@
   ],
   "rewrites": [
     { "source": "/.well-known/(.*)", "destination": "/.well-known/$1" },
-    { "source": "/m/redirect.html", "destination": "/m/redirect.html" },
-    { "source": "/m/:code", "destination": "/m/redirect.html" },
-    { "source": "/((?!\\.well-known|m/).*)", "destination": "/index.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

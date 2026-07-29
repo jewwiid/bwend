@@ -1,0 +1,10 @@
+// Per-config overrides applied at build time via xcargs.
+//
+// In CI / fastlane these are passed via `xcargs`. For local dev, copy to a private
+// `Local.xcconfig` (gitignored) and reference from the project if you want them baked in.
+
+// Spotify OAuth — from https://developer.spotify.com/dashboard
+SPOTIFY_CLIENT_ID = your_spotify_client_id
+
+// Backend base URL. Dev: http://localhost:8080. Prod: https://api.bwend.xyz
+BWEND_API_URL = http://localhost:8080

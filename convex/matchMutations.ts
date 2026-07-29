@@ -19,6 +19,8 @@ export const create = internalMutation({
         id: v.string(),
         name: v.string(),
         artistName: v.union(v.string(), v.null()),
+        imageURL: v.union(v.string(), v.null()),
+        spotifyURL: v.union(v.string(), v.null()),
       })
     ),
     sharedTopArtistNames: v.array(v.string()),

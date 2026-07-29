@@ -1,7 +1,7 @@
 {
   "name": "Bwend",
   "short_name": "Bwend",
-  "description": "The dating app that sounds like you. Match through music before you match on looks.",
+  "description": "A dating app that sounds like you. Match through music before looks.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

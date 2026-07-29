@@ -15,7 +15,7 @@ export const upsert = internalMutation({
     displayName: v.union(v.string(), v.null()),
     topTracks: v.any(),
     topArtists: v.any(),
-    audioProfile: v.any(),
+    tasteProfile: v.any(),
     spotifyTokenBlob: v.string(),
   },
   returns: v.id("bwendProfiles"),
@@ -32,7 +32,7 @@ export const upsert = internalMutation({
         displayName: args.displayName,
         topTracks: args.topTracks,
         topArtists: args.topArtists,
-        audioProfile: args.audioProfile,
+        tasteProfile: args.tasteProfile,
         spotifyTokenBlob: args.spotifyTokenBlob,
         updatedAt: now,
       });
@@ -44,11 +44,38 @@ export const upsert = internalMutation({
       displayName: args.displayName,
       topTracks: args.topTracks,
       topArtists: args.topArtists,
-      audioProfile: args.audioProfile,
+      tasteProfile: args.tasteProfile,
       spotifyTokenBlob: args.spotifyTokenBlob,
       createdAt: now,
       updatedAt: now,
     });
+  },
+});
+
+/**
+ * Persist a refreshed Spotify token blob.
+ *
+ * Kept separate from `upsert` so the read path can rotate an expired access token without
+ * having to resupply the whole profile.
+ */
+export const updateTokenBlob = internalMutation({
+  args: {
+    spotifyUserId: v.string(),
+    spotifyTokenBlob: v.string(),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const existing = await ctx.db
+      .query("bwendProfiles")
+      .withIndex("by_spotify_user_id", (q) => q.eq("spotifyUserId", args.spotifyUserId))
+      .first();
+    if (!existing) return null;
+
+    await ctx.db.patch(existing._id, {
+      spotifyTokenBlob: args.spotifyTokenBlob,
+      updatedAt: Date.now(),
+    });
+    return null;
   },
 });
 

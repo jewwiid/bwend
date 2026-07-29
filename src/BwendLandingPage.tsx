@@ -272,8 +272,8 @@ function HeroSection({ waitlist }: { waitlist: WaitlistSignup }) {
             be heard.
           </h1>
           <p className="mt-12 text-white/70 text-lg md:text-xl lg:text-2xl max-w-xl font-normal leading-relaxed tracking-normal">
-            We&apos;re building a way to connect through the music you actually love, <br className="hidden md:block" />
-            before you ever match on looks. Join the list to get early access.
+            We connect through the music you actually love, <br className="hidden md:block" />
+            before looks enter the picture. Join the list for early access.
           </p>
 
           <div className="mt-10 max-w-xl">
@@ -366,7 +366,7 @@ function AppShowcaseSection() {
               </div>
               <div>
                 <h4 className="font-bold text-sm uppercase tracking-widest text-[var(--color-text-primary)]">Ritual-based matching</h4>
-                <p className="mt-1 text-sm text-[var(--color-text-secondary)]">No endless catalog. The idea: one intentional blend at a time, not another night of swiping.</p>
+                <p className="mt-1 text-sm text-[var(--color-text-secondary)]">One blend a day, picked on purpose. Not another night of swiping.</p>
               </div>
             </div>
             <div className="flex items-start gap-4">
@@ -444,7 +444,7 @@ function PhilosophySection() {
                 People spend hours curating the perfect "face," but 30 seconds of their most-played track says more than a bio ever could.
               </p>
               <p>
-                Bwend is for the people who let the music speak first. No more checkbox overlap. Just shared energy, track by track.
+                Bwend is for people who let the music speak first. Shared energy, track by track.
               </p>
             </div>
             <div className="mt-12">
@@ -492,7 +492,7 @@ function LabsSection() {
               <span className="italic font-serif">scientists.</span>
             </h2>
             <p className="mt-12 text-[var(--color-text-secondary)] text-xl leading-relaxed font-normal max-w-md">
-              The matching layer we&apos;re building won&apos;t start from who you say you are. It starts from what you actually listen to.
+              The matching layer starts from what you actually listen to, not who you say you are.
             </p>
             <p className="mt-8 text-[var(--color-text-muted)] text-base leading-relaxed max-w-md">
               Decibels, BPM, acoustic range: signals that point to someone on your wavelength, whether that&apos;s lo-fi mornings or techno nights.
@@ -516,13 +516,13 @@ function HowItWorksSection() {
     {
       id: '02',
       title: 'Join a Ritual',
-      body: 'Designed so each day you get one "Blend": a person whose playlist mirrors your taste.',
+      body: 'Each day you get one Blend: a person whose playlist mirrors your taste.',
       color: 'var(--color-accent-lavender)',
     },
     {
       id: '03',
       title: 'Match & Melt',
-      body: 'Skip the "Hello" and start by reacting to their tracks. The conversation starts where the music ends.',
+      body: 'React to their tracks first. The conversation starts with something you both already like.',
       color: 'var(--color-accent-coral)',
     },
   ];
@@ -554,12 +554,17 @@ function HowItWorksSection() {
         </div>
 
         <div className="mt-24 text-center">
-            <div className={`inline-flex items-center gap-1.5 p-1 rounded-full bg-[var(--color-bg-secondary)] border border-[var(--color-border)] transition-all duration-1000 ${ref.inView ? 'opacity-100' : 'opacity-0'}`}>
-                <span className="px-6 py-2.5 text-[0.625rem] font-bold uppercase tracking-[0.2em] text-[var(--color-text-primary)]">Want early access?</span>
-                <a href="#waitlist" className="px-6 py-2.5 rounded-full bg-[var(--color-ink)] text-white text-[0.625rem] font-bold uppercase tracking-[0.2em] hover:opacity-90 transition-opacity">
-                    Join the waitlist
-                </a>
-            </div>
+          <a
+            href="#waitlist"
+            className={`inline-flex items-center justify-center gap-3 rounded-full bg-[var(--color-accent-cta)] px-7 py-3.5 text-[0.6875rem] font-bold uppercase tracking-[0.18em] text-[#14120f] transition-all duration-500 hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-focus-ring)] ${
+              ref.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
+            }`}
+          >
+            <span>Want early access?</span>
+            <span className="h-1 w-1 rounded-full bg-[#14120f]/50" aria-hidden="true" />
+            <span>Join the waitlist</span>
+            <Icons.arrow className="h-4 w-4" aria-hidden="true" />
+          </a>
         </div>
       </div>
     </section>
@@ -571,7 +576,7 @@ function MidCTASection() {
     <section className="py-16 md:py-20 px-6">
       <div className="mid-cta-surface max-w-4xl mx-auto rounded-[999px] px-8 py-12 md:py-16 text-center border border-[var(--color-border)] shadow-sm">
         <h2 className="font-display text-2xl md:text-3xl font-semibold text-[var(--color-text-primary)]">
-          Be first when we open the list for real matches.
+          Be first when real matches open.
         </h2>
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
           <a href="#waitlist" className="w-full sm:w-auto inline-flex justify-center px-8 py-3.5 rounded-full bg-[var(--color-accent-cta)] text-[#14120f] font-semibold text-sm hover:brightness-105 transition-all">
@@ -594,19 +599,19 @@ function FeaturesSection() {
   const rows = [
     {
       title: 'Your Blend',
-      body: 'A playlist that belongs to both of you, not a list of mutual likes, but a living mix that grows with your relationship.',
+      body: 'A playlist that belongs to both of you. It grows as you do.',
       img: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1200&q=80',
       align: 'left' as const,
     },
     {
       title: 'Vibe Score',
-      body: 'Compatibility based on how you listen: energy, era, and emotional range. We find the person who hears what you hear.',
+      body: 'Compatibility from how you listen: energy, era, emotional range. The person who hears what you hear.',
       img: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=80',
       align: 'right' as const,
     },
     {
       title: 'Music-first chat',
-      body: 'React to tracks, swap songs, and skip the hollow opener. The conversation starts with something you both actually care about.',
+      body: 'React to tracks, swap songs, skip the opener. The conversation starts with something you both actually care about.',
       img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=1200&q=80',
       align: 'left' as const,
     },
@@ -624,7 +629,7 @@ function FeaturesSection() {
         <div className="mb-24">
           <SectionLabel className="mb-6">The Rituals</SectionLabel>
           <h2 className="font-display text-4xl md:text-5xl lg:text-[4rem] font-semibold text-[var(--color-text-primary)] leading-[1.0] tracking-tight max-w-2xl">
-            Built for connection. <br />Not just for swiping.
+            Built for connection. <br />Not for swiping.
           </h2>
         </div>
 
@@ -712,7 +717,7 @@ function MoodsSection() {
             What moves you?
           </h2>
           <p className="mt-8 text-[var(--color-text-secondary)] text-xl max-w-xl mx-auto">
-            These are the moods we&apos;re tuning for. Tell us what matters on the waitlist.
+            Pick the moods that match you. Tell us which ones to build around first.
           </p>
         </div>
         <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
@@ -743,7 +748,7 @@ function ComparisonSection() {
         <div className="text-center mb-24">
           <SectionLabel className="mb-6">The Difference</SectionLabel>
           <h2 className="font-display text-5xl md:text-7xl font-semibold text-[var(--color-text-primary)] tracking-tight">
-            A better way to start.
+            Start with a track.
           </h2>
         </div>
 
@@ -775,14 +780,14 @@ function ComparisonSection() {
                 <Icons.check className="w-5 h-5 text-[var(--color-accent-peach)] mt-1" />
                 <div>
                   <p className="text-xl font-medium text-[var(--color-bg-primary)]">The Daily Blend</p>
-                  <p className="mt-3 text-[var(--color-bg-primary)] opacity-70 font-normal leading-relaxed">One high-intent connection a day. Focus on the person, not the catalog.</p>
+                  <p className="mt-3 text-[var(--color-bg-primary)] opacity-70 font-normal leading-relaxed">One high-intent connection a day. Your attention goes to the person, not the queue.</p>
                 </div>
               </li>
               <li className="flex gap-6 items-start">
                 <Icons.check className="w-5 h-5 text-[var(--color-accent-peach)] mt-1" />
                 <div>
                   <p className="text-xl font-medium text-[var(--color-bg-primary)]">Music-first Momentum</p>
-                  <p className="mt-3 text-[var(--color-bg-primary)] opacity-70 font-normal leading-relaxed">Start with a shared favorite track. The small talk is bypassed by default.</p>
+                  <p className="mt-3 text-[var(--color-bg-primary)] opacity-70 font-normal leading-relaxed">Start with a track you both already love. The small talk is already over.</p>
                 </div>
               </li>
             </ul>
@@ -811,7 +816,7 @@ function TestimonialsSection() {
             The moments <br />we&apos;re designing for.
           </h2>
           <p className="mt-8 text-white/50 text-lg max-w-2xl mx-auto font-normal">
-            No reviews yet. Here&apos;s the kind of connection we&apos;re building toward.
+            No reviews yet. Here&apos;s what we&apos;re building toward.
           </p>
         </div>
 
@@ -856,7 +861,7 @@ function FinalCTASection({ waitlist }: { waitlist: WaitlistSignup }) {
               need.
             </h2>
             <p className="mt-14 text-[var(--color-text-secondary)] text-xl leading-relaxed max-w-sm font-normal">
-              We&apos;re not live yet. Join the waitlist and we&apos;ll email you when the app opens. One match a day, no noise, music first.
+              We&apos;re not live yet. Join the list and we&apos;ll email you when we open. One match a day, picked on taste.
             </p>
 
             {waitlist.submitted ? (
@@ -895,7 +900,7 @@ function FinalCTASection({ waitlist }: { waitlist: WaitlistSignup }) {
               </div>
             )}
             <p className="mt-10 text-[0.625rem] font-bold uppercase tracking-[0.4em] text-[var(--color-text-muted)]">
-              Designed for intention.
+              One match a day. Music first.
             </p>
           </div>
           <div className="order-1 lg:order-2 relative aspect-[square] lg:aspect-[10/12] rounded-[3.5rem] overflow-hidden shadow-2xl">
@@ -940,7 +945,7 @@ function Footer() {
           </div>
           <div className="col-span-2 md:col-span-2">
             <h3 className="text-[0.625rem] font-bold uppercase tracking-[0.3em] text-[var(--color-text-muted)] mb-8">Newsletter</h3>
-            <p className="text-sm text-[var(--color-text-secondary)] mb-6">Stay updated on our city launches.</p>
+            <p className="text-sm text-[var(--color-text-secondary)] mb-6">City launches and early access.</p>
             <div className="flex gap-2">
               <input
                 type="email"

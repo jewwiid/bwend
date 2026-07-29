@@ -4,7 +4,10 @@
     "target": "es2023",
     "lib": ["ES2023", "DOM"],
     "module": "esnext",
-    "types": ["vite/client"],
+    // "node" is required because src imports convex/_generated/api, which transitively pulls
+    // the convex/*.ts sources into this program — and those legitimately use process.env.
+    // Without it `tsc -b` fails and the Vercel build never produces a bundle.
+    "types": ["vite/client", "node"],
     "skipLibCheck": true,
 
     /* Bundler mode */

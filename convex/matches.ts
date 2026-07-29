@@ -49,7 +49,7 @@ export const handleListMatches = httpAction(async (ctx, request) => {
     createdAt: new Date(m.createdAt).toISOString(),
   }));
 
-  return jsonResponse(200, summaries);
+  return jsonResponse(200, summaries, request);
 });
 
 // MARK: Fetch single match
@@ -63,17 +63,17 @@ export const handleFetchMatch = httpAction(async (ctx, request) => {
   const pathParts = url.pathname.split("/").filter(Boolean);
   const matchId = pathParts[pathParts.length - 1];
 
-  if (!matchId) return jsonResponse(400, { reason: "Missing match id." });
+  if (!matchId) return jsonResponse(400, { reason: "Missing match id." }, request);
 
   const match: any = await ctx.runQuery(internal.matchQueries.getById, { matchId });
   if (!match) {
-    return jsonResponse(404, { reason: "Match not found." });
+    return jsonResponse(404, { reason: "Match not found." }, request);
   }
 
   const iAmA = match.userASpotifyUserId === identity.spotifyUserId;
   const iAmB = match.userBSpotifyUserId === identity.spotifyUserId;
   if (!iAmA && !iAmB) {
-    return jsonResponse(403, { reason: "Not your match." });
+    return jsonResponse(403, { reason: "Not your match." }, request);
   }
 
   const partnerSpotifyId = iAmA ? match.userBSpotifyUserId : match.userASpotifyUserId;
@@ -99,5 +99,5 @@ export const handleFetchMatch = httpAction(async (ctx, request) => {
     sharedTopTrackNames: match.sharedTopTrackNames,
     compatibilityRead: match.compatibilityRead,
     createdAt: new Date(match.createdAt).toISOString(),
-  });
+  }, request);
 });

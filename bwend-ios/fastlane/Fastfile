@@ -1,0 +1,103 @@
+# fastlane/Fastfile
+#
+# Lanes:
+#   fastlane beta         # build + upload to TestFlight (requires ASC setup, see README)
+#   fastlane ci           # build + run tests (no signing required, simulator only)
+#
+# Configure signing via the Appfile (see README).
+
+default_platform(:ios)
+
+platform :ios do
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # CI lane — run on every PR. No code signing needed; just verify the build.
+  # ───────────────────────────────────────────────────────────────────────────
+  desc "Build + run unit tests (simulator only, no signing)"
+  lane :ci do
+    # Regenerate the project from project.yml in case sources changed.
+    sh("xcodegen generate")
+
+    run_tests(
+      project: "Bwend.xcodeproj",
+      scheme: "Bwend",
+      device: "iPhone 15",
+      clean: true,
+      code_coverage: true,
+    )
+  end
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # TestFlight lane — bump build, archive, upload.
+  #
+  # Prerequisites (one-time, see README § ASC setup):
+  #   - App ID + bundle id com.bwend.app registered in developer portal
+  #   - Sign in with Apple capability enabled for the bundle id
+  #   - App record created in App Store Connect
+  #   - Provisioning profile + distribution cert in `fastlane/match` repo
+  #   - ASC_API_KEY_ID + ASC_API_ISSUER_ID + ASC_API_KEY_FILEPATH env vars set
+  # ───────────────────────────────────────────────────────────────────────────
+  desc "Build + upload to TestFlight"
+  lane :beta do
+    # Ensure xcconfig env vars are populated.
+    UI.user_error!("SPOTIFY_CLIENT_ID is required") if ENV["SPOTIFY_CLIENT_ID"].to_s.empty?
+    UI.user_error!("BWEND_API_URL is required")      if ENV["BWEND_API_URL"].to_s.empty?
+
+    sh("xcodegen generate")
+
+    # Match — sync signing certs + profiles from the private match repo.
+    match(
+      type: "appstore",
+      readonly: ENV["CI"].to_s == "true",
+      app_identifier: "com.bwend.app",
+    )
+
+    # Bump the build number so TestFlight accepts the upload.
+    increment_build_number(
+      xcodeproj: "Bwend.xcodeproj",
+      build_number: next_testflight_build_number,
+    )
+
+    build_app(
+      project: "Bwend.xcodeproj",
+      scheme: "Bwend",
+      export_method: "app-store",
+      xcargs: "SPOTIFY_CLIENT_ID=#{ENV['SPOTIFY_CLIENT_ID']} BWEND_API_URL=#{ENV['BWEND_API_URL']}",
+    )
+
+    api_key = app_store_connect_api_key(
+      key_id:        ENV["ASC_API_KEY_ID"],
+      issuer_id:     ENV["ASC_API_ISSUER_ID"],
+      key_filepath:  ENV["ASC_API_KEY_FILEPATH"],
+      in_house:      false,
+    )
+
+    upload_to_testflight(
+      api_key: api_key,
+      skip_waiting_for_build_processing: true,
+      distribute_external: false,    # flip to true + add testers in App Store Connect
+    )
+  end
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # Helpers
+  # ───────────────────────────────────────────────────────────────────────────
+
+  # Fetch the latest TestFlight build number for this app and return +1.
+  def next_testflight_build_number
+    api_key = app_store_connect_api_key(
+      key_id:        ENV["ASC_API_KEY_ID"],
+      issuer_id:     ENV["ASC_API_ISSUER_ID"],
+      key_filepath:  ENV["ASC_API_KEY_FILEPATH"],
+      in_house:      false,
+    )
+    latest = latest_testflight_build_number(
+      api_key: api_key,
+      app_identifier: "com.bwend.app",
+    )
+    (latest || 0) + 1
+  rescue => e
+    UI.important("Couldn't fetch latest TestFlight build number (#{e.message}); starting from 1.")
+    1
+  end
+end

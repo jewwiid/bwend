@@ -9,6 +9,8 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as blend from "../blend.js";
+import type * as blendActions from "../blendActions.js";
 import type * as bwendProfileMutations from "../bwendProfileMutations.js";
 import type * as bwendProfileQueries from "../bwendProfileQueries.js";
 import type * as claimActions from "../claimActions.js";
@@ -36,6 +38,8 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  blend: typeof blend;
+  blendActions: typeof blendActions;
   bwendProfileMutations: typeof bwendProfileMutations;
   bwendProfileQueries: typeof bwendProfileQueries;
   claimActions: typeof claimActions;

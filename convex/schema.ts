@@ -14,12 +14,24 @@ export default defineSchema({
   bwendProfiles: defineTable({
     spotifyUserId: v.string(),
     displayName: v.union(v.string(), v.null()),
+    // Both arrays are stored in Spotify's rank order (index 0 = most played). Scoring
+    // discounts matches by rank, so the order is load-bearing — don't sort these.
     topTracks: v.array(
       v.object({
         id: v.string(),
         name: v.string(),
         artistIds: v.array(v.string()),
+        artistName: v.union(v.string(), v.null()),
+        artistNames: v.array(v.string()),
+        albumName: v.union(v.string(), v.null()),
+        // Album art / artist photos are captured at connect time because they cannot be
+        // backfilled: /v1/tracks?ids= and /v1/artists?ids= are both 403 for this app.
+        imageURL: v.union(v.string(), v.null()),
+        spotifyURL: v.union(v.string(), v.null()),
+        durationMs: v.union(v.number(), v.null()),
+        explicit: v.union(v.boolean(), v.null()),
         releaseYear: v.union(v.number(), v.null()),
+        popularity: v.union(v.number(), v.null()),
       })
     ),
     topArtists: v.array(
@@ -27,20 +39,57 @@ export default defineSchema({
         id: v.string(),
         name: v.string(),
         genres: v.array(v.string()),
+        imageURL: v.union(v.string(), v.null()),
+        spotifyURL: v.union(v.string(), v.null()),
+        popularity: v.union(v.number(), v.null()),
       })
     ),
-    audioProfile: v.object({
-      energy: v.number(),
-      valence: v.number(),
-      tempo: v.number(),
-      danceability: v.number(),
-      era: v.number(),
+    // Replaces the old audioProfile (energy/valence/tempo/danceability/era), which was
+    // built from Spotify's now-deprecated /audio-features endpoint. Nulls mean "Spotify
+    // did not provide this signal" and cause the matching component to be dropped.
+    tasteProfile: v.object({
+      genres: v.array(v.object({ name: v.string(), weight: v.number() })),
+      popularity: v.union(v.number(), v.null()),
+      era: v.union(v.number(), v.null()),
+      eraSpread: v.union(v.number(), v.null()),
+      discovery: v.union(v.number(), v.null()),
+      // 24 bins, one per hour (UTC), summing to 1.
+      clock: v.union(v.array(v.number()), v.null()),
     }),
     spotifyTokenBlob: v.union(v.string(), v.null()),
     createdAt: v.number(),
     updatedAt: v.number(),
   })
     .index("by_spotify_user_id", ["spotifyUserId"]),
+
+  // Artist enrichment cache — the signal Spotify stopped providing, sourced from MusicBrainz
+  // (genres, country) and ListenBrainz (similar artists).
+  //
+  // Keyed by Spotify artist id because that's what user profiles store, but `similar` is in
+  // MBID space because that's ListenBrainz's key space. Cached rather than fetched per request:
+  // MusicBrainz allows one request per second, so per-match lookups would be both unusably slow
+  // and abusive. One row is shared by every user who listens to that artist.
+  artists: defineTable({
+    spotifyId: v.string(),
+    name: v.string(),
+    mbid: v.union(v.string(), v.null()),
+    genres: v.array(v.string()),
+    country: v.union(v.string(), v.null()),
+    similar: v.array(
+      v.object({ mbid: v.string(), name: v.string(), score: v.number() })
+    ),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("enriched"),
+      // Resolved to nothing after repeated attempts. Retried after a long horizon — artists
+      // do get added to MusicBrainz over time.
+      v.literal("unresolved")
+    ),
+    attempts: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_spotify_id", ["spotifyId"])
+    .index("by_status", ["status", "updatedAt"]),
 
   // Shareable invites.
   invites: defineTable({
@@ -65,13 +114,16 @@ export default defineSchema({
     userASpotifyUserId: v.string(),
     userBSpotifyUserId: v.string(),
     vibeScore: v.number(),
+    // Null components were not computable (Spotify withheld the underlying signal) and
+    // were excluded from the score rather than counted as zero.
     breakdown: v.object({
       trackOverlap: v.number(),
       artistOverlap: v.number(),
-      energySim: v.number(),
-      valenceSim: v.number(),
-      tempoSim: v.number(),
-      eraSim: v.number(),
+      genreOverlap: v.union(v.number(), v.null()),
+      popularitySim: v.union(v.number(), v.null()),
+      eraSim: v.union(v.number(), v.null()),
+      discoverySim: v.union(v.number(), v.null()),
+      clockSim: v.union(v.number(), v.null()),
     }),
     anchorTrack: v.union(
       v.null(),
@@ -79,6 +131,8 @@ export default defineSchema({
         id: v.string(),
         name: v.string(),
         artistName: v.union(v.string(), v.null()),
+        imageURL: v.union(v.string(), v.null()),
+        spotifyURL: v.union(v.string(), v.null()),
       })
     ),
     sharedTopArtistNames: v.array(v.string()),

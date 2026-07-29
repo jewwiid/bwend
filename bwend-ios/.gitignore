@@ -1,0 +1,35 @@
+# Xcode / Swift
+.build/
+.swiftpm/
+DerivedData/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
+build/
+*.xcuserstate
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+fastlane/README.md
+
+# Local signing (never commit these)
+*.mobileprovision
+*.p12
+*.cer
+*.pem
+
+# Local config / secrets
+Local.xcconfig
+.env
+.env.local
+*.asc.private.*
+
+# Bundler
+vendor/bundle/
+.bundle/
+
+# CocoaPods (if you add them later)
+Pods/
