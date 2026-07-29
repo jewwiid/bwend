@@ -8,7 +8,7 @@ import SwiftUI
 // Tap "see why" to advance to the full breakdown (Layer 3).
 
 struct RevealAnchorView: View {
-    let matchId: UUID
+    let matchId: String
 
     @EnvironmentObject var api: APIClient
     @EnvironmentObject var router: Router
@@ -114,7 +114,7 @@ struct RevealAnchorView: View {
 }
 
 #Preview {
-    RevealAnchorView(matchId: UUID())
+    RevealAnchorView(matchId: "preview-match")
         .environmentObject(APIClient())
         .environmentObject(Router())
 }

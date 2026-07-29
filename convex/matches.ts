@@ -87,6 +87,10 @@ export const handleFetchMatch = httpAction(async (ctx, request) => {
       spotifyUserId: partnerSpotifyId,
     }),
   ]);
+  const savedPlaylist = await ctx.runQuery(internal.playlistRecords.getByMatchAndUser, {
+    matchId: match._id,
+    spotifyUserId: identity.spotifyUserId,
+  });
 
   return jsonResponse(200, {
     id: match._id,
@@ -98,6 +102,7 @@ export const handleFetchMatch = httpAction(async (ctx, request) => {
     sharedTopArtistNames: match.sharedTopArtistNames,
     sharedTopTrackNames: match.sharedTopTrackNames,
     compatibilityRead: match.compatibilityRead,
+    savedPlaylistURL: savedPlaylist?.spotifyURL ?? null,
     createdAt: new Date(match.createdAt).toISOString(),
   }, request);
 });

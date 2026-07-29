@@ -13,22 +13,20 @@
 "use node";
 
 import { internalAction } from "./_generated/server";
-import { internal } from "./_generated/api";
 import { v } from "convex/values";
 import {
   topTracks,
   topArtists,
   recentlyPlayed,
   libraryCounts,
-  refreshAccessToken,
-  decodeTokenBlob,
-  encodeTokenBlob,
-  isTokenExpired,
   hasScope,
   asTimeRange,
-  type StoredTokens,
 } from "./lib/spotify";
 import { meanReleaseYear } from "./lib/vibeScore";
+import {
+  requireFreshSpotifySession,
+  SpotifySessionError,
+} from "./lib/spotifySession";
 
 export const myBlend = internalAction({
   args: {
@@ -39,54 +37,24 @@ export const myBlend = internalAction({
   handler: async (ctx, args) => {
     const timeRange = asTimeRange(args.timeRange);
 
-    const profile: any = await ctx.runQuery(internal.bwendProfileQueries.getBySpotifyUserId, {
-      spotifyUserId: args.spotifyUserId,
-    });
-    // `code` is what clients branch on. Status alone is ambiguous — a 404 here means "your
-    // account no longer exists, sign in again", while a 404 from /invites means "that link is
-    // wrong", and a client that signed the user out on both would be maddening.
-    if (!profile) {
-      return {
-        status: 404,
-        error: "Your Spotify account isn't connected any more. Reconnect to see your blend.",
-        code: "reconnect_required",
-        data: null,
-      };
-    }
-    if (!profile.spotifyTokenBlob) {
-      return {
-        status: 421,
-        error: "Your Spotify connection expired. Reconnect to see your blend.",
-        code: "reconnect_required",
-        data: null,
-      };
-    }
-
-    let tokens = decodeTokenBlob(profile.spotifyTokenBlob);
-    if (!tokens) {
-      return {
-        status: 421,
-        error: "Your Spotify connection expired. Reconnect to see your blend.",
-        code: "reconnect_required",
-        data: null,
-      };
-    }
-
-    // 1. Refresh the access token if it's expired (or predates absolute-expiry storage).
+    let profile;
+    let tokens;
     try {
-      tokens = await ensureFreshToken(ctx, args.spotifyUserId, tokens);
-    } catch {
-      // Refresh failed — the user revoked access, or the refresh token is dead. Only a fresh
-      // authorization fixes this, so tell the client to send them back through connect.
+      ({ profile, tokens } = await requireFreshSpotifySession(ctx, args.spotifyUserId));
+    } catch (error) {
+      const sessionError =
+        error instanceof SpotifySessionError
+          ? error
+          : new SpotifySessionError("Your Spotify connection expired. Reconnect to see your blend.");
       return {
-        status: 421,
-        error: "Your Spotify connection expired. Reconnect to see your blend.",
-        code: "reconnect_required",
+        status: sessionError.status,
+        error: sessionError.message,
+        code: sessionError.code,
         data: null,
       };
     }
 
-    // 2. Fetch everything in parallel. Only the two top-reads are required.
+    // Fetch everything in parallel. Only the two top-reads are required.
     const wantsRecent = hasScope(tokens, "user-read-recently-played");
     const wantsLibrary =
       hasScope(tokens, "user-library-read") ||
@@ -138,48 +106,3 @@ export const myBlend = internalAction({
     };
   },
 });
-
-/**
- * Return usable tokens, refreshing and persisting when the access token has expired.
- *
- * The refreshed blob is written back so the next request doesn't refresh again — Spotify
- * rate-limits the token endpoint, and a read path that refreshes on every call will trip it.
- */
-async function ensureFreshToken(
-  ctx: any,
-  spotifyUserId: string,
-  tokens: StoredTokens
-): Promise<StoredTokens> {
-  if (!isTokenExpired(tokens)) return tokens;
-
-  const refreshToken = tokens.refreshToken;
-  if (!refreshToken) throw new Error("No refresh token stored.");
-
-  const clientId = process.env.SPOTIFY_CLIENT_ID;
-  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
-  if (!clientId || !clientSecret) throw new Error("Spotify credentials not configured.");
-
-  const refreshed = await refreshAccessToken(refreshToken, clientId, clientSecret);
-
-  // Spotify omits `scope` on some refresh responses; keep the originally granted set so we
-  // don't wrongly conclude the user lost a scope and hide their library section.
-  const blob = encodeTokenBlob({
-    accessToken: refreshed.accessToken,
-    tokenType: refreshed.tokenType,
-    expiresIn: refreshed.expiresIn,
-    refreshToken: refreshed.refreshToken ?? refreshToken,
-    scope: refreshed.scope ?? tokens.scope,
-  });
-
-  await ctx.runMutation(internal.bwendProfileMutations.updateTokenBlob, {
-    spotifyUserId,
-    spotifyTokenBlob: blob,
-  });
-
-  return {
-    accessToken: refreshed.accessToken,
-    refreshToken: refreshed.refreshToken ?? refreshToken,
-    scope: refreshed.scope ?? tokens.scope,
-    expiresAt: Date.now() + refreshed.expiresIn * 1000,
-  };
-}

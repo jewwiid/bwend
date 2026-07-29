@@ -9,7 +9,7 @@ import SwiftUI
 // Design ref: image 1 from the user — "92" huge, "If you're not best friends, you should be."
 
 struct RevealMomentView: View {
-    let matchId: UUID
+    let matchId: String
 
     @EnvironmentObject var api: APIClient
     @EnvironmentObject var router: Router
@@ -87,7 +87,7 @@ struct RevealMomentView: View {
 }
 
 #Preview {
-    RevealMomentView(matchId: UUID())
+    RevealMomentView(matchId: "preview-match")
         .environmentObject(APIClient())
         .environmentObject(Router())
 }

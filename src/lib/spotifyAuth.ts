@@ -21,6 +21,9 @@ export const SPOTIFY_SCOPES = [
   "user-library-read",
   "playlist-read-private",
   "user-follow-read",
+  "user-read-currently-playing",
+  "user-read-playback-state",
+  "playlist-modify-private",
 ].join(" ");
 
 const VERIFIER_KEY = "bwend.pkce.verifier";

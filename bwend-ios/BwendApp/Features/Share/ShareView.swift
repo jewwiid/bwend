@@ -91,6 +91,31 @@ struct InvitePreviewView: View {
                                 .cornerRadius(BwendRadius.lg)
                             }
 
+                            if let track = preview.selectedTrack {
+                                VStack(alignment: .leading, spacing: 12) {
+                                    SectionLabel("They sent you a track")
+                                    HStack(spacing: 14) {
+                                        RemoteArtwork(url: track.imageURL, fallbackSymbol: "music.note")
+                                            .frame(width: 72, height: 72)
+                                            .cornerRadius(BwendRadius.md)
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(track.name)
+                                                .font(.bwend(size: 16, weight: .bold))
+                                                .foregroundColor(Color.bwendText)
+                                            if let artist = track.artistName {
+                                                Text(artist)
+                                                    .font(.bwend(size: 13))
+                                                    .foregroundColor(Color.bwendTextSecondary)
+                                            }
+                                        }
+                                        Spacer()
+                                    }
+                                }
+                                .padding(20)
+                                .background(Color.bwendBgCard)
+                                .cornerRadius(BwendRadius.lg)
+                            }
+
                             PrimaryButton(
                                 preview.alreadyClaimed ? "Already claimed" : "Reveal our vibe",
                                 loading: claiming,

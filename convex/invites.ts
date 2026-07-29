@@ -28,11 +28,13 @@ export const handleCreateInvite = httpAction(async (ctx, request) => {
 
   const now = Date.now();
   const expiresAt = now + SEVEN_DAYS_MS;
+  const selectedTrack = await parseSelectedTrack(request);
 
   await ctx.runMutation(internal.inviteMutations.create, {
     code,
     inviterSpotifyUserId: identity.spotifyUserId,
     status: "pending",
+    ...(selectedTrack ? { selectedTrack } : {}),
     createdAt: now,
     expiresAt,
   });
@@ -82,6 +84,7 @@ export const handleFetchInvite = httpAction(async (ctx, request) => {
       name: a.name,
       imageURL: a.imageURL ?? null,
     })),
+    selectedTrack: invite.selectedTrack ?? null,
     expiresAt: new Date(invite.expiresAt).toISOString(),
     alreadyClaimed: invite.status === "claimed",
     isMine: identity.spotifyUserId === invite.inviterSpotifyUserId,
@@ -125,4 +128,41 @@ function extractLastPathSegment(urlStr: string): string | null {
   const parsed = new URL(urlStr);
   const parts = parsed.pathname.split("/").filter(Boolean);
   return parts.length > 0 ? parts[parts.length - 1] : null;
+}
+
+interface SelectedTrackInput {
+  id: string;
+  name: string;
+  artistName: string | null;
+  imageURL: string | null;
+  spotifyURL: string | null;
+}
+
+async function parseSelectedTrack(request: Request): Promise<SelectedTrackInput | null> {
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return null;
+  }
+  const track = (body as { selectedTrack?: unknown })?.selectedTrack;
+  if (!track || typeof track !== "object") return null;
+  const value = track as Record<string, unknown>;
+  if (
+    typeof value.id !== "string" ||
+    typeof value.name !== "string" ||
+    value.id.length === 0 ||
+    value.name.length === 0
+  ) {
+    return null;
+  }
+  const nullableString = (input: unknown): string | null =>
+    typeof input === "string" && input.length > 0 ? input : null;
+  return {
+    id: value.id.slice(0, 128),
+    name: value.name.slice(0, 200),
+    artistName: nullableString(value.artistName)?.slice(0, 200) ?? null,
+    imageURL: nullableString(value.imageURL),
+    spotifyURL: nullableString(value.spotifyURL),
+  };
 }

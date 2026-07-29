@@ -104,9 +104,43 @@ final class APIClient: ObservableObject {
         try await get("/me/blend?time_range=\(timeRange.rawValue)")
     }
 
+    /// GET /me/now-playing. The server returns JSON null when Spotify reports HTTP 204.
+    func nowPlaying() async throws -> NowPlayingResponse? {
+        try await get("/me/now-playing")
+    }
+
+    /// GET /me/player — active state and Spotify Connect devices.
+    func player() async throws -> PlayerResponse {
+        try await get("/me/player")
+    }
+
+    /// GET /search/tracks?q= — track-led invite search.
+    func searchTracks(query: String) async throws -> [BlendTrack] {
+        var components = URLComponents()
+        components.queryItems = [URLQueryItem(name: "q", value: query)]
+        let queryString = components.percentEncodedQuery ?? ""
+        return try await get("/search/tracks?\(queryString)")
+    }
+
+    /// GET /discovery — new releases and featured playlists.
+    func discovery() async throws -> [DiscoveryItem] {
+        try await get("/discovery")
+    }
+
     /// POST /invites — create a shareable invite.
-    func createInvite() async throws -> CreateInviteResponse {
-        try await post("/invites", body: [:], authed: true)
+    func createInvite(selectedTrack: BlendTrack? = nil) async throws -> CreateInviteResponse {
+        var body: [String: Any] = [:]
+        if let selectedTrack {
+            let selectedTrackBody: [String: Any] = [
+                "id": selectedTrack.id,
+                "name": selectedTrack.name,
+                "artistName": selectedTrack.artistName ?? NSNull(),
+                "imageURL": selectedTrack.imageURL ?? NSNull(),
+                "spotifyURL": selectedTrack.spotifyURL ?? NSNull(),
+            ]
+            body["selectedTrack"] = selectedTrackBody
+        }
+        return try await post("/invites", body: body, authed: true)
     }
 
     /// GET /invites/{code}
@@ -120,13 +154,44 @@ final class APIClient: ObservableObject {
     }
 
     /// GET /matches/{id}
-    func fetchMatch(id: UUID) async throws -> PublicMatch {
+    func fetchMatch(id: String) async throws -> PublicMatch {
         try await get("/matches/\(id)")
     }
 
     /// GET /matches — the caller's past matches, newest first.
     func myMatches() async throws -> [MatchSummary] {
         try await get("/matches")
+    }
+
+    /// POST /matches/{id}/playlist — idempotent per user and match.
+    func saveMatchPlaylist(id: String) async throws -> SavedPlaylistResponse {
+        try await post("/matches/\(id)/playlist", body: [:], authed: true)
+    }
+
+    func registerPushDevice(
+        token: String,
+        environment: String,
+        timezone: String,
+        dailyHour: Int
+    ) async throws -> PushSettingsResponse {
+        try await post(
+            "/notifications/device",
+            body: [
+                "deviceToken": token,
+                "environment": environment,
+                "timezone": timezone,
+                "dailyHour": dailyHour,
+            ],
+            authed: true
+        )
+    }
+
+    func disablePushDevice(token: String) async throws -> PushSettingsResponse {
+        try await post(
+            "/notifications/device/disable",
+            body: ["deviceToken": token],
+            authed: true
+        )
     }
 
     // MARK: - Internals

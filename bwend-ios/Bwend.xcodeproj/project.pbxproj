@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01F48590B2E50AD4703A272F /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D945EB445B81E5D581E906 /* NotificationManager.swift */; };
+		100F476CE86A0F3CC831BFC0 /* TrackInviteSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A2A6142EAAAD726A029E1A /* TrackInviteSearchView.swift */; };
 		10C3308E3A6D16AB7C206712 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4391CCDA57470052AA938A62 /* WelcomeView.swift */; };
 		1400A01B7B1D56CED7033BE3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E696CA0D1D6AA2202E5148AF /* PrivacyInfo.xcprivacy */; };
 		1C4A7E3C9F81F4BB512E520E /* RevealDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE1C0C155F9ED6090EC3100 /* RevealDetailView.swift */; };
@@ -39,12 +41,14 @@
 		40233528AF8B98FAAEE4718F /* ShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareView.swift; sourceTree = "<group>"; };
 		4391CCDA57470052AA938A62 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		4D81F1C10E76687F7DEA9C02 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		55D26C219CEDE43284B71B1D /* bwend-logo.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = "bwend-logo.svg"; sourceTree = "<group>"; };
-		572850A0A6CCA108A204679E /* Bwend.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bwend.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		53D945EB445B81E5D581E906 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		55D26C219CEDE43284B71B1D /* bwend-logo.svg */ = {isa = PBXFileReference; path = "bwend-logo.svg"; sourceTree = "<group>"; };
+		572850A0A6CCA108A204679E /* Bwend.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Bwend.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5AEF1B8D1B46BE07692B2F28 /* SpotifyConnectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyConnectView.swift; sourceTree = "<group>"; };
 		7D603CB038EB622AE5CE5259 /* SpotifyAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyAuth.swift; sourceTree = "<group>"; };
 		828BDBAABA554104C00AB625 /* RevealAnchorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevealAnchorView.swift; sourceTree = "<group>"; };
 		831EA77BE256CB2E545EC9C4 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
+		85A2A6142EAAAD726A029E1A /* TrackInviteSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackInviteSearchView.swift; sourceTree = "<group>"; };
 		8669BE3BCF9F6809EF0F0FB8 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		867F21DDDAA2AFB9EAB89885 /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
 		88E499C58AF6297343FE9BAF /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -54,7 +58,7 @@
 		D6233EA104C2BC7AEECE21A1 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		D828EFC144895318FFA24B29 /* RevealMomentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevealMomentView.swift; sourceTree = "<group>"; };
 		DDE1C0C155F9ED6090EC3100 /* RevealDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevealDetailView.swift; sourceTree = "<group>"; };
-		E696CA0D1D6AA2202E5148AF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		E696CA0D1D6AA2202E5148AF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		EA0EC9B334EEA20C7A58E1C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		F23ABE35647D986E734FDB88 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -67,6 +71,7 @@
 				E7192FE8631FD7453300E31E /* DesignSystem */,
 				CB521C170A75D6ED4EC14325 /* Models */,
 				5AB56362D5232CA34A0611EC /* Networking */,
+				F5E87060F2BD433F20B99E35 /* Notifications */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -79,13 +84,6 @@
 				C169686B1962D92889C3D172 /* Brand */,
 			);
 			path = Resources;
-			sourceTree = "<group>";
-		};
-		1D6BD909DE3022040848CF01 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Components;
 			sourceTree = "<group>";
 		};
 		1F68DA3B268598C58477D6E8 /* Blend */ = {
@@ -121,13 +119,6 @@
 			);
 			sourceTree = "<group>";
 		};
-		73D17A07FB32552F8EBAD3F3 /* Match */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Match;
-			sourceTree = "<group>";
-		};
 		76933381209B1E8627C22FA5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -158,13 +149,6 @@
 			path = Auth;
 			sourceTree = "<group>";
 		};
-		917516E988451426B09F49E9 /* Home */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Home;
-			sourceTree = "<group>";
-		};
 		ABD978536181E99FBA77D434 /* Start */ = {
 			isa = PBXGroup;
 			children = (
@@ -177,11 +161,8 @@
 			isa = PBXGroup;
 			children = (
 				1F68DA3B268598C58477D6E8 /* Blend */,
-				917516E988451426B09F49E9 /* Home */,
-				73D17A07FB32552F8EBAD3F3 /* Match */,
 				4DF5253EF100D3EEC07E1BFB /* Onboarding */,
 				DD50171D1AA91DFB6DC7A5CC /* Reveal */,
-				F795B33500C35665EE6A5E21 /* Settings */,
 				F74EA183910B1F17B626DA0C /* Share */,
 				ABD978536181E99FBA77D434 /* Start */,
 			);
@@ -221,24 +202,25 @@
 				8669BE3BCF9F6809EF0F0FB8 /* Components.swift */,
 				F23ABE35647D986E734FDB88 /* Theme.swift */,
 				283ED7C0F09C428FEA2E4316 /* Typography.swift */,
-				1D6BD909DE3022040848CF01 /* Components */,
 			);
 			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		F5E87060F2BD433F20B99E35 /* Notifications */ = {
+			isa = PBXGroup;
+			children = (
+				53D945EB445B81E5D581E906 /* NotificationManager.swift */,
+			);
+			path = Notifications;
 			sourceTree = "<group>";
 		};
 		F74EA183910B1F17B626DA0C /* Share */ = {
 			isa = PBXGroup;
 			children = (
 				40233528AF8B98FAAEE4718F /* ShareView.swift */,
+				85A2A6142EAAAD726A029E1A /* TrackInviteSearchView.swift */,
 			);
 			path = Share;
-			sourceTree = "<group>";
-		};
-		F795B33500C35665EE6A5E21 /* Settings */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Settings;
 			sourceTree = "<group>";
 		};
 		FE78C50A5895348EFB6E1A65 /* App */ = {
@@ -280,6 +262,11 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					E1890BE6DF7CFC8B6B82CB2E = {
+						DevelopmentTeam = 7JSY6J5R99;
+					};
+				};
 			};
 			buildConfigurationList = B1B4E01AA61ACDB8D00E7617 /* Build configuration list for PBXProject "Bwend" */;
 			developmentRegion = en;
@@ -325,6 +312,7 @@
 				2F6EF0132F7493A018D64407 /* BwendApp.swift in Sources */,
 				5CD3B43407137C00C05B4AAA /* Components.swift in Sources */,
 				8B538553380D9E13C6990021 /* Models.swift in Sources */,
+				01F48590B2E50AD4703A272F /* NotificationManager.swift in Sources */,
 				217D3F81613762DE9BDEEC31 /* RevealAnchorView.swift in Sources */,
 				1C4A7E3C9F81F4BB512E520E /* RevealDetailView.swift in Sources */,
 				DEA304547CD975FCC5A2FC9D /* RevealMomentView.swift in Sources */,
@@ -335,6 +323,7 @@
 				A6F58EE3EFDCF57A99C93D74 /* SpotifyConnectView.swift in Sources */,
 				FCC3C599CBECCD9EDB55EC62 /* StartView.swift in Sources */,
 				CD53CDFFAF28E09D861E7EDC /* Theme.swift in Sources */,
+				100F476CE86A0F3CC831BFC0 /* TrackInviteSearchView.swift in Sources */,
 				E3CE0E9E57E9774D086E02F1 /* Typography.swift in Sources */,
 				10C3308E3A6D16AB7C206712 /* WelcomeView.swift in Sources */,
 			);
@@ -349,7 +338,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = BwendApp/Bwend.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = 7JSY6J5R99;
 				INFOPLIST_FILE = BwendApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -398,7 +386,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 7JSY6J5R99;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -429,7 +417,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = BwendApp/Bwend.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = 7JSY6J5R99;
 				INFOPLIST_FILE = BwendApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -478,7 +465,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 7JSY6J5R99;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;

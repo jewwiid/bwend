@@ -5,12 +5,21 @@
 import { internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 
+const selectedTrackValidator = v.object({
+  id: v.string(),
+  name: v.string(),
+  artistName: v.union(v.string(), v.null()),
+  imageURL: v.union(v.string(), v.null()),
+  spotifyURL: v.union(v.string(), v.null()),
+});
+
 /** Create a new invite row. */
 export const create = internalMutation({
   args: {
     code: v.string(),
     inviterSpotifyUserId: v.string(),
     status: v.union(v.literal("pending"), v.literal("claimed"), v.literal("expired")),
+    selectedTrack: v.optional(selectedTrackValidator),
     createdAt: v.number(),
     expiresAt: v.number(),
   },
@@ -21,6 +30,7 @@ export const create = internalMutation({
       inviterSpotifyUserId: args.inviterSpotifyUserId,
       inviteeSpotifyUserId: null,
       status: args.status,
+      ...(args.selectedTrack ? { selectedTrack: args.selectedTrack } : {}),
       createdAt: args.createdAt,
       claimedAt: null,
       expiresAt: args.expiresAt,

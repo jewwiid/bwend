@@ -22,6 +22,9 @@ final class SpotifyAuth: NSObject, ASWebAuthenticationPresentationContextProvidi
         "user-library-read",           // saved songs + albums counts
         "playlist-read-private",       // playlist count
         "user-follow-read",            // followed-artists count
+        "user-read-currently-playing", // live track on the Blend screen
+        "user-read-playback-state",    // active Spotify Connect device
+        "playlist-modify-private",     // explicit "Save to my Spotify" action
     ].joined(separator: " ")
 
     /// Spotify client id. Configure via Info.plist `SPOTIFY_CLIENT_ID`.

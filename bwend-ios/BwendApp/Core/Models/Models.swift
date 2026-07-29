@@ -28,6 +28,7 @@ struct InvitePreview: Codable, Equatable {
     /// Bare names, kept for compatibility. Prefer `inviterArtists` — it carries the photos.
     let inviterTopArtists: [String]
     let inviterArtists: [ArtistBrief]?
+    let selectedTrack: AnchorTrack?
     let expiresAt: Date
     let alreadyClaimed: Bool
     let isMine: Bool
@@ -42,7 +43,7 @@ struct ArtistBrief: Codable, Equatable, Hashable, Identifiable {
 
 /// Response from POST /invites/{code}/claim — the match is created here.
 struct ClaimResponse: Codable, Equatable {
-    let matchId: UUID
+    let matchId: String
     let vibeScore: Int
     let breakdown: VibeBreakdown
 }
@@ -67,7 +68,7 @@ struct VibeBreakdown: Codable, Equatable, Hashable {
 
 /// Response from GET /matches/{id} — everything the 3-layer reveal needs.
 struct PublicMatch: Codable, Equatable, Identifiable {
-    let id: UUID
+    let id: String
     let vibeScore: Int
     let breakdown: VibeBreakdown
     let myName: String?
@@ -76,6 +77,7 @@ struct PublicMatch: Codable, Equatable, Identifiable {
     let sharedTopArtistNames: [String]
     let sharedTopTrackNames: [String]
     let compatibilityRead: String
+    let savedPlaylistURL: String?
     let createdAt: Date
 }
 
@@ -101,6 +103,63 @@ struct BlendResponse: Codable, Equatable {
     /// Nil when the user hasn't granted `user-read-recently-played`.
     let recentlyPlayed: [BlendTrack]?
     let library: LibraryCounts
+}
+
+/// Live Spotify presence. A nil response from the endpoint means no active playback.
+struct NowPlayingResponse: Codable, Equatable {
+    let isPlaying: Bool
+    let progressMs: Int?
+    let fetchedAt: Double
+    let track: BlendTrack?
+}
+
+struct PlaybackDevice: Codable, Equatable, Identifiable {
+    let id: String?
+    let name: String
+    let type: String
+    let isActive: Bool
+    let isRestricted: Bool
+    let volumePercent: Int?
+
+    /// Spotify documents device ids as nullable and not permanently stable.
+    var stableID: String { id ?? "\(name)-\(type)" }
+}
+
+struct PlaybackState: Codable, Equatable {
+    let isPlaying: Bool
+    let progressMs: Int?
+    let fetchedAt: Double
+    let track: BlendTrack?
+    let device: PlaybackDevice?
+}
+
+struct PlayerResponse: Codable, Equatable {
+    let state: PlaybackState?
+    let devices: [PlaybackDevice]
+}
+
+struct DiscoveryItem: Codable, Equatable, Identifiable {
+    enum Kind: String, Codable {
+        case album
+        case playlist
+    }
+
+    let id: String
+    let kind: Kind
+    let name: String
+    let subtitle: String?
+    let imageURL: String?
+    let spotifyURL: String?
+}
+
+struct SavedPlaylistResponse: Codable, Equatable {
+    let spotifyPlaylistId: String
+    let spotifyURL: String
+    let alreadyExisted: Bool
+}
+
+struct PushSettingsResponse: Codable, Equatable {
+    let enabled: Bool
 }
 
 struct BlendArtist: Codable, Equatable, Hashable, Identifiable {
@@ -166,7 +225,7 @@ enum BlendTimeRange: String, CaseIterable, Identifiable {
 
 /// Response from GET /matches — a summary row for the history list on StartView.
 struct MatchSummary: Codable, Equatable, Identifiable {
-    let id: UUID
+    let id: String
     let partnerName: String?
     let vibeScore: Int
     let anchorTrackName: String?

@@ -22,9 +22,10 @@ final class Router: ObservableObject {
         case blend
         case shareInvite(code: String)
         case invitePreview(code: String)
-        case revealMoment(matchId: UUID)
-        case revealAnchor(matchId: UUID)
-        case revealDetail(matchId: UUID)
+        case trackInviteSearch
+        case revealMoment(matchId: String)
+        case revealAnchor(matchId: String)
+        case revealDetail(matchId: String)
     }
 
     func route(to destination: Route) {

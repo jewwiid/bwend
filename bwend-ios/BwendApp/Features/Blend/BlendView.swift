@@ -19,6 +19,9 @@ struct BlendView: View {
     @State private var timeRange: BlendTimeRange = .medium
     @State private var loading = false
     @State private var errorMessage: String?
+    @State private var nowPlaying: NowPlayingResponse?
+    @State private var nowPlayingUnavailable = false
+    @State private var player: PlayerResponse?
 
     /// Cache per window so flipping back and forth doesn't re-hit the network.
     @State private var cache: [BlendTimeRange: BlendResponse] = [:]
@@ -32,6 +35,12 @@ struct BlendView: View {
                     rangePicker
 
                     if let blend {
+                        if let nowPlaying, let track = nowPlaying.track {
+                            NowPlayingStrip(nowPlaying: nowPlaying, track: track)
+                        }
+                        if let player {
+                            PlayerDeviceCard(player: player)
+                        }
                         artistsSection(blend)
                         tracksSection(blend)
                         if let recent = blend.recentlyPlayed, !recent.isEmpty {
@@ -55,6 +64,36 @@ struct BlendView: View {
         .navigationTitle("Your blend")
         .navigationBarTitleDisplayMode(.inline)
         .task { await load(timeRange) }
+        .task { await pollNowPlaying() }
+        .task { await loadPlayer() }
+    }
+
+    /// Presence is independent from the heavier blend payload. The task is cancelled
+    /// automatically when the view disappears, and capability failures stop future polling.
+    @MainActor
+    private func pollNowPlaying() async {
+        while !Task.isCancelled && !nowPlayingUnavailable {
+            do {
+                nowPlaying = try await api.nowPlaying()
+            } catch let error as APIError {
+                if case .http(let status, _) = error, status == 403 {
+                    nowPlayingUnavailable = true
+                }
+            } catch {
+                // Presence is best-effort. Keep the rest of the Blend screen intact.
+            }
+
+            do {
+                try await Task.sleep(for: .seconds(30))
+            } catch {
+                return
+            }
+        }
+    }
+
+    @MainActor
+    private func loadPlayer() async {
+        player = try? await api.player()
     }
 
     // MARK: - Time range
@@ -289,6 +328,110 @@ struct BlendView: View {
             if range == timeRange { errorMessage = error.localizedDescription }
         }
         loading = false
+    }
+}
+
+private struct PlayerDeviceCard: View {
+    @Environment(\.openURL) private var openURL
+
+    let player: PlayerResponse
+
+    private var activeDevice: PlaybackDevice? {
+        player.state?.device ?? player.devices.first(where: \.isActive)
+    }
+
+    var body: some View {
+        if let device = activeDevice {
+            Button {
+                if let url = URL(string: "spotify:") {
+                    openURL(url)
+                }
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: symbol(for: device.type))
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(Color.spotify)
+                        .frame(width: 36, height: 36)
+                        .background(Circle().fill(Color.spotify.opacity(0.12)))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Listening on")
+                            .font(.bwend(size: 11, weight: .bold))
+                            .foregroundColor(Color.bwendTextMuted)
+                            .textCase(.uppercase)
+                            .tracking(1.1)
+                        Text(device.name)
+                            .font(.bwend(size: 14, weight: .bold))
+                            .foregroundColor(Color.bwendText)
+                    }
+                    Spacer()
+                    Text("Open Spotify")
+                        .font(.bwend(size: 12, weight: .bold))
+                        .foregroundColor(Color.spotify)
+                }
+                .padding(14)
+                .background(Color.bwendBgCard)
+                .cornerRadius(BwendRadius.lg)
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    private func symbol(for type: String) -> String {
+        switch type.lowercased() {
+        case "smartphone": return "iphone"
+        case "computer": return "laptopcomputer"
+        case "speaker": return "hifispeaker.fill"
+        case "tv": return "tv"
+        default: return "airplayaudio"
+        }
+    }
+}
+
+private struct NowPlayingStrip: View {
+    let nowPlaying: NowPlayingResponse
+    let track: BlendTrack
+
+    var body: some View {
+        SpotifyLink(url: track.spotifyURL) {
+            HStack(spacing: 14) {
+                RemoteArtwork(url: track.imageURL, fallbackSymbol: "waveform")
+                    .frame(width: 58, height: 58)
+                    .cornerRadius(BwendRadius.md)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 6) {
+                        Circle()
+                            .fill(nowPlaying.isPlaying ? Color.spotify : Color.bwendTextMuted)
+                            .frame(width: 7, height: 7)
+                        Text(nowPlaying.isPlaying ? "Now playing" : "Paused")
+                            .font(.bwend(size: 11, weight: .bold))
+                            .foregroundColor(Color.bwendTextMuted)
+                            .textCase(.uppercase)
+                            .tracking(1.2)
+                    }
+                    Text(track.name)
+                        .font(.bwend(size: 15, weight: .bold))
+                        .foregroundColor(Color.bwendText)
+                        .lineLimit(1)
+                    Text(track.creditLine)
+                        .font(.bwend(size: 12))
+                        .foregroundColor(Color.bwendTextSecondary)
+                        .lineLimit(1)
+                }
+
+                Spacer()
+                Image(systemName: "arrow.up.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(Color.bwendTextMuted)
+            }
+            .padding(14)
+            .background(Color.bwendBgCard)
+            .cornerRadius(BwendRadius.lg)
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(
+                "\(nowPlaying.isPlaying ? "Now playing" : "Paused"), \(track.name), \(track.creditLine)"
+            )
+        }
     }
 }
 

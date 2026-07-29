@@ -39,6 +39,8 @@ struct RootView: View {
             BlendView()
         case .shareInvite(let code):
             ShareView(inviteCode: code)
+        case .trackInviteSearch:
+            TrackInviteSearchView()
         case .invitePreview(let code):
             InvitePreviewView(code: code)
         case .revealMoment(let matchId):

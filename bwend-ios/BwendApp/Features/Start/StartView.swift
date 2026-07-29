@@ -9,6 +9,7 @@ struct StartView: View {
     @EnvironmentObject var auth: AuthManager
     @EnvironmentObject var api: APIClient
     @EnvironmentObject var router: Router
+    @EnvironmentObject var notifications: NotificationManager
 
     @State private var creating = false
     @State private var pastMatches: [MatchSummary] = []
@@ -29,11 +30,26 @@ struct StartView: View {
 
                     startCard
 
+                    Button {
+                        router.route(to: .trackInviteSearch)
+                    } label: {
+                        Label("Send a track with your invite", systemImage: "music.note.list")
+                            .font(.bwend(size: 14, weight: .bold))
+                            .foregroundColor(Color.bwendText)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(Color.bwendBgCard)
+                            .cornerRadius(BwendRadius.md)
+                    }
+                    .buttonStyle(.plain)
+
                     if !pastMatches.isEmpty {
                         historySection
                     }
 
                     accountSection
+
+                    notificationSection
 
                     Spacer(minLength: 40)
                 }
@@ -257,6 +273,77 @@ struct StartView: View {
         .padding(.top, 8)
     }
 
+    @ViewBuilder
+    private var notificationSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 12) {
+                Image(systemName: "bell.badge.fill")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(Color.Accent.cta)
+                    .frame(width: 38, height: 38)
+                    .background(Circle().fill(Color.Accent.peach.opacity(0.18)))
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Your daily Bwend")
+                        .font(.bwend(size: 14, weight: .bold))
+                        .foregroundColor(Color.bwendText)
+                    Text(
+                        notifications.dailyBlendsEnabled
+                            ? "A music-first nudge is scheduled for 6pm."
+                            : "One thoughtful reason to revisit a blend each day."
+                    )
+                    .font(.bwend(size: 12))
+                    .foregroundColor(Color.bwendTextSecondary)
+                }
+
+                Spacer()
+            }
+
+            if notifications.authorizationStatus == .denied {
+                Button("Open notification settings") {
+                    notifications.openSystemSettings()
+                }
+                .font(.bwend(size: 13, weight: .bold))
+                .foregroundColor(Color.Accent.cta)
+            } else {
+                Button {
+                    Task {
+                        if notifications.dailyBlendsEnabled {
+                            await notifications.disableDailyBlends()
+                        } else {
+                            _ = await notifications.enableDailyBlends()
+                        }
+                    }
+                } label: {
+                    Text(notifications.dailyBlendsEnabled ? "Turn off" : "Notify me daily")
+                        .font(.bwend(size: 13, weight: .bold))
+                        .foregroundColor(
+                            notifications.dailyBlendsEnabled ? Color.bwendText : .white
+                        )
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(
+                            Capsule().fill(
+                                notifications.dailyBlendsEnabled
+                                    ? Color.bwendBgMuted
+                                    : Color.Accent.cta
+                            )
+                        )
+                }
+                .buttonStyle(.plain)
+            }
+
+            if let error = notifications.registrationError {
+                Text(error)
+                    .font(.bwend(size: 11))
+                    .foregroundStyle(.red)
+            }
+        }
+        .padding(18)
+        .background(Color.bwendBgCard)
+        .cornerRadius(BwendRadius.lg)
+    }
+
     // MARK: - Actions
 
     @MainActor
@@ -302,4 +389,5 @@ struct StartView: View {
         .environmentObject(AuthManager())
         .environmentObject(APIClient())
         .environmentObject(Router())
+        .environmentObject(NotificationManager.shared)
 }

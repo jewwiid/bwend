@@ -34,6 +34,18 @@ import type { SpotifyTrack, SpotifyArtist } from "./vibeScore";
 const ACCOUNT_BASE = "https://accounts.spotify.com/api";
 const API_BASE = "https://api.spotify.com/v1";
 
+export class SpotifyAPIError extends Error {
+  readonly status: number;
+  readonly endpoint: string;
+
+  constructor(endpoint: string, status: number, detail = "") {
+    super(`Spotify ${endpoint} failed: ${status}${detail ? ` ${detail}` : ""}`);
+    this.name = "SpotifyAPIError";
+    this.endpoint = endpoint;
+    this.status = status;
+  }
+}
+
 /** Spotify's three top-read windows: ~4 weeks, ~6 months, ~1 year+. */
 export type TimeRange = "short_term" | "medium_term" | "long_term";
 
@@ -150,6 +162,39 @@ export interface RecentPlays {
   playedAt: number[];
 }
 
+export interface NowPlaying {
+  isPlaying: boolean;
+  progressMs: number | null;
+  fetchedAt: number;
+  track: SpotifyTrack | null;
+}
+
+export interface SpotifyDevice {
+  id: string | null;
+  name: string;
+  type: string;
+  isActive: boolean;
+  isRestricted: boolean;
+  volumePercent: number | null;
+}
+
+export interface PlaybackState {
+  isPlaying: boolean;
+  progressMs: number | null;
+  fetchedAt: number;
+  track: SpotifyTrack | null;
+  device: SpotifyDevice | null;
+}
+
+export interface SpotifyDiscoveryItem {
+  id: string;
+  kind: "album" | "playlist";
+  name: string;
+  subtitle: string | null;
+  imageURL: string | null;
+  spotifyURL: string | null;
+}
+
 /**
  * Recently played tracks. Requires the `user-read-recently-played` scope.
  *
@@ -180,6 +225,187 @@ export async function recentlyPlayed(token: string, limit = 50): Promise<RecentP
   }
 
   return { tracks, playedAt };
+}
+
+/** Current track only. Requires user-read-currently-playing. A 204 means idle. */
+export async function currentlyPlaying(token: string): Promise<NowPlaying | null> {
+  const resp = await fetch(`${API_BASE}/me/player/currently-playing`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (resp.status === 204) return null;
+  if (!resp.ok) throw new SpotifyAPIError("/me/player/currently-playing", resp.status);
+  const data = await resp.json();
+  const item = data?.item;
+  return {
+    isPlaying: data?.is_playing === true,
+    progressMs: numberOrNull(data?.progress_ms),
+    fetchedAt: Date.now(),
+    track: item?.type === "track" && item?.id ? mapTrack(item) : null,
+  };
+}
+
+/** Playback plus active device. Requires user-read-playback-state. A 204 means idle. */
+export async function playbackState(token: string): Promise<PlaybackState | null> {
+  const resp = await fetch(`${API_BASE}/me/player`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (resp.status === 204) return null;
+  if (!resp.ok) throw new SpotifyAPIError("/me/player", resp.status);
+  const data = await resp.json();
+  const item = data?.item;
+  const device = data?.device;
+  return {
+    isPlaying: data?.is_playing === true,
+    progressMs: numberOrNull(data?.progress_ms),
+    fetchedAt: Date.now(),
+    track: item?.type === "track" && item?.id ? mapTrack(item) : null,
+    device: device
+      ? {
+          id: typeof device.id === "string" ? device.id : null,
+          name: typeof device.name === "string" ? device.name : "Spotify device",
+          type: typeof device.type === "string" ? device.type : "unknown",
+          isActive: device.is_active === true,
+          isRestricted: device.is_restricted === true,
+          volumePercent: numberOrNull(device.volume_percent),
+        }
+      : null,
+  };
+}
+
+/** Available Spotify Connect devices. Requires user-read-playback-state. */
+export async function availableDevices(token: string): Promise<SpotifyDevice[]> {
+  const resp = await fetch(`${API_BASE}/me/player/devices`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!resp.ok) throw new SpotifyAPIError("/me/player/devices", resp.status);
+  const data = await resp.json();
+  return (Array.isArray(data?.devices) ? data.devices : []).map((device: any) => ({
+    id: typeof device.id === "string" ? device.id : null,
+    name: typeof device.name === "string" ? device.name : "Spotify device",
+    type: typeof device.type === "string" ? device.type : "unknown",
+    isActive: device.is_active === true,
+    isRestricted: device.is_restricted === true,
+    volumePercent: numberOrNull(device.volume_percent),
+  }));
+}
+
+/** Track search used by track-led invites. */
+export async function searchTracks(
+  token: string,
+  query: string,
+  limit = 12
+): Promise<SpotifyTrack[]> {
+  const params = new URLSearchParams({
+    q: query,
+    type: "track",
+    limit: String(Math.max(1, Math.min(limit, 20))),
+  });
+  const resp = await fetch(`${API_BASE}/search?${params.toString()}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!resp.ok) throw new SpotifyAPIError("/search", resp.status);
+  const data = await resp.json();
+  return (data?.tracks?.items ?? [])
+    .filter((item: any) => item?.id && item?.name)
+    .map(mapTrack);
+}
+
+/** Create a private playlist in the current user's account. */
+export async function createPrivatePlaylist(
+  token: string,
+  name: string,
+  description: string
+): Promise<{ id: string; spotifyURL: string }> {
+  const resp = await fetch(`${API_BASE}/me/playlists`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ name, description, public: false }),
+  });
+  if (!resp.ok) {
+    const detail = await resp.text().catch(() => "");
+    throw new SpotifyAPIError("/me/playlists", resp.status, detail);
+  }
+  const data = await resp.json();
+  if (!data?.id || !data?.external_urls?.spotify) {
+    throw new SpotifyAPIError("/me/playlists", 502, "missing playlist id or URL");
+  }
+  return { id: data.id, spotifyURL: data.external_urls.spotify };
+}
+
+/** Add track URIs to a playlist using Spotify's current /items path. */
+export async function addPlaylistItems(
+  token: string,
+  playlistId: string,
+  trackIds: string[]
+): Promise<void> {
+  const uris = [...new Set(trackIds)]
+    .filter(Boolean)
+    .slice(0, 100)
+    .map((id) => `spotify:track:${id}`);
+  if (uris.length === 0) return;
+  const resp = await fetch(`${API_BASE}/playlists/${encodeURIComponent(playlistId)}/items`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ uris }),
+  });
+  if (!resp.ok) {
+    const detail = await resp.text().catch(() => "");
+    throw new SpotifyAPIError(`/playlists/${playlistId}/items`, resp.status, detail);
+  }
+}
+
+/** New releases and featured playlists for the post-match discovery rail. */
+export async function discovery(token: string): Promise<SpotifyDiscoveryItem[]> {
+  const headers = { Authorization: `Bearer ${token}` };
+  const [albumsResponse, playlistsResponse] = await Promise.all([
+    fetch(`${API_BASE}/browse/new-releases?limit=8`, { headers }),
+    fetch(`${API_BASE}/browse/featured-playlists?limit=6`, { headers }),
+  ]);
+
+  const items: SpotifyDiscoveryItem[] = [];
+  if (albumsResponse.ok) {
+    const data = await albumsResponse.json();
+    for (const album of data?.albums?.items ?? []) {
+      if (!album?.id || !album?.name) continue;
+      items.push({
+        id: album.id,
+        kind: "album",
+        name: album.name,
+        subtitle: Array.isArray(album.artists)
+          ? album.artists.map((artist: any) => artist?.name).filter(Boolean).join(", ") || null
+          : null,
+        imageURL: largestImage(album.images),
+        spotifyURL: album.external_urls?.spotify ?? null,
+      });
+    }
+  }
+  if (playlistsResponse.ok) {
+    const data = await playlistsResponse.json();
+    for (const playlist of data?.playlists?.items ?? []) {
+      if (!playlist?.id || !playlist?.name) continue;
+      items.push({
+        id: playlist.id,
+        kind: "playlist",
+        name: playlist.name,
+        subtitle: playlist.description || null,
+        imageURL: largestImage(playlist.images),
+        spotifyURL: playlist.external_urls?.spotify ?? null,
+      });
+    }
+  }
+  if (items.length === 0 && (!albumsResponse.ok || !playlistsResponse.ok)) {
+    throw new SpotifyAPIError(
+      "/browse",
+      !albumsResponse.ok ? albumsResponse.status : playlistsResponse.status
+    );
+  }
+  return items;
 }
 
 /**
@@ -225,7 +451,7 @@ export async function libraryCounts(token: string): Promise<{
  * there is no way to backfill them later — /v1/tracks?ids= and /v1/artists?ids= are both
  * 403 for this app, so anything dropped at read time is gone.
  */
-function mapTrack(item: any): SpotifyTrack {
+export function mapTrack(item: any): SpotifyTrack {
   const artists = Array.isArray(item.artists) ? item.artists : [];
   return {
     id: item.id,

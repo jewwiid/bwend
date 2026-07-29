@@ -96,6 +96,17 @@ export default defineSchema({
     code: v.string(),
     inviterSpotifyUserId: v.string(),
     inviteeSpotifyUserId: v.union(v.string(), v.null()),
+    // Optional for backward compatibility with invites created before track-led invites.
+    // When present, this becomes the match anchor instead of an automatically selected track.
+    selectedTrack: v.optional(
+      v.object({
+        id: v.string(),
+        name: v.string(),
+        artistName: v.union(v.string(), v.null()),
+        imageURL: v.union(v.string(), v.null()),
+        spotifyURL: v.union(v.string(), v.null()),
+      })
+    ),
     status: v.union(
       v.literal("pending"),
       v.literal("claimed"),
@@ -142,4 +153,33 @@ export default defineSchema({
   })
     .index("by_user_a", ["userASpotifyUserId"])
     .index("by_user_b", ["userBSpotifyUserId"]),
+
+  // One saved Spotify playlist per user per match. A playlist belongs to the Spotify
+  // account that created it; both people can independently save the same blend.
+  matchPlaylists: defineTable({
+    matchId: v.id("matches"),
+    spotifyUserId: v.string(),
+    spotifyPlaylistId: v.string(),
+    spotifyURL: v.string(),
+    createdAt: v.number(),
+  })
+    .index("by_match_and_user", ["matchId", "spotifyUserId"])
+    .index("by_spotify_user_id", ["spotifyUserId"]),
+
+  // APNs device registrations. Tokens are opaque and may rotate, so the server upserts every
+  // successful registration callback. Notification delivery is implemented after the product
+  // surfaces so this table is intentionally independent from alert authorization state.
+  pushSubscriptions: defineTable({
+    spotifyUserId: v.string(),
+    deviceToken: v.string(),
+    environment: v.union(v.literal("sandbox"), v.literal("production")),
+    timezone: v.string(),
+    dailyHour: v.number(),
+    enabled: v.boolean(),
+    lastDailySentKey: v.optional(v.string()),
+    updatedAt: v.number(),
+  })
+    .index("by_device_token", ["deviceToken"])
+    .index("by_spotify_user_id", ["spotifyUserId"])
+    .index("by_enabled", ["enabled"]),
 });

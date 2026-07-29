@@ -2,9 +2,12 @@ import SwiftUI
 
 @main
 struct BwendApp: App {
+    @UIApplicationDelegateAdaptor(BwendAppDelegate.self) private var appDelegate
+
     @StateObject private var authManager = AuthManager()
     @StateObject private var api = APIClient()
     @StateObject private var router = Router()
+    @StateObject private var notificationManager = NotificationManager.shared
 
     init() {
         // Register the bundled DM Sans + Fraunces OTF files before any view loads.
@@ -17,6 +20,7 @@ struct BwendApp: App {
                 .environmentObject(authManager)
                 .environmentObject(api)
                 .environmentObject(router)
+                .environmentObject(notificationManager)
                 .preferredColorScheme(nil)   // respect system until user toggles
                 .tint(Color.Accent.cta)
                 .onOpenURL { url in
@@ -26,6 +30,7 @@ struct BwendApp: App {
                     // Fix the wiring bug: wire the auth manager into the API client so requests
                     // can read the Bearer token. Previously this was never called.
                     api.attach(authManager)
+                    notificationManager.configure(api: api, router: router)
                 }
         }
     }

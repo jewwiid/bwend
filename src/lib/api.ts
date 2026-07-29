@@ -91,6 +91,7 @@ export interface InvitePreview {
   inviterName: string | null;
   inviterTopArtists: string[];
   inviterArtists: ArtistBrief[] | null;
+  selectedTrack: AnchorTrack | null;
   expiresAt: string;
   alreadyClaimed: boolean;
   isMine: boolean;
@@ -132,6 +133,7 @@ export interface PublicMatch {
   sharedTopArtistNames: string[];
   sharedTopTrackNames: string[];
   compatibilityRead: string;
+  savedPlaylistURL: string | null;
   createdAt: string;
 }
 
@@ -237,8 +239,21 @@ export function myBlend(timeRange: TimeRange = "medium_term"): Promise<BlendResp
   return request(`/me/blend?time_range=${timeRange}`);
 }
 
-export function createInvite(): Promise<CreateInviteResponse> {
-  return request("/invites", { method: "POST", body: "{}" });
+export function createInvite(selectedTrack?: BlendTrack): Promise<CreateInviteResponse> {
+  return request("/invites", {
+    method: "POST",
+    body: JSON.stringify({
+      selectedTrack: selectedTrack
+        ? {
+            id: selectedTrack.id,
+            name: selectedTrack.name,
+            artistName: selectedTrack.artistName,
+            imageURL: selectedTrack.imageURL,
+            spotifyURL: selectedTrack.spotifyURL,
+          }
+        : undefined,
+    }),
+  });
 }
 
 export function fetchInvite(code: string): Promise<InvitePreview> {

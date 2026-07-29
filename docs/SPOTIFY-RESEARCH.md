@@ -11,27 +11,25 @@ the product.
 
 ## TL;DR
 
-The bwend backend is **substantially complete** and the engineering around
-the post-2024-11-27 Spotify deprecation is already mature — the codebase
-header in `convex/lib/spotify.ts` and the new `TasteProfile` in
-`convex/lib/vibeScore.ts` are themselves a writeup of the live API state.
+The first native iPhone slice is now implemented end-to-end:
 
-What the landing page promises that the product doesn't yet deliver
-(excluding chat, which is intentionally out of scope):
+1. **Living Blend screen** — a cancellable 30-second Now Playing poll,
+   playback/device awareness, and a safe fallback when Spotify quota
+   denies player access.
+2. **Track-led invites** — Spotify track search can create an invite whose
+   selected track becomes the match anchor.
+3. **A real private Spotify playlist** — either participant can explicitly
+   save an idempotent, interleaved match playlist to their own account.
+4. **Post-match discovery** — new releases and featured playlists appear
+   as a lightweight "Listen next" rail.
+5. **Daily Bwend notifications** — APNs registration, foreground and tap
+   handling, match deep links, per-user local-time scheduling, invalid-token
+   cleanup, and an hourly Convex cron are implemented last in the sequence.
 
-1. **No shared playback** — `/me/player/play` and `/me/player/queue` are
-   live and documented; bwend has the scopes and the backend to ask for
-   them but doesn't.
-2. **No "now playing" on profile** — `/me/player/currently-playing` is
-   one of the cheapest signals you can show on a blend, and would turn
-   the `BlendPage` from a static receipt into a living thing.
-3. **No discovery feed** — `/browse/featured-playlists` and
-   `/browse/new-releases` are available with the existing token and would
-   give the post-match "what now" a real surface.
-4. **No search** — `/search` is the obvious way to invite someone by a
-   track instead of a code.
-5. **No active session awareness** — `/me/player` + `/me/player/devices`
-   would let a match page know whether the user is even *in* Spotify.
+The remaining launch work is operational: install the APNs key/team
+credentials in Convex, reconnect existing Spotify users so they grant the
+new read/player and private-playlist scopes, and verify the Spotify Player,
+Search, Browse, and Playlist endpoints against the app's live quota mode.
 
 **Deliberately out of scope:** chat / messaging. The landing page's
 "Music-first chat" line and the iOS-style "React to their tracks first"
@@ -49,7 +47,7 @@ more Spotify plumbing.
 
 | File | Purpose | Spotify endpoints it touches |
 | --- | --- | --- |
-| `schema.ts` | 4 tables: `waitlist`, `bwendProfiles`, `invites`, `matches` | — |
+| `schema.ts` | Profiles, invites, matches, saved playlists, and push-device records | — |
 | `spotifyConnect.ts` | HTTP entry to OAuth | — |
 | `spotifyActions.ts` | `/api/auth/spotify` → token exchange + profile | `POST /api/token`, `GET /me`, `GET /me/top/tracks`, `GET /me/top/artists`, `GET /me/player/recently-played` |
 | `blendActions.ts` | `/api/me/blend` → live profile + token refresh | `GET /me/top/{tracks,artists}`, `GET /me/player/recently-played`, `GET /me/{tracks,albums,playlists,following}?limit=1` |
@@ -86,11 +84,13 @@ user-read-recently-played
 user-library-read
 playlist-read-private
 user-follow-read
+user-read-currently-playing
+user-read-playback-state
+playlist-modify-private
 ```
 
-All seven are documented in the live Scopes page and are all read-only —
-bwend never writes to a user's library, never modifies playlists, never
-touches playback.
+The first nine are read-only. `playlist-modify-private` is used only after
+the user taps **Save to my Spotify**; bwend does not modify playback.
 
 ---
 
@@ -129,21 +129,20 @@ to not chase one.
 
 ### New things that *are* alive and bwend doesn't use
 
-These are the live endpoints that don't require a new scope and would
-unlock the features the marketing already implies:
+These live endpoints now back the first iPhone slice:
 
-| Endpoint | Scope needed (already in hand) | What it unlocks |
+| Endpoint | Scope needed | What it unlocks |
 | --- | --- | --- |
-| `GET /me/player` | none extra (user-modify-playback-state isn't required to *read* the player — but in practice most new apps need to be in **Extended Quota** mode to read the player) | "Last played 4 hours ago", device list, premium check |
-| `GET /me/player/devices` | same | Show "Open Spotify" CTA per device on the blend page |
-| `GET /me/player/currently-playing` | same | A live "now playing" strip on the blend; also the cheapest possible presence signal for a match |
+| `GET /me/player` | `user-read-playback-state` | Active playback and device context |
+| `GET /me/player/devices` | `user-read-playback-state` | Show an "Open Spotify" CTA for the active device |
+| `GET /me/player/currently-playing` | `user-read-currently-playing` | A live Now Playing strip on the Blend screen |
 | `PUT /me/player/play` (body: `uris`) | `user-modify-playback-state` (not currently requested) | "Play on Spotify" → actually starts playback on the anchor track |
 | `POST /me/player/queue` | same | Add the anchor to queue without interrupting |
-| `GET /search?q=...&type=track` | none extra (uses the implicit user-read-private grant) | Invite by track URL or by search; "send someone a track" link |
+| `GET /search?q=...&type=track` | OAuth access token | Create a track-led invite |
 | `GET /playlists/{id}` | `playlist-read-private` (already granted) | Show a real playlist when the match reveals one |
 | `GET /playlists/{id}/items` | same | A shared-blend playlist, not just a single anchor |
-| `POST /users/{user_id}/playlists` | `playlist-modify-public` or `playlist-modify-private` (NOT granted) | Auto-create a "Your Blend" playlist in the user's account |
-| `POST /playlists/{id}/items` | same | Populate that playlist with the shared tracks |
+| `POST /me/playlists` | `playlist-modify-private` | Create the user's private Bwend match playlist |
+| `POST /playlists/{id}/items` | `playlist-modify-private` | Populate it with interleaved match tracks |
 | `GET /browse/featured-playlists` | none | Discovery feed on the match page |
 | `GET /browse/new-releases` | none | "What to listen next" rail |
 | `GET /artists/{id}/albums` | none | Artist page on the blend |
@@ -159,14 +158,11 @@ endpoints may also be EQ-gated — need to confirm with a live `GET
 /me/player` call against the deployed app before relying on any of
 this in the UI.
 
-### New scope worth adding
+### Scope intentionally not added
 
 | Scope | Why |
 | --- | --- |
-| `user-modify-playback-state` | Required for `PUT /me/player/play` and `POST /me/player/queue`. Without it, the existing "Play on Spotify" button in `MatchPage.tsx` is just an `open.spotify.com` link — fine, but you can't add to queue or auto-resume on their active device. |
-| `playlist-modify-public` or `playlist-modify-private` | Required to create a real "Your Blend" playlist in the user's account. Currently the marketing promises "a playlist that belongs to both of you" but the data is just a stored list, not a Spotify playlist. |
-
-Neither scope is currently in `SPOTIFY_SCOPES` in `src/lib/spotifyAuth.ts`.
+| `user-modify-playback-state` | Required for remote play/queue. The first native slice deliberately opens Spotify instead of controlling playback, keeping the permission surface smaller. |
 
 ---
 
@@ -182,12 +178,12 @@ list) promises:
 | One blend a day, picked on purpose | `pickAnchorTrack` in `claimActions.ts` | ⚠️ Anchor is a single shared track, not a daily recommendation; "one per day" not enforced |
 | Vibe Score | `score()` in `lib/vibeScore.ts` | ✅ Live, 5 components, breakdown visible on match page |
 | Music-first chat | "React to their tracks first" copy in `HowItWorksSection` and `FeaturesSection` | ❌ **Out of scope by product decision.** Cut from marketing before launch — there's no plan to build it. |
-| "A playlist that belongs to both of you" | `FeaturesSection` row 1 copy | ❌ **Not a real Spotify playlist.** The stored match has `sharedTopTrackNames` as a flat list, not a `/playlists/{id}/items` payload. |
+| "A playlist that belongs to both of you" | `playlistActions.ts` + iOS reveal | ✅ Each participant can save a private, idempotent match playlist to their Spotify account. |
 | "Decibels, BPM, acoustic range" | `LabsSection` body copy | ❌ **Can't be delivered.** These are the deprecated audio features. The marketing has not been updated to reflect the new world. |
 | "Date energy" (per AGENTS.md) | — | ❌ Not built. |
 | Spotify Native | `AppShowcaseSection` feature | ✅ "We use the real `/me/top/*`, not a curated list" — true. |
 | "Taste match" | `MatchPage.tsx` header label | ✅ Live |
-| "The Daily Blend" | `ComparisonSection` card title | ⚠️ As above — single match per invite, not a daily feed |
+| "The Daily Blend" | `notificationActions.ts` + `crons.ts` | ✅ Daily local-time match reminder; broader daily matchmaking remains future work. |
 | "Turn into moment" (per AGENTS.md) | — | ❌ Not built. |
 
 ### The "Decibels, BPM, acoustic range" line is a real liability
@@ -229,16 +225,10 @@ In priority order, sorted by what is cheapest and most user-visible:
 
 ### P1 — finish the product the marketing already promises
 
-4. **Auto-create a "Your Blend" playlist in the user's account** at
-   claim time. Requires `playlist-modify-{public,private}` in
-   `SPOTIFY_SCOPES` (one-line edit) and a new internal action in
-   `convex/`. About 2 hours of work end-to-end. This single feature
-   makes "a playlist that belongs to both of you" stop being a lie.
-5. **"Now playing" strip on the blend page.** Adds
-   `GET /me/player/currently-playing` to `blendActions.ts`, a new
-   `nowPlaying` field on `BlendResponse`, and a 30-second poll on
-   `BlendPage`. Requires confirming the endpoint is reachable under
-   the current quota mode. About 4 hours including the quota check.
+4. ✅ **User-triggered "Your Blend" playlist save.** Implemented as an
+   idempotent per-user action rather than silently writing at claim time.
+5. ✅ **"Now playing" strip on the native Blend screen.** Implemented with
+   a 30-second cancellable poll and graceful quota fallback.
 6. **Match list page** — `GET /api/matches` already exists; the
    web has no UI for it. A `MatchesListPage` at `/matches` that the
    match page can deep-link to.
@@ -249,21 +239,14 @@ In priority order, sorted by what is cheapest and most user-visible:
 no per-message polling. Anything in the marketing that implies chat
 needs to be cut before launch.
 
-7. **Search-powered invite.** `/search?q=...&type=track` returns a
-   track, the recipient connects and sees their score against the
-   inviter's library. Requires a new internal action + an extension
-   to `claimActions.ts` (anchor can come from the inviter's chosen
-   track instead of being auto-picked).
-8. **Real "Daily Blend"** — a per-user dispatch that runs once a day
-   via Convex cron, pulls an active invite partner or picks the
-   highest-vibe-score profile in the user's circle, and pushes a push
-   notification through the iOS app. Requires push-notification
-   credentials on the iOS side and a Convex cron in
-   `convex/crons.ts` (which doesn't exist yet).
-9. **Discovery rail on the match page.** `/browse/new-releases` and
-    `/browse/featured-playlists` are cheap reads. A "while you two
-    wait" section under the reveal with 4–6 new releases and 2–3
-    featured playlists would give the reveal somewhere to go.
+7. ✅ **Search-powered invite.** Implemented on iPhone; the selected track
+   is persisted on the invite and becomes the claim anchor.
+8. ✅ **Daily Bwend notification infrastructure.** Implemented with an
+   hourly bounded Convex fanout, local-time deduplication, APNs token
+   lifecycle, and reveal deep links. APNs production credentials are the
+   remaining operational step.
+9. ✅ **Discovery rail on the native match page.** Implemented with new
+   releases and featured playlists; failure is intentionally non-blocking.
 
 ### P3 — quality of life
 
@@ -305,10 +288,9 @@ plan if they come back wrong:
 - `GET /v1/search?q=foo&type=track` — is it reachable for this app?
   The schema still lists it but I've seen search return 403 for
   newer apps in the same way audio-features does.
-- `POST /v1/users/{user_id}/playlists` — same question. The
-  `/playlists` POST path was renamed from `/tracks` to `/items` in
-  the live docs; make sure the existing library actually uses the
-  new path.
+- `POST /v1/me/playlists` — confirm playlist creation is available to this
+  app in live quota mode. The implementation uses the current endpoint and
+  populates it through `POST /v1/playlists/{id}/items`.
 - The new `user-personalized` scope. What does it gate? No app-level
   endpoints reference it yet. Worth watching for an actual
   personalization API.

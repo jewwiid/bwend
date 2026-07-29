@@ -34,6 +34,7 @@ export const getById = internalQuery({
   args: { matchId: v.string() },
   returns: v.union(v.null(), v.any()),
   handler: async (ctx, args) => {
-    return await ctx.db.get(args.matchId as any);
+    const matchId = ctx.db.normalizeId("matches", args.matchId);
+    return matchId ? await ctx.db.get(matchId) : null;
   },
 });

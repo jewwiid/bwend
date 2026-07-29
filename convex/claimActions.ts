@@ -90,7 +90,7 @@ export const claim = internalAction({
       .map((t: { name: string }) => t.name);
 
     // Pick the anchor track (best-effort).
-    const anchorTrack = pickAnchorTrack(inviterProfile, inviteeProfile);
+    const anchorTrack = invite.selectedTrack ?? pickAnchorTrack(inviterProfile, inviteeProfile);
 
     // Generate the compatibility read.
     const compatibilityRead = readCompatibility(result.breakdown, sharedArtistNames);

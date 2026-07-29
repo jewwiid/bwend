@@ -8,12 +8,16 @@ import SwiftUI
 // This is the only layer with data density — the payoff after the emotional moment + anchor.
 
 struct RevealDetailView: View {
-    let matchId: UUID
+    let matchId: String
 
     @EnvironmentObject var api: APIClient
     @EnvironmentObject var router: Router
 
     @State private var match: PublicMatch?
+    @State private var discoveryItems: [DiscoveryItem] = []
+    @State private var savingPlaylist = false
+    @State private var savedPlaylistURL: String?
+    @State private var playlistError: String?
 
     var body: some View {
         ZStack {
@@ -54,6 +58,12 @@ struct RevealDetailView: View {
                             )
                         }
 
+                        playlistSection(match)
+
+                        if !discoveryItems.isEmpty {
+                            discoverySection
+                        }
+
                         // CTA.
                         PrimaryButton("Start another blend") {
                             router.reset(to: .start)
@@ -71,6 +81,75 @@ struct RevealDetailView: View {
         .navigationTitle("What makes your vibe")
         .navigationBarTitleDisplayMode(.inline)
         .task { await load() }
+    }
+
+    @ViewBuilder
+    private func playlistSection(_ match: PublicMatch) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            SectionLabel("Take it with you")
+            Text("Save a private mix built from both of your top tracks.")
+                .font(.bwend(size: 14))
+                .foregroundColor(Color.bwendTextSecondary)
+
+            if let urlString = savedPlaylistURL ?? match.savedPlaylistURL,
+               let url = URL(string: urlString) {
+                Link(destination: url) {
+                    Label("Open your Bwend playlist", systemImage: "arrow.up.right")
+                        .font(.bwend(size: 14, weight: .bold))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Capsule().fill(Color.spotify))
+                }
+            } else {
+                PrimaryButton(
+                    "Save to my Spotify",
+                    loading: savingPlaylist,
+                    loadingTitle: "Building playlist…"
+                ) {
+                    Task { await savePlaylist() }
+                }
+            }
+
+            if let playlistError {
+                Text(playlistError)
+                    .font(.bwend(size: 12))
+                    .foregroundStyle(.red)
+            }
+        }
+        .padding(20)
+        .background(Color.bwendBgCard)
+        .cornerRadius(BwendRadius.lg)
+    }
+
+    private var discoverySection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            SectionLabel("Listen next")
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(alignment: .top, spacing: 12) {
+                    ForEach(discoveryItems) { item in
+                        if let urlString = item.spotifyURL, let url = URL(string: urlString) {
+                            Link(destination: url) {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    RemoteArtwork(url: item.imageURL, fallbackSymbol: "music.note")
+                                        .frame(width: 132, height: 132)
+                                        .cornerRadius(BwendRadius.md)
+                                    Text(item.name)
+                                        .font(.bwend(size: 12, weight: .bold))
+                                        .foregroundColor(Color.bwendText)
+                                        .lineLimit(1)
+                                    Text(item.subtitle ?? item.kind.rawValue.capitalized)
+                                        .font(.bwend(size: 11))
+                                        .foregroundColor(Color.bwendTextMuted)
+                                        .lineLimit(1)
+                                }
+                                .frame(width: 132, alignment: .leading)
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // MARK: - Sections
@@ -127,8 +206,28 @@ struct RevealDetailView: View {
 
     @MainActor
     private func load() async {
-        do { match = try await api.fetchMatch(id: matchId) }
-        catch {}
+        async let matchTask = api.fetchMatch(id: matchId)
+        async let discoveryTask = try? api.discovery()
+        do {
+            match = try await matchTask
+            savedPlaylistURL = match?.savedPlaylistURL
+        } catch {}
+        discoveryItems = await discoveryTask ?? []
+    }
+
+    @MainActor
+    private func savePlaylist() async {
+        savingPlaylist = true
+        playlistError = nil
+        defer { savingPlaylist = false }
+        do {
+            let response = try await api.saveMatchPlaylist(id: matchId)
+            savedPlaylistURL = response.spotifyURL
+        } catch let error as APIError {
+            playlistError = error.errorDescription
+        } catch {
+            playlistError = error.localizedDescription
+        }
     }
 }
 
@@ -165,7 +264,7 @@ private struct BreakdownRow: View {
 }
 
 #Preview {
-    RevealDetailView(matchId: UUID())
+    RevealDetailView(matchId: "preview-match")
         .environmentObject(APIClient())
         .environmentObject(Router())
 }

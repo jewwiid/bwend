@@ -16,6 +16,17 @@ import { handleSpotifyConnect } from "./spotifyConnect";
 import { handleMyBlend } from "./blend";
 import { handleCreateInvite, handleFetchInvite, handleClaimInvite } from "./invites";
 import { handleListMatches, handleFetchMatch } from "./matches";
+import {
+  handleDiscovery,
+  handleNowPlaying,
+  handlePlayer,
+  handleSearchTracks,
+} from "./spotifyFeatures";
+import { handleSaveMatchPlaylist } from "./playlists";
+import {
+  handleDisablePushDevice,
+  handleRegisterPushDevice,
+} from "./notifications";
 
 const http = httpRouter();
 
@@ -39,6 +50,42 @@ http.route({
   path: "/api/me/blend",
   method: "GET",
   handler: handleMyBlend,
+});
+
+http.route({
+  path: "/api/me/now-playing",
+  method: "GET",
+  handler: handleNowPlaying,
+});
+
+http.route({
+  path: "/api/me/player",
+  method: "GET",
+  handler: handlePlayer,
+});
+
+http.route({
+  path: "/api/search/tracks",
+  method: "GET",
+  handler: handleSearchTracks,
+});
+
+http.route({
+  path: "/api/discovery",
+  method: "GET",
+  handler: handleDiscovery,
+});
+
+http.route({
+  path: "/api/notifications/device",
+  method: "POST",
+  handler: handleRegisterPushDevice,
+});
+
+http.route({
+  path: "/api/notifications/device/disable",
+  method: "POST",
+  handler: handleDisablePushDevice,
 });
 
 // Invites — create (no dynamic segment).
@@ -77,12 +124,29 @@ http.route({
   handler: handleFetchMatch,
 });
 
+http.route({
+  pathPrefix: "/api/matches/",
+  method: "POST",
+  handler: handleSaveMatchPlaylist,
+});
+
 // CORS preflight. The browser sends OPTIONS before any request carrying an Authorization or
 // Content-Type header, and Convex's router has no middleware layer — so each browser-reachable
 // path needs its own OPTIONS route or the real request never leaves the browser.
 const preflight = httpAction(async (_ctx, request) => preflightResponse(request));
 
-for (const path of ["/api/auth/spotify", "/api/me/blend", "/api/invites", "/api/matches"]) {
+for (const path of [
+  "/api/auth/spotify",
+  "/api/me/blend",
+  "/api/me/now-playing",
+  "/api/me/player",
+  "/api/search/tracks",
+  "/api/discovery",
+  "/api/notifications/device",
+  "/api/notifications/device/disable",
+  "/api/invites",
+  "/api/matches",
+]) {
   http.route({ path, method: "OPTIONS", handler: preflight });
 }
 for (const pathPrefix of ["/api/invites/", "/api/matches/"]) {
