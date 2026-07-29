@@ -49,15 +49,18 @@ struct SpotifyConnectView: View {
 
                 VStack(spacing: 12) {
                     Toggle(isOn: $privacyConsentGranted) {
-                        Text("I agree to Bwend using my Spotify listening data only to create private Taste Cards and blends I choose to share.")
+                        Text("I agree to the Beta Terms and consent to Bwend using my Spotify listening data only for private Taste Cards and blends I choose to share.")
                             .font(.bwend(size: 12))
                             .foregroundColor(Color.bwendTextSecondary)
                             .lineSpacing(3)
                     }
                     .toggleStyle(.switch)
 
-                    Button("Read the privacy notice") {
-                        showingPrivacyNotice = true
+                    HStack(spacing: 18) {
+                        Button("Privacy notice") {
+                            showingPrivacyNotice = true
+                        }
+                        Link("Beta Terms", destination: URL(string: "https://www.bwend.xyz/terms")!)
                     }
                     .font(.bwend(size: 12, weight: .medium))
                     .foregroundColor(Color.Accent.cta)
@@ -109,7 +112,8 @@ struct SpotifyConnectView: View {
             let response = try await api.connectSpotify(
                 code: result.code,
                 codeVerifier: result.codeVerifier,
-                privacyConsentVersion: Self.privacyVersion
+                privacyConsentVersion: Self.privacyVersion,
+                termsVersion: APIClient.termsVersion
             )
             try await auth.applySession(token: response.token, displayName: response.displayName)
 

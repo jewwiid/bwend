@@ -78,7 +78,9 @@ export function PrivacyPage() {
             <Link to="/blend" className="font-semibold text-[var(--color-accent-cta)] hover:underline">
               Your blend
             </Link>
-            .
+            . You can also read the current <Link to="/terms" className="font-semibold text-[var(--color-accent-cta)] hover:underline">
+              Beta Terms
+            </Link>.
           </p>
         </div>
       </article>

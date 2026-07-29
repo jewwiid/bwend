@@ -1058,6 +1058,7 @@ function Footer() {
           <div className="flex items-center gap-8 text-[0.625rem] font-bold uppercase tracking-[0.3em] text-[var(--color-text-muted)]">
             <span>© {new Date().getFullYear()} Bwend</span>
             <a href="/privacy">Privacy</a>
+            <a href="/terms">Terms</a>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-[0.625rem] font-bold uppercase tracking-[0.3em] text-[var(--color-text-muted)]">A product of</span>

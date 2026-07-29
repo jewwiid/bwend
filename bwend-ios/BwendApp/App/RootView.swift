@@ -43,6 +43,8 @@ struct RootView: View {
             ShareView(inviteCode: code)
         case .trackInviteSearch:
             TrackInviteSearchView()
+        case .inviteManagement:
+            InviteManagementView()
         case .accountPrivacy:
             AccountPrivacyView()
         case .invitePreview(let code):

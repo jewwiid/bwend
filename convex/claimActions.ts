@@ -95,33 +95,38 @@ export const claim = internalAction({
     // Generate the compatibility read.
     const compatibilityRead = readCompatibility(result.breakdown, sharedArtistNames);
 
-    // Insert the match.
+    // Atomically consume the invite and insert the match. A second simultaneous claimer loses
+    // the transaction instead of creating a duplicate match.
     const now = Date.now();
-    const matchId: string = await ctx.runMutation(internal.matchMutations.create, {
+    const finalization = await ctx.runMutation(internal.matchMutations.finalizeClaim, {
       inviteId: invite._id,
-      userASpotifyUserId: invite.inviterSpotifyUserId,
-      userBSpotifyUserId: args.claimerSpotifyUserId,
+      claimerSpotifyUserId: args.claimerSpotifyUserId,
       vibeScore: result.score,
       breakdown: result.breakdown,
       anchorTrack,
       sharedTopArtistNames: sharedArtistNames,
       sharedTopTrackNames: sharedTrackNames,
       compatibilityRead,
-      createdAt: now,
-    });
-
-    // Mark invite as claimed.
-    await ctx.runMutation(internal.inviteMutations.markClaimed, {
-      inviteId: invite._id,
-      inviteeSpotifyUserId: args.claimerSpotifyUserId,
       claimedAt: now,
     });
+    if (finalization.outcome === "not_found") {
+      return { status: 404, error: "Invite not found.", data: null };
+    }
+    if (finalization.outcome === "expired") {
+      return { status: 410, error: "This invite has expired.", data: null };
+    }
+    if (finalization.outcome === "own_invite") {
+      return { status: 400, error: "Can't claim your own invite.", data: null };
+    }
+    if (finalization.outcome === "not_claimable") {
+      return { status: 409, error: "This invite is no longer claimable.", data: null };
+    }
 
     return {
       status: 200,
       error: null,
       data: {
-        matchId,
+        matchId: finalization.matchId,
         vibeScore: result.score,
         breakdown: result.breakdown,
       },

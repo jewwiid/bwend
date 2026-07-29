@@ -61,6 +61,8 @@ export default defineSchema({
     identityVersion: v.optional(v.number()),
     privacyConsentVersion: v.optional(v.string()),
     privacyConsentedAt: v.optional(v.number()),
+    termsVersion: v.optional(v.string()),
+    termsAcceptedAt: v.optional(v.number()),
     disconnectedAt: v.optional(v.union(v.number(), v.null())),
     createdAt: v.number(),
     updatedAt: v.number(),
@@ -206,6 +208,7 @@ export default defineSchema({
     compatibilityRead: v.string(),
     createdAt: v.number(),
   })
+    .index("by_invite_id", ["inviteId"])
     .index("by_user_a", ["userASpotifyUserId"])
     .index("by_user_b", ["userBSpotifyUserId"]),
 

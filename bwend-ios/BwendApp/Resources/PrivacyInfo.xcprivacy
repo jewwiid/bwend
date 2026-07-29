@@ -30,11 +30,11 @@
             </array>
         </dict>
 
-        <!-- Audio data — the user's top tracks / artists / audio features, fetched from Spotify
-             with their explicit consent. Used to compute the Vibe Score and Bwend Blend. -->
+        <!-- Product interaction — Spotify listening/activity data such as ranked top tracks and
+             artists. This is not a voice or sound recording. Used only for app functionality. -->
         <dict>
             <key>NSPrivacyCollectedDataType</key>
-            <string>NSPrivacyCollectedDataTypeAudioData</string>
+            <string>NSPrivacyCollectedDataTypeProductInteraction</string>
             <key>NSPrivacyCollectedDataTypeLinked</key>
             <true/>
             <key>NSPrivacyCollectedDataTypeTracking</key>

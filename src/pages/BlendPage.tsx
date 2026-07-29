@@ -23,6 +23,7 @@ import {
 } from '../lib/api';
 import { AppShell, SectionLabel, Artwork, Spinner, ErrorCard } from '../components/AppShell';
 import { ListeningPortraitSection } from '../components/ListeningPortraitSection';
+import { InvitesSection } from '../components/InvitesSection';
 
 const RANGES: { value: TimeRange; label: string }[] = [
   { value: 'short_term', label: 'Last month' },
@@ -41,6 +42,7 @@ export function BlendPage() {
   const [inviteUrl, setInviteUrl] = useState<string | null>(null);
   const [creatingInvite, setCreatingInvite] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [inviteRefreshKey, setInviteRefreshKey] = useState(0);
   const [privacyBusy, setPrivacyBusy] = useState(false);
 
   const session = loadSession();
@@ -90,6 +92,7 @@ export function BlendPage() {
     try {
       const response = await createInvite();
       setInviteUrl(response.url);
+      setInviteRefreshKey((value) => value + 1);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not create an invite.');
     } finally {
@@ -203,6 +206,10 @@ export function BlendPage() {
             {creatingInvite ? 'Creating…' : 'Create invite link'}
           </button>
         )}
+      </div>
+
+      <div className="mb-10">
+        <InvitesSection refreshKey={inviteRefreshKey} />
       </div>
 
       {/* Time range */}

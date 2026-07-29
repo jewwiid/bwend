@@ -14,7 +14,13 @@ import { httpAction } from "./_generated/server";
 import { preflightResponse } from "./auth";
 import { handleSpotifyConnect } from "./spotifyConnect";
 import { handleMyBlend } from "./blend";
-import { handleCreateInvite, handleFetchInvite, handleClaimInvite } from "./invites";
+import {
+  handleCancelInvite,
+  handleClaimInvite,
+  handleCreateInvite,
+  handleFetchInvite,
+  handleListInvites,
+} from "./invites";
 import { handleListMatches, handleFetchMatch } from "./matches";
 import {
   handleDiscovery,
@@ -137,6 +143,12 @@ http.route({
 // Invites — create (no dynamic segment).
 http.route({
   path: "/api/invites",
+  method: "GET",
+  handler: handleListInvites,
+});
+
+http.route({
+  path: "/api/invites",
   method: "POST",
   handler: handleCreateInvite,
 });
@@ -154,6 +166,12 @@ http.route({
   pathPrefix: "/api/invites/",
   method: "POST",
   handler: handleClaimInvite,
+});
+
+http.route({
+  pathPrefix: "/api/invites/",
+  method: "DELETE",
+  handler: handleCancelInvite,
 });
 
 // Matches — list (no dynamic segment).

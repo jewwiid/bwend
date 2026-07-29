@@ -45,6 +45,7 @@ APNs delivery additionally needs `APNS_KEY_ID`, `APNS_TEAM_ID`, and `APNS_PRIVAT
 ```bash
 npm run lint
 npm run build
+npm test
 npx tsc --noEmit
 npx convex dev --once
 npx convex run privacyActions:selfCheck '{}'
@@ -53,8 +54,8 @@ npx convex run listeningPortrait:selfCheck '{}'
 cd bwend-ios
 xcodegen generate
 xcodebuild -project Bwend.xcodeproj -scheme Bwend \
-  -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
-  CODE_SIGNING_ALLOWED=NO build
+  -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  CODE_SIGNING_ALLOWED=NO test
 ```
 
 ## Product routes

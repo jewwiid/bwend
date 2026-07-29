@@ -4,6 +4,9 @@ import UserNotifications
 @MainActor
 final class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterDelegate {
     static let shared = NotificationManager()
+    static var isAvailable: Bool {
+        Bundle.main.object(forInfoDictionaryKey: "BWEND_NOTIFICATIONS_ENABLED") as? Bool ?? false
+    }
 
     @Published private(set) var authorizationStatus: UNAuthorizationStatus = .notDetermined
     @Published private(set) var dailyBlendsEnabled: Bool
@@ -17,13 +20,19 @@ final class NotificationManager: NSObject, ObservableObject, UNUserNotificationC
     private static let enabledKey = "bwend.notifications.daily.enabled"
 
     private override init() {
-        dailyBlendsEnabled = UserDefaults.standard.bool(forKey: Self.enabledKey)
+        dailyBlendsEnabled = Self.isAvailable
+            && UserDefaults.standard.bool(forKey: Self.enabledKey)
         super.init()
     }
 
     func configure(api: APIClient, router: Router) {
         self.api = api
         self.router = router
+        guard Self.isAvailable else {
+            dailyBlendsEnabled = false
+            UserDefaults.standard.removeObject(forKey: Self.enabledKey)
+            return
+        }
 
         if let pendingMatchID {
             router.route(to: .revealMoment(matchId: pendingMatchID))
@@ -39,6 +48,7 @@ final class NotificationManager: NSObject, ObservableObject, UNUserNotificationC
     }
 
     func enableDailyBlends() async -> Bool {
+        guard Self.isAvailable else { return false }
         let center = UNUserNotificationCenter.current()
         let settings = await center.notificationSettings()
         let granted: Bool

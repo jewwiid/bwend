@@ -22,7 +22,7 @@ struct WelcomeView: View {
                                 .interpolation(.high)
                                 .frame(width: 32, height: 32)
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
-                            Text("Pre-launch. Gathering interest.")
+                            Text("Private beta.")
                                 .font(.bwend(size: 11, weight: .medium))
                                 .foregroundColor(Color.bwendTextMuted)
                                 .tracking(3)

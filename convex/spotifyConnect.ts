@@ -7,7 +7,7 @@
 import { httpAction } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { corsHeaders } from "./auth";
-import { CURRENT_PRIVACY_VERSION } from "./lib/privacyConstants";
+import { CURRENT_PRIVACY_VERSION, CURRENT_TERMS_VERSION } from "./lib/privacyConstants";
 
 // Local helper rather than auth.ts's jsonResponse: this module deliberately avoids importing
 // the JWT verification path, since connect is the endpoint that issues the session in the
@@ -26,6 +26,8 @@ export const handleSpotifyConnect = httpAction(async (ctx, request) => {
     redirectUri?: string;
     privacyConsentVersion?: string;
     privacyConsentGranted?: boolean;
+    termsVersion?: string;
+    termsAccepted?: boolean;
   };
   try {
     body = await request.json();
@@ -52,6 +54,17 @@ export const handleSpotifyConnect = httpAction(async (ctx, request) => {
       request
     );
   }
+  if (body.termsAccepted !== true || body.termsVersion !== CURRENT_TERMS_VERSION) {
+    return json(
+      400,
+      {
+        reason: "Review and accept the current Bwend Beta Terms before connecting Spotify.",
+        code: "terms_acceptance_required",
+        termsVersion: CURRENT_TERMS_VERSION,
+      },
+      request
+    );
+  }
 
   try {
     const result: any = await ctx.runAction(internal.spotifyActions.connect, {
@@ -60,12 +73,14 @@ export const handleSpotifyConnect = httpAction(async (ctx, request) => {
       // Omitted by older iOS builds; the action falls back to the default (iOS) URI.
       redirectUri: body.redirectUri,
       privacyConsentVersion: body.privacyConsentVersion,
+      termsVersion: body.termsVersion,
     });
     if (result.error) {
       return json(result.status, { reason: result.error }, request);
     }
     return json(200, result.data, request);
   } catch (e) {
-    return json(500, { reason: `Connect failed: ${(e as Error).message}` }, request);
+    console.error("Spotify connect failed", e);
+    return json(500, { reason: "Couldn't connect Spotify right now. Please try again." }, request);
   }
 });

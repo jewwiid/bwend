@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  web-and-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+      - run: npm test
+
+  ios:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate the Xcode project
+        working-directory: bwend-ios
+        run: xcodegen generate
+      - name: Select an available iPhone simulator
+        id: simulator
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          import subprocess
+
+          runtimes = json.loads(
+              subprocess.check_output(
+                  ["xcrun", "simctl", "list", "devices", "available", "-j"],
+                  text=True,
+              )
+          )["devices"]
+          for devices in runtimes.values():
+              for device in devices:
+                  if device["name"].startswith("iPhone"):
+                      print(f"udid={device['udid']}")
+                      raise SystemExit
+          raise SystemExit("No available iPhone simulator")
+          PY
+      - name: Run iPhone tests
+        working-directory: bwend-ios
+        run: >-
+          xcodebuild
+          -project Bwend.xcodeproj
+          -scheme Bwend
+          -sdk iphonesimulator
+          -destination "platform=iOS Simulator,id=${{ steps.simulator.outputs.udid }}"
+          CODE_SIGNING_ALLOWED=NO
+          test

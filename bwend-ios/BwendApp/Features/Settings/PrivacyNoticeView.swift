@@ -39,6 +39,10 @@ struct PrivacyNoticeView: View {
                     Text("Privacy notice version \(SpotifyConnectView.privacyVersion)")
                         .font(.bwend(size: 11))
                         .foregroundColor(Color.bwendTextMuted)
+
+                    Link("Read the Beta Terms", destination: URL(string: "https://www.bwend.xyz/terms")!)
+                        .font(.bwend(size: 13, weight: .bold))
+                        .foregroundColor(Color.Accent.cta)
                 }
                 .padding(24)
             }

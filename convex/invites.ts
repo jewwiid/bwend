@@ -47,6 +47,30 @@ export const handleCreateInvite = httpAction(async (ctx, request) => {
   }, request);
 });
 
+// MARK: List sent invites
+
+export const handleListInvites = httpAction(async (ctx, request) => {
+  const authResult = await requireAuth(request);
+  if (authResult instanceof Response) return authResult;
+
+  const invites = await ctx.runQuery(internal.inviteQueries.listByInviter, {
+    spotifyUserId: authResult.spotifyUserId,
+  });
+  const publicBaseURL = process.env.PUBLIC_BASE_URL ?? "https://www.bwend.xyz";
+
+  return jsonResponse(
+    200,
+    invites.map((invite) => ({
+      ...invite,
+      url: `${publicBaseURL}/m/${invite.code}`,
+      createdAt: new Date(invite.createdAt).toISOString(),
+      claimedAt: invite.claimedAt ? new Date(invite.claimedAt).toISOString() : null,
+      expiresAt: new Date(invite.expiresAt).toISOString(),
+    })),
+    request
+  );
+});
+
 // MARK: Fetch (recipient preview)
 
 export const handleFetchInvite = httpAction(async (ctx, request) => {
@@ -118,8 +142,31 @@ export const handleClaimInvite = httpAction(async (ctx, request) => {
     }
     return jsonResponse(200, result.data, request);
   } catch (e) {
-    return jsonResponse(500, { reason: `Claim failed: ${(e as Error).message}` }, request);
+    console.error("Invite claim failed", e);
+    return jsonResponse(500, { reason: "Couldn't claim this invite right now. Please try again." }, request);
   }
+});
+
+// MARK: Cancel
+
+export const handleCancelInvite = httpAction(async (ctx, request) => {
+  const authResult = await requireAuth(request);
+  if (authResult instanceof Response) return authResult;
+
+  const code = extractLastPathSegment(request.url);
+  if (!code) return jsonResponse(400, { reason: "Missing invite code." }, request);
+
+  const result = await ctx.runMutation(internal.inviteMutations.cancelPending, {
+    code,
+    inviterSpotifyUserId: authResult.spotifyUserId,
+  });
+  if (result.outcome === "not_found") {
+    return jsonResponse(404, { reason: "Invite not found." }, request);
+  }
+  if (result.outcome === "already_claimed") {
+    return jsonResponse(409, { reason: "A claimed invite can't be cancelled." }, request);
+  }
+  return jsonResponse(200, { ok: true, cancelled: true }, request);
 });
 
 // MARK: - Helpers

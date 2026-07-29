@@ -74,6 +74,7 @@ private struct ServerReason: Decodable {
 @MainActor
 final class APIClient: ObservableObject {
     static let listeningPortraitConsentVersion = "2026-07-29.ai-portrait.v1"
+    static let termsVersion = "2026-07-29.beta-v1"
 
     /// Base URL. Configure via Info.plist `BWEND_API_URL` or default to local dev.
     static let baseURL = Bundle.main.object(forInfoDictionaryKey: "BWEND_API_URL") as? String
@@ -100,7 +101,8 @@ final class APIClient: ObservableObject {
     func connectSpotify(
         code: String,
         codeVerifier: String,
-        privacyConsentVersion: String
+        privacyConsentVersion: String,
+        termsVersion: String
     ) async throws -> SpotifyConnectResponse {
         try await post(
             "/auth/spotify",
@@ -109,6 +111,8 @@ final class APIClient: ObservableObject {
                 "codeVerifier": codeVerifier,
                 "privacyConsentVersion": privacyConsentVersion,
                 "privacyConsentGranted": true,
+                "termsVersion": termsVersion,
+                "termsAccepted": true,
             ],
             authed: false
         )
@@ -188,6 +192,11 @@ final class APIClient: ObservableObject {
         return try await post("/invites", body: body, authed: true)
     }
 
+    /// GET /invites — sent links, newest first, including pending and completed states.
+    func myInvites() async throws -> [InviteSummary] {
+        try await get("/invites")
+    }
+
     /// GET /invites/{code}
     func fetchInvite(code: String) async throws -> InvitePreview {
         try await get("/invites/\(code)")
@@ -196,6 +205,11 @@ final class APIClient: ObservableObject {
     /// POST /invites/{code}/claim
     func claimInvite(code: String) async throws -> ClaimResponse {
         try await post("/invites/\(code)/claim", body: [:], authed: true)
+    }
+
+    /// DELETE /invites/{code} — revoke an unused link immediately.
+    func cancelInvite(code: String) async throws -> CancelInviteResponse {
+        try await perform("DELETE", "/invites/\(code)", body: nil, authed: true)
     }
 
     /// GET /matches/{id}

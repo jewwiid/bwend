@@ -21,7 +21,7 @@ import {
 import { buildTasteProfile, describeSignals } from "./lib/vibeScore";
 import { issueSession } from "./lib/jwt";
 import { privateAlias, pseudonymousUserId } from "./lib/privacy";
-import { CURRENT_PRIVACY_VERSION } from "./lib/privacyConstants";
+import { CURRENT_PRIVACY_VERSION, CURRENT_TERMS_VERSION } from "./lib/privacyConstants";
 
 /**
  * Redirect URIs this backend will complete a token exchange for.
@@ -52,6 +52,7 @@ export const connect = internalAction({
     // Optional: older app builds don't send it and get the default (iOS) URI.
     redirectUri: v.optional(v.string()),
     privacyConsentVersion: v.string(),
+    termsVersion: v.string(),
   },
   returns: v.any(),
   handler: async (ctx, args) => {
@@ -73,6 +74,9 @@ export const connect = internalAction({
     }
     if (args.privacyConsentVersion !== CURRENT_PRIVACY_VERSION) {
       return { status: 400, error: "The privacy notice has changed. Review it again.", data: null };
+    }
+    if (args.termsVersion !== CURRENT_TERMS_VERSION) {
+      return { status: 400, error: "The Beta Terms have changed. Review them again.", data: null };
     }
 
     // 1. Exchange the auth code for tokens (PKCE — verifier must match the challenge).
@@ -136,6 +140,8 @@ export const connect = internalAction({
         spotifyTokenBlob: tokenBlob,
         privacyConsentVersion: args.privacyConsentVersion,
         privacyConsentedAt: Date.now(),
+        termsVersion: args.termsVersion,
+        termsAcceptedAt: Date.now(),
       });
 
       // 4. Mint the session JWT.

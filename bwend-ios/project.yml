@@ -63,6 +63,7 @@ targets:
           UIApplicationSupportsMultipleScenes: false
         SPOTIFY_CLIENT_ID: 593e4f5104c8411885d53b88223f3db2
         BWEND_API_URL: https://helpful-owl-232.eu-west-1.convex.site/api
+        BWEND_NOTIFICATIONS_ENABLED: false
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.bwend.app
@@ -71,3 +72,15 @@ targets:
         TARGETED_DEVICE_FAMILY: "1,2"
         IPHONEOS_DEPLOYMENT_TARGET: "17.0"
         CODE_SIGN_ENTITLEMENTS: BwendApp/Bwend.entitlements
+
+  BwendTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: BwendTests
+    dependencies:
+      - target: Bwend
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: "YES"

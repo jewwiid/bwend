@@ -10,6 +10,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   consumeCallback,
   CURRENT_PRIVACY_VERSION,
+  CURRENT_TERMS_VERSION,
   redirectUri,
 } from '../lib/spotifyAuth';
 import { connectSpotify, saveSession } from '../lib/api';
@@ -36,6 +37,7 @@ export function CallbackPage() {
           codeVerifier,
           redirectUri(),
           CURRENT_PRIVACY_VERSION,
+          CURRENT_TERMS_VERSION,
         );
         saveSession({
           token: response.token,

@@ -45,13 +45,17 @@ struct StartView: View {
                     }
                     .buttonStyle(.plain)
 
+                    inviteManagementCard
+
                     if !pastMatches.isEmpty {
                         historySection
                     }
 
                     accountSection
 
-                    notificationSection
+                    if NotificationManager.isAvailable {
+                        notificationSection
+                    }
 
                     Spacer(minLength: 40)
                 }
@@ -66,6 +70,42 @@ struct StartView: View {
             // loaded artists would otherwise never get the preview strip.
             if pastMatches.isEmpty || blendPreview.isEmpty { await load() }
         }
+    }
+
+    @ViewBuilder
+    private var inviteManagementCard: some View {
+        Button {
+            router.route(to: .inviteManagement)
+        } label: {
+            HStack(spacing: 14) {
+                Image(systemName: "link.badge.plus")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(Color.Accent.cta)
+                    .frame(width: 42, height: 42)
+                    .background(Circle().fill(Color.Accent.peach.opacity(0.18)))
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Your invites")
+                        .font(.bwend(size: 15, weight: .bold))
+                        .foregroundColor(Color.bwendText)
+                    Text("Reshare pending links or return to completed blends.")
+                        .font(.bwend(size: 12))
+                        .foregroundColor(Color.bwendTextSecondary)
+                        .multilineTextAlignment(.leading)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(Color.bwendTextMuted)
+            }
+            .padding(18)
+            .background(Color.bwendBgCard)
+            .cornerRadius(BwendRadius.lg)
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("inviteManagementCard")
     }
 
     // MARK: - Sections

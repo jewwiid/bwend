@@ -3,7 +3,7 @@
  * that need to read/write profile data. Not exposed via HTTP directly.
  */
 
-import { internalMutation, query } from "./_generated/server";
+import { internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 
 /**
@@ -19,6 +19,8 @@ export const upsert = internalMutation({
     spotifyTokenBlob: v.string(),
     privacyConsentVersion: v.string(),
     privacyConsentedAt: v.number(),
+    termsVersion: v.string(),
+    termsAcceptedAt: v.number(),
   },
   returns: v.id("bwendProfiles"),
   handler: async (ctx, args) => {
@@ -39,6 +41,8 @@ export const upsert = internalMutation({
         identityVersion: 1,
         privacyConsentVersion: args.privacyConsentVersion,
         privacyConsentedAt: args.privacyConsentedAt,
+        termsVersion: args.termsVersion,
+        termsAcceptedAt: args.termsAcceptedAt,
         disconnectedAt: null,
         updatedAt: now,
       });
@@ -55,6 +59,8 @@ export const upsert = internalMutation({
       identityVersion: 1,
       privacyConsentVersion: args.privacyConsentVersion,
       privacyConsentedAt: args.privacyConsentedAt,
+      termsVersion: args.termsVersion,
+      termsAcceptedAt: args.termsAcceptedAt,
       disconnectedAt: null,
       createdAt: now,
       updatedAt: now,
@@ -199,19 +205,5 @@ export const updateTokenBlob = internalMutation({
       updatedAt: Date.now(),
     });
     return null;
-  },
-});
-
-/**
- * Internal query — fetch a profile by spotifyUserId.
- */
-export const getBySpotifyUserId = query({
-  args: { spotifyUserId: v.string() },
-  returns: v.union(v.null(), v.any()),
-  handler: async (ctx, args) => {
-    return await ctx.db
-      .query("bwendProfiles")
-      .withIndex("by_spotify_user_id", (q) => q.eq("spotifyUserId", args.spotifyUserId))
-      .first();
   },
 });

@@ -27,7 +27,9 @@
 		9AAA897D9FA552CC5658EFA7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4D81F1C10E76687F7DEA9C02 /* Assets.xcassets */; };
 		A6F58EE3EFDCF57A99C93D74 /* SpotifyConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AEF1B8D1B46BE07692B2F28 /* SpotifyConnectView.swift */; };
 		A946DD6F0EACF2926EF863C6 /* SpotifyAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D603CB038EB622AE5CE5259 /* SpotifyAuth.swift */; };
+		B2D76CB1B8A2F1B48AC1C33C /* InviteManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6EB0F63D709E8EAF3253E71 /* InviteManagementView.swift */; };
 		B340C98577B56DD5B075E4C7 /* bwend-logo.svg in Resources */ = {isa = PBXBuildFile; fileRef = 55D26C219CEDE43284B71B1D /* bwend-logo.svg */; };
+		B9955C7649DA364F56C3B54D /* InviteSummaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBA178CEE03782D7AC7A5214 /* InviteSummaryTests.swift */; };
 		CD53CDFFAF28E09D861E7EDC /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23ABE35647D986E734FDB88 /* Theme.swift */; };
 		D606EF0928D05E3EA70CE3DE /* bwend-logo-1024.png in Resources */ = {isa = PBXBuildFile; fileRef = B33D96DF1BC9169F037B27FA /* bwend-logo-1024.png */; };
 		DE98583371F32DE5F2345915 /* ShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40233528AF8B98FAAEE4718F /* ShareView.swift */; };
@@ -36,12 +38,23 @@
 		FCC3C599CBECCD9EDB55EC62 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867F21DDDAA2AFB9EAB89885 /* StartView.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		785639F38F90473B3CE25AB1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 862DE4DE8987BC08B07F07F9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1890BE6DF7CFC8B6B82CB2E;
+			remoteInfo = Bwend;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		0659A046F571A808F7E0104E /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		071FC51FD4479EF0DABF2A26 /* BlendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlendView.swift; sourceTree = "<group>"; };
 		136083DF882F1AB93930FA03 /* PrivacyNoticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyNoticeView.swift; sourceTree = "<group>"; };
 		283ED7C0F09C428FEA2E4316 /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
 		298B63660F8F6D836EB68802 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		2B07B450608D19DFFE69FA38 /* BwendTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BwendTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		40233528AF8B98FAAEE4718F /* ShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareView.swift; sourceTree = "<group>"; };
 		4391CCDA57470052AA938A62 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		4A1C7D43E6118B5461A9E9A1 /* ListeningPortraitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListeningPortraitView.swift; sourceTree = "<group>"; };
@@ -65,8 +78,10 @@
 		DDE1C0C155F9ED6090EC3100 /* RevealDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevealDetailView.swift; sourceTree = "<group>"; };
 		DF348730622C969F5B833679 /* AccountPrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountPrivacyView.swift; sourceTree = "<group>"; };
 		E696CA0D1D6AA2202E5148AF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		E6EB0F63D709E8EAF3253E71 /* InviteManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteManagementView.swift; sourceTree = "<group>"; };
 		EA0EC9B334EEA20C7A58E1C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		F23ABE35647D986E734FDB88 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		FBA178CEE03782D7AC7A5214 /* InviteSummaryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteSummaryTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -108,6 +123,14 @@
 			path = Blend;
 			sourceTree = "<group>";
 		};
+		233507B59DBADCC7E8335AC3 /* BwendTests */ = {
+			isa = PBXGroup;
+			children = (
+				FBA178CEE03782D7AC7A5214 /* InviteSummaryTests.swift */,
+			);
+			path = BwendTests;
+			sourceTree = "<group>";
+		};
 		4DF5253EF100D3EEC07E1BFB /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
@@ -129,6 +152,7 @@
 			isa = PBXGroup;
 			children = (
 				7D1694689E068C35CA9D2B01 /* BwendApp */,
+				233507B59DBADCC7E8335AC3 /* BwendTests */,
 				76933381209B1E8627C22FA5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -137,6 +161,7 @@
 			isa = PBXGroup;
 			children = (
 				572850A0A6CCA108A204679E /* Bwend.app */,
+				2B07B450608D19DFFE69FA38 /* BwendTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -233,6 +258,7 @@
 		F74EA183910B1F17B626DA0C /* Share */ = {
 			isa = PBXGroup;
 			children = (
+				E6EB0F63D709E8EAF3253E71 /* InviteManagementView.swift */,
 				40233528AF8B98FAAEE4718F /* ShareView.swift */,
 				85A2A6142EAAAD726A029E1A /* TrackInviteSearchView.swift */,
 			);
@@ -261,6 +287,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		9DFC9B20AE9E5B88B0C18DD5 /* BwendTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6EA18CBF1C900D67965BE901 /* Build configuration list for PBXNativeTarget "BwendTests" */;
+			buildPhases = (
+				A9BFEC46AD77B14E85DCC921 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				55DFF305A71F83CEFA5FAB3B /* PBXTargetDependency */,
+			);
+			name = BwendTests;
+			packageProductDependencies = (
+			);
+			productName = BwendTests;
+			productReference = 2B07B450608D19DFFE69FA38 /* BwendTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		E1890BE6DF7CFC8B6B82CB2E /* Bwend */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6406C8D28EE9C6B85BBCBDEF /* Build configuration list for PBXNativeTarget "Bwend" */;
@@ -288,6 +332,9 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					9DFC9B20AE9E5B88B0C18DD5 = {
+						DevelopmentTeam = 7JSY6J5R99;
+					};
 					E1890BE6DF7CFC8B6B82CB2E = {
 						DevelopmentTeam = 7JSY6J5R99;
 					};
@@ -308,6 +355,7 @@
 			projectRoot = "";
 			targets = (
 				E1890BE6DF7CFC8B6B82CB2E /* Bwend */,
+				9DFC9B20AE9E5B88B0C18DD5 /* BwendTests */,
 			);
 		};
 /* End PBXProject section */
@@ -327,6 +375,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		A9BFEC46AD77B14E85DCC921 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B9955C7649DA364F56C3B54D /* InviteSummaryTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B896102C3EB0ACBDFD629808 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -337,6 +393,7 @@
 				461224A4BAEF211A815AA0CF /* BlendView.swift in Sources */,
 				2F6EF0132F7493A018D64407 /* BwendApp.swift in Sources */,
 				5CD3B43407137C00C05B4AAA /* Components.swift in Sources */,
+				B2D76CB1B8A2F1B48AC1C33C /* InviteManagementView.swift in Sources */,
 				2B2A567EDCE9C2D07A7D8CD3 /* ListeningPortraitView.swift in Sources */,
 				8B538553380D9E13C6990021 /* Models.swift in Sources */,
 				01F48590B2E50AD4703A272F /* NotificationManager.swift in Sources */,
@@ -358,6 +415,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		55DFF305A71F83CEFA5FAB3B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1890BE6DF7CFC8B6B82CB2E /* Bwend */;
+			targetProxy = 785639F38F90473B3CE25AB1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		2AFE95B73B464C1C6D6323E1 /* Debug */ = {
@@ -457,6 +522,24 @@
 			};
 			name = Release;
 		};
+		763F96F5C2D2054EBEDEDE1A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.bwend.BwendTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Bwend.app/Bwend";
+			};
+			name = Release;
+		};
 		862E306C7EC3A5817AEA4FC9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -525,6 +608,24 @@
 			};
 			name = Debug;
 		};
+		B4B7573C06178BD4B06ED06C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.bwend.BwendTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Bwend.app/Bwend";
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -533,6 +634,15 @@
 			buildConfigurations = (
 				2AFE95B73B464C1C6D6323E1 /* Debug */,
 				639C7786455B9CD28636A883 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6EA18CBF1C900D67965BE901 /* Build configuration list for PBXNativeTarget "BwendTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B4B7573C06178BD4B06ED06C /* Debug */,
+				763F96F5C2D2054EBEDEDE1A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

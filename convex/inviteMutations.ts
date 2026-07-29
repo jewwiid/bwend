@@ -66,3 +66,36 @@ export const markClaimed = internalMutation({
     });
   },
 });
+
+/**
+ * Revoke an unused invite. Deleting the row makes the shared URL stop working immediately and
+ * avoids retaining a cancelled connection attempt.
+ */
+export const cancelPending = internalMutation({
+  args: {
+    code: v.string(),
+    inviterSpotifyUserId: v.string(),
+  },
+  returns: v.union(
+    v.object({ outcome: v.literal("cancelled") }),
+    v.object({ outcome: v.literal("not_found") }),
+    v.object({ outcome: v.literal("already_claimed") })
+  ),
+  handler: async (ctx, args) => {
+    const invite = await ctx.db
+      .query("invites")
+      .withIndex("by_code", (q) => q.eq("code", args.code))
+      .first();
+
+    // Treat another user's code as absent so this endpoint does not reveal ownership.
+    if (!invite || invite.inviterSpotifyUserId !== args.inviterSpotifyUserId) {
+      return { outcome: "not_found" as const };
+    }
+    if (invite.status === "claimed") {
+      return { outcome: "already_claimed" as const };
+    }
+
+    await ctx.db.delete(invite._id);
+    return { outcome: "cancelled" as const };
+  },
+});

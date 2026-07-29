@@ -143,6 +143,20 @@ export interface CreateInviteResponse {
   expiresAt: string;
 }
 
+export type InviteStatus = "pending" | "claimed" | "expired";
+
+export interface InviteSummary {
+  code: string;
+  url: string;
+  status: InviteStatus;
+  selectedTrack: AnchorTrack | null;
+  createdAt: string;
+  claimedAt: string | null;
+  expiresAt: string;
+  matchId: string | null;
+  partnerName: string | null;
+}
+
 export interface MatchSummary {
   id: string;
   partnerName: string | null;
@@ -256,6 +270,7 @@ export function connectSpotify(
   codeVerifier: string,
   redirectUri: string,
   privacyConsentVersion: string,
+  termsVersion: string,
 ): Promise<SpotifyConnectResponse> {
   return request(
     "/auth/spotify",
@@ -267,6 +282,8 @@ export function connectSpotify(
         redirectUri,
         privacyConsentVersion,
         privacyConsentGranted: true,
+        termsVersion,
+        termsAccepted: true,
       }),
     },
     false,
@@ -315,8 +332,16 @@ export function createInvite(selectedTrack?: BlendTrack): Promise<CreateInviteRe
   });
 }
 
+export function myInvites(): Promise<InviteSummary[]> {
+  return request("/invites");
+}
+
 export function fetchInvite(code: string): Promise<InvitePreview> {
   return request(`/invites/${encodeURIComponent(code)}`);
+}
+
+export function cancelInvite(code: string): Promise<{ ok: boolean; cancelled: boolean }> {
+  return request(`/invites/${encodeURIComponent(code)}`, { method: "DELETE" });
 }
 
 export function claimInvite(code: string): Promise<ClaimResponse> {

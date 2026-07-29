@@ -17,8 +17,8 @@ For a signing-free simulator check:
 
 ```bash
 xcodebuild -project Bwend.xcodeproj -scheme Bwend \
-  -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
-  CODE_SIGNING_ALLOWED=NO build
+  -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  CODE_SIGNING_ALLOWED=NO test
 ```
 
 `project.yml` is the source of truth. It configures bundle ID `com.bwend.app`, Apple team
@@ -57,7 +57,9 @@ Register `bwend://spotify-callback` in the Spotify developer dashboard.
   Listening Portrait content used for app functionality.
 
 Server delivery requires `APNS_KEY_ID`, `APNS_TEAM_ID`, and `APNS_PRIVATE_KEY` in the Convex
-production environment. Without them, notification delivery safely no-ops.
+production environment. The beta build keeps `BWEND_NOTIFICATIONS_ENABLED` false until those
+credentials and real-device delivery have been verified; the notification controls remain
+hidden while the flag is off.
 
 ## Universal Links
 

@@ -4,6 +4,8 @@
 <dict>
 	<key>BWEND_API_URL</key>
 	<string>https://helpful-owl-232.eu-west-1.convex.site/api</string>
+	<key>BWEND_NOTIFICATIONS_ENABLED</key>
+	<false/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

@@ -103,6 +103,44 @@ struct CreateInviteResponse: Codable, Equatable {
     let expiresAt: Date
 }
 
+/// A sent invite returned by GET /invites for history and management.
+struct InviteSummary: Codable, Equatable, Identifiable {
+    var id: String { code }
+
+    let code: String
+    let url: String
+    let status: String
+    let selectedTrack: AnchorTrack?
+    let createdAt: Date
+    let claimedAt: Date?
+    let expiresAt: Date
+    let matchId: String?
+    let partnerName: String?
+
+    var isPending: Bool { status == "pending" }
+    var isClaimed: Bool { status == "claimed" }
+
+    func effectiveStatus(at date: Date) -> String {
+        isPending && expiresAt <= date ? "expired" : status
+    }
+
+    func expiryDescription(at date: Date) -> String {
+        let remaining = expiresAt.timeIntervalSince(date)
+        if remaining <= 0 { return "Expired" }
+        let hours = max(1, Int(ceil(remaining / 3_600)))
+        if hours < 24 {
+            return "Expires in \(hours) \(hours == 1 ? "hour" : "hours")"
+        }
+        let days = Int(ceil(Double(hours) / 24))
+        return "Expires in \(days) \(days == 1 ? "day" : "days")"
+    }
+}
+
+struct CancelInviteResponse: Codable, Equatable {
+    let ok: Bool
+    let cancelled: Bool
+}
+
 /// Response from GET /invites/{code} — the recipient preview.
 struct InvitePreview: Codable, Equatable {
     let code: String

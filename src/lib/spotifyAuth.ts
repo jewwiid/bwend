@@ -12,6 +12,7 @@
 
 const AUTHORIZE_URL = "https://accounts.spotify.com/authorize";
 export const CURRENT_PRIVACY_VERSION = "2026-07-29";
+export const CURRENT_TERMS_VERSION = "2026-07-29.beta-v1";
 
 /** Same scopes as iOS, so a user's profile is identical whichever client they connect from. */
 export const SPOTIFY_SCOPES = [
@@ -42,10 +43,10 @@ export function redirectUri(): string {
  */
 export async function beginSpotifyLogin(returnTo?: string): Promise<void> {
   const accepted = window.confirm(
-    "Bwend will use your Spotify listening data only to create a private Taste Card and blends you choose to share. Bwend does not create a public dating profile, import data from dating apps, or infer sensitive traits. You can export or delete your data at any time. Continue?",
+    "By continuing, you agree to Bwend's Beta Terms and consent to the Privacy Notice. Bwend uses Spotify listening data only for private Taste Cards and blends you choose to share. Continue?",
   );
   if (!accepted) {
-    throw new Error("Spotify was not connected because the privacy notice was not accepted.");
+    throw new Error("Spotify was not connected because the Beta Terms and privacy notice were not accepted.");
   }
 
   const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;

@@ -56,6 +56,12 @@ export const exportSnapshot = internalQuery({
           ? new Date(profile.privacyConsentedAt).toISOString()
           : null,
       },
+      termsAcceptance: {
+        version: profile.termsVersion ?? null,
+        acceptedAt: profile.termsAcceptedAt
+          ? new Date(profile.termsAcceptedAt).toISOString()
+          : null,
+      },
       tasteCard: {
         userId: profile.spotifyUserId,
         alias: profile.displayName,
