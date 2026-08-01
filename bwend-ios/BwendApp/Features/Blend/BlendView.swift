@@ -22,6 +22,11 @@ struct BlendView: View {
     @State private var nowPlaying: NowPlayingResponse?
     @State private var nowPlayingUnavailable = false
     @State private var player: PlayerResponse?
+    @State private var spotifyBlendURL: String?
+    @State private var spotifyBlendInput = ""
+    @State private var spotifyBlendBusy = false
+    @State private var spotifyBlendMessage: String?
+    @State private var confirmingSpotifyBlendRemoval = false
 
     /// Cache per window so flipping back and forth doesn't re-hit the network.
     @State private var cache: [BlendTimeRange: BlendResponse] = [:]
@@ -35,6 +40,7 @@ struct BlendView: View {
                     rangePicker
 
                     if let blend {
+                        spotifyBlendSection
                         if let nowPlaying, let track = nowPlaying.track {
                             NowPlayingStrip(nowPlaying: nowPlaying, track: track)
                         }
@@ -66,6 +72,18 @@ struct BlendView: View {
         .task { await load(timeRange) }
         .task { await pollNowPlaying() }
         .task { await loadPlayer() }
+        .confirmationDialog(
+            "Remove your Spotify Blend?",
+            isPresented: $confirmingSpotifyBlendRemoval,
+            titleVisibility: .visible
+        ) {
+            Button("Remove from Bwend", role: .destructive) {
+                Task { await removeSpotifyBlend() }
+            }
+            Button("Keep it", role: .cancel) {}
+        } message: {
+            Text("This also removes the Spotify Blend link from existing Bwend invites.")
+        }
     }
 
     /// Presence is independent from the heavier blend payload. The task is cancelled
@@ -119,6 +137,95 @@ struct BlendView: View {
                 .buttonStyle(.plain)
             }
             Spacer()
+        }
+    }
+
+    // MARK: - Spotify Blend handoff
+
+    private var spotifyBlendSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .firstTextBaseline) {
+                VStack(alignment: .leading, spacing: 5) {
+                    SectionLabel("Spotify Blend")
+                    Text("One link, two ways to connect.")
+                        .font(.bwend(size: 20, weight: .bold))
+                        .foregroundColor(Color.bwendText)
+                }
+                Spacer()
+                if let spotifyBlendURL, let url = URL(string: spotifyBlendURL) {
+                    Link(destination: url) {
+                        Text("OPEN SPOTIFY")
+                            .font(.bwend(size: 11, weight: .bold))
+                            .foregroundColor(Color.spotify)
+                    }
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Paste the URL or Spotify's full invite message. New Bwend invites include it automatically.")
+                    .font(.bwend(size: 13))
+                    .foregroundColor(Color.bwendTextSecondary)
+                    .lineSpacing(3)
+
+                TextField(
+                    "https://open.spotify.com/blend/taste-match/…",
+                    text: $spotifyBlendInput,
+                    axis: .vertical
+                )
+                .font(.bwend(size: 13))
+                .foregroundColor(Color.bwendText)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .keyboardType(.URL)
+                .lineLimit(2 ... 4)
+                .padding(12)
+                .background(Color.bwendBackground)
+                .overlay(
+                    RoundedRectangle(cornerRadius: BwendRadius.md)
+                        .stroke(Color.bwendBorder, lineWidth: 1)
+                )
+                .clipShape(RoundedRectangle(cornerRadius: BwendRadius.md))
+                .disabled(spotifyBlendBusy)
+                .accessibilityLabel("Spotify Blend invite link")
+
+                Text("Spotify may show Blend members your Spotify username and profile picture. Members can invite additional friends. Bwend never reads the Blend.")
+                    .font(.bwend(size: 11))
+                    .foregroundColor(Color.bwendTextMuted)
+                    .lineSpacing(3)
+
+                HStack(spacing: 10) {
+                    Button {
+                        Task { await saveSpotifyBlend() }
+                    } label: {
+                        Text(spotifyBlendBusy ? "Saving…" : spotifyBlendURL == nil ? "Add to Taste Card" : "Replace link")
+                            .font(.bwend(size: 13, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 15)
+                            .padding(.vertical, 10)
+                            .background(Capsule().fill(Color.Accent.cta))
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(spotifyBlendBusy || spotifyBlendInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+
+                    if spotifyBlendURL != nil {
+                        Button("Remove", role: .destructive) {
+                            confirmingSpotifyBlendRemoval = true
+                        }
+                        .font(.bwend(size: 13, weight: .bold))
+                        .disabled(spotifyBlendBusy)
+                    }
+                }
+
+                if let spotifyBlendMessage {
+                    Text(spotifyBlendMessage)
+                        .font(.bwend(size: 12))
+                        .foregroundColor(Color.bwendTextSecondary)
+                        .accessibilityLabel(spotifyBlendMessage)
+                }
+            }
+            .padding(16)
+            .background(Color.bwendBgCard)
+            .cornerRadius(BwendRadius.lg)
         }
     }
 
@@ -312,6 +419,8 @@ struct BlendView: View {
         do {
             let response = try await api.myBlend(timeRange: range)
             cache[range] = response
+            spotifyBlendURL = response.spotifyBlendURL
+            spotifyBlendInput = response.spotifyBlendURL ?? ""
             // Ignore a response that lost the race with a newer selection.
             if range == timeRange { blend = response }
         } catch let e as APIError {
@@ -328,6 +437,40 @@ struct BlendView: View {
             if range == timeRange { errorMessage = error.localizedDescription }
         }
         loading = false
+    }
+
+    @MainActor
+    private func saveSpotifyBlend() async {
+        spotifyBlendBusy = true
+        spotifyBlendMessage = nil
+        defer { spotifyBlendBusy = false }
+        do {
+            let response = try await api.saveSpotifyBlend(input: spotifyBlendInput)
+            spotifyBlendURL = response.url
+            spotifyBlendInput = response.url
+            spotifyBlendMessage = "Saved. New Bwend invites will include this Spotify Blend."
+        } catch let error as APIError {
+            spotifyBlendMessage = error.errorDescription
+        } catch {
+            spotifyBlendMessage = error.localizedDescription
+        }
+    }
+
+    @MainActor
+    private func removeSpotifyBlend() async {
+        spotifyBlendBusy = true
+        spotifyBlendMessage = nil
+        defer { spotifyBlendBusy = false }
+        do {
+            _ = try await api.removeSpotifyBlend()
+            spotifyBlendURL = nil
+            spotifyBlendInput = ""
+            spotifyBlendMessage = "Removed from your Taste Card and existing Bwend invites."
+        } catch let error as APIError {
+            spotifyBlendMessage = error.errorDescription
+        } catch {
+            spotifyBlendMessage = error.localizedDescription
+        }
     }
 }
 

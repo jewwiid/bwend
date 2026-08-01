@@ -2,8 +2,8 @@ import SwiftUI
 
 // MARK: - InvitePreviewView
 //
-// Recipient-side: shows who invited them, with a "Reveal our vibe" CTA that triggers the match.
-// If the user isn't onboarded yet, routes them to Spotify connect first, then back here.
+// Recipient-side: shows the optional public Spotify handoff before onboarding, then the private
+// Taste Card and "Reveal our vibe" CTA after the recipient connects Spotify.
 
 struct InvitePreviewView: View {
     let code: String
@@ -13,6 +13,7 @@ struct InvitePreviewView: View {
     @EnvironmentObject var router: Router
 
     @State private var preview: InvitePreview?
+    @State private var handoff: InviteHandoff?
     @State private var claiming = false
     @State private var errorMessage: String?
 
@@ -116,6 +117,10 @@ struct InvitePreviewView: View {
                                 .cornerRadius(BwendRadius.lg)
                             }
 
+                            if let value = preview.spotifyBlendURL, let url = URL(string: value) {
+                                SpotifyBlendHandoff(url: url)
+                            }
+
                             PrimaryButton(
                                 preview.alreadyClaimed ? "Already claimed" : "Reveal our vibe",
                                 loading: claiming,
@@ -153,6 +158,9 @@ struct InvitePreviewView: View {
                 .font(.bwend(size: 18, weight: .bold))
                 .foregroundColor(Color.bwendText)
                 .multilineTextAlignment(.center)
+            if let value = handoff?.spotifyBlendURL, let url = URL(string: value) {
+                SpotifyBlendHandoff(url: url)
+            }
             PrimaryButton("Connect Spotify") {
                 router.route(to: .spotifyConnect)
             }
@@ -162,7 +170,13 @@ struct InvitePreviewView: View {
 
     @MainActor
     private func load() async {
-        do { preview = try await api.fetchInvite(code: code) }
+        do {
+            if auth.isOnboarded {
+                preview = try await api.fetchInvite(code: code)
+            } else {
+                handoff = try await api.fetchInviteHandoff(code: code)
+            }
+        }
         catch let e as APIError { errorMessage = e.errorDescription }
         catch { errorMessage = error.localizedDescription }
     }
@@ -196,7 +210,6 @@ struct ShareView: View {
     @State private var invite: InvitePreview?
     @State private var claimed = false
     @State private var errorMessage: String?
-    @State private var presentShareSheet = false
 
     private var shareURL: URL? {
         URL(string: "https://www.bwend.xyz/m/\(inviteCode)")
@@ -255,9 +268,11 @@ struct ShareView: View {
                             }
                             .buttonStyle(.plain)
 
-                            Button {
-                                presentShareSheet = true
-                            } label: {
+                            ShareLink(
+                                item: url,
+                                subject: Text("A private Bwend invite"),
+                                message: Text("I made a private Bwend invite for us. Open this one link to see our music overlap and, if included, join my Spotify Blend.")
+                            ) {
                                 Label("Share", systemImage: "square.and.arrow.up")
                                     .font(.bwend(size: 14, weight: .bold))
                                     .foregroundColor(.white)
@@ -268,6 +283,28 @@ struct ShareView: View {
                             .buttonStyle(.plain)
                         }
                     }
+                }
+
+                if let value = invite?.spotifyBlendURL, let url = URL(string: value) {
+                    HStack(spacing: 12) {
+                        Image(systemName: "music.note.list")
+                            .foregroundColor(Color.spotify)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Spotify Blend included")
+                                .font(.bwend(size: 14, weight: .bold))
+                                .foregroundColor(Color.bwendText)
+                            Text("Your friend can open it from this Bwend invite.")
+                                .font(.bwend(size: 12))
+                                .foregroundColor(Color.bwendTextSecondary)
+                        }
+                        Spacer()
+                        Link("OPEN", destination: url)
+                            .font(.bwend(size: 11, weight: .bold))
+                            .foregroundColor(Color.spotify)
+                    }
+                    .padding(14)
+                    .background(Color.bwendBgCard)
+                    .cornerRadius(BwendRadius.lg)
                 }
 
                 if claimed {
@@ -294,11 +331,6 @@ struct ShareView: View {
         .navigationTitle("Share")
         .navigationBarTitleDisplayMode(.inline)
         .task { await poll() }
-        .sheet(isPresented: $presentShareSheet) {
-            if let url = shareURL {
-                ShareSheet(items: [url])
-            }
-        }
     }
 
     /// Poll the invite every 4 seconds until it's claimed.
@@ -319,16 +351,33 @@ struct ShareView: View {
     }
 }
 
-// MARK: - UIKit share sheet bridge
+private struct SpotifyBlendHandoff: View {
+    let url: URL
 
-struct ShareSheet: UIViewControllerRepresentable {
-    let items: [Any]
-
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: items, applicationActivities: nil)
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            SectionLabel("Also on Spotify")
+            Text("Join their Spotify Blend")
+                .font(.bwend(size: 18, weight: .bold))
+                .foregroundColor(Color.bwendText)
+            Text("Spotify may show members your Spotify username and profile picture. Members can invite other friends. Bwend does not read the Blend.")
+                .font(.bwend(size: 12))
+                .foregroundColor(Color.bwendTextSecondary)
+                .lineSpacing(3)
+            Link(destination: url) {
+                Text("OPEN SPOTIFY")
+                    .font(.bwend(size: 13, weight: .bold))
+                    .foregroundColor(.black)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(Capsule().fill(Color.spotify))
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(20)
+        .background(Color.bwendBgCard)
+        .cornerRadius(BwendRadius.lg)
     }
-
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
 #Preview {

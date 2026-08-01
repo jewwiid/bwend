@@ -98,4 +98,22 @@ describe("invite lifecycle", () => {
     expect(invites).toHaveLength(1);
     expect(invites[0].status).toBe("expired");
   });
+
+  test("a new invite snapshots an optional Spotify Blend link", async () => {
+    const t = convexTest(schema, modules);
+    const spotifyBlendURL =
+      "https://open.spotify.com/blend/taste-match/fb222dd96752c99b?si=share";
+
+    const inviteId = await t.mutation(internal.inviteMutations.create, {
+      code: "TWOLINKS",
+      inviterSpotifyUserId: "inviter",
+      status: "pending",
+      spotifyBlendURL,
+      createdAt: Date.now(),
+      expiresAt: Date.now() + 60_000,
+    });
+    const invite = await t.run(async (ctx) => await ctx.db.get(inviteId));
+
+    expect(invite?.spotifyBlendURL).toBe(spotifyBlendURL);
+  });
 });

@@ -63,6 +63,8 @@ export default defineSchema({
     privacyConsentedAt: v.optional(v.number()),
     termsVersion: v.optional(v.string()),
     termsAcceptedAt: v.optional(v.number()),
+    // Optional user-supplied Spotify Blend invite. Bwend validates but never fetches it.
+    spotifyBlendURL: v.optional(v.union(v.string(), v.null())),
     disconnectedAt: v.optional(v.union(v.number(), v.null())),
     createdAt: v.number(),
     updatedAt: v.number(),
@@ -162,6 +164,8 @@ export default defineSchema({
         spotifyURL: v.union(v.string(), v.null()),
       })
     ),
+    // Snapshot of the inviter's optional Spotify Blend link at invite creation time.
+    spotifyBlendURL: v.optional(v.union(v.string(), v.null())),
     status: v.union(
       v.literal("pending"),
       v.literal("claimed"),

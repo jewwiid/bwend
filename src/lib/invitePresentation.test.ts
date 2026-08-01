@@ -12,6 +12,7 @@ function invite(code: string, status: InviteSummary["status"]): InviteSummary {
     url: `https://www.bwend.xyz/m/${code}`,
     status,
     selectedTrack: null,
+    spotifyBlendURL: null,
     createdAt: "2026-07-29T12:00:00.000Z",
     claimedAt: status === "claimed" ? "2026-07-29T13:00:00.000Z" : null,
     expiresAt: "2026-08-05T12:00:00.000Z",

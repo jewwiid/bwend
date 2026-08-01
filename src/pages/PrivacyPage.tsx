@@ -12,14 +12,14 @@ const sections = [
   {
     title: 'Data we use',
     body: [
-      'When you connect Spotify, Bwend stores a pseudonymous Bwend identifier, an encrypted Spotify connection, your top music and a derived taste fingerprint, the blends you intentionally create or join, and playlist-save records. If you separately opt into a Listening Portrait, Bwend also stores your questionnaire answers, the generated portrait, and its AI consent record.',
+      'When you connect Spotify, Bwend stores a pseudonymous Bwend identifier, an encrypted Spotify connection, your top music and a derived taste fingerprint, the blends you intentionally create or join, and playlist-save records. If you choose to attach a Spotify Blend invite, Bwend also stores that validated URL and snapshots it into Bwend invites you create. If you separately opt into a Listening Portrait, Bwend also stores your questionnaire answers, the generated portrait, and its AI consent record.',
       'Spotify display names are not stored. OAuth credentials are encrypted at rest and are never included in an account export. Pseudonymous records are still treated as personal data.',
     ],
   },
   {
     title: 'Why we use it',
     body: [
-      'Listening data is used only to build your private Taste Card, calculate a blend you intentionally send or claim, create a Spotify playlist after you ask us to, and show your own Spotify playback context.',
+      'Listening data is used only to build your private Taste Card, calculate a blend you intentionally send or claim, create a Spotify playlist after you ask us to, and show your own Spotify playback context. A Spotify Blend URL is used only to include an optional handoff to Spotify in Bwend links you intentionally share; Bwend does not fetch the Blend or its members.',
       'Bwend does not use music to infer health, ethnicity, religion, politics, sexuality, or other sensitive traits. Bwend does not sell your listening data.',
     ],
   },
@@ -33,8 +33,8 @@ const sections = [
   {
     title: 'Sharing and retention',
     body: [
-      'Your Taste Card or blend is shared only through a private link you choose to send. A Listening Portrait remains visible only to you. Unclaimed invite links expire after seven days.',
-      'You can delete a Listening Portrait and its questionnaire answers immediately without deleting your account. Disconnecting Spotify immediately removes the stored Spotify credential. The disconnected Taste Card and related data are deleted after a 30-day recovery window. Choosing Delete account removes Bwend data immediately. A playlist already saved to Spotify remains there until you delete it in Spotify.',
+      'Your Taste Card or blend is shared only through a private link you choose to send. If you attach a Spotify Blend URL, recipients of new Bwend invites can open it in Spotify. Spotify says Blend members may see each other’s Spotify username and profile picture and may invite additional friends. A Listening Portrait remains visible only to you. Unclaimed invite links expire after seven days.',
+      'You can remove a Spotify Blend URL at any time; Bwend also removes its snapshots from existing Bwend invites. You can delete a Listening Portrait and its questionnaire answers immediately without deleting your account. Disconnecting Spotify immediately removes the stored Spotify credential and Spotify Blend URL. The disconnected Taste Card and related data are deleted after a 30-day recovery window. Choosing Delete account removes Bwend data immediately. A playlist or Blend already joined on Spotify remains governed by your Spotify controls.',
     ],
   },
   {
@@ -56,7 +56,7 @@ export function PrivacyPage() {
         </h1>
         <p className="mt-5 text-ds-lg leading-relaxed text-[var(--color-text-secondary)]">
           This product notice explains Bwend&apos;s current pre-release data design. Version
-          2026-07-29.
+          2026-08-01.
         </p>
 
         <div className="mt-12 space-y-10">

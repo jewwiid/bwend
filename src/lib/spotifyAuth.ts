@@ -11,8 +11,8 @@
  */
 
 const AUTHORIZE_URL = "https://accounts.spotify.com/authorize";
-export const CURRENT_PRIVACY_VERSION = "2026-07-29";
-export const CURRENT_TERMS_VERSION = "2026-07-29.beta-v1";
+export const CURRENT_PRIVACY_VERSION = "2026-08-01";
+export const CURRENT_TERMS_VERSION = "2026-08-01.beta-v2";
 
 /** Same scopes as iOS, so a user's profile is identical whichever client they connect from. */
 export const SPOTIFY_SCOPES = [

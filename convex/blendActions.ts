@@ -97,6 +97,7 @@ export const myBlend = internalAction({
       error: null,
       data: {
         displayName: profile.displayName,
+        spotifyBlendURL: profile.spotifyBlendURL ?? null,
         timeRange,
         era: meanReleaseYear(tracks),
         topArtists: artists,

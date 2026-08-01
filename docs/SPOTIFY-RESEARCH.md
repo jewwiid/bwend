@@ -25,6 +25,10 @@ The first native iPhone slice is now implemented end-to-end:
 5. **Daily Bwend notifications** — server and client infrastructure exists, but
    the current beta binary deliberately hides the controls and excludes the push
    entitlement until APNs is configured and verified on physical devices.
+6. **Optional Spotify Blend handoff** — a user can paste Spotify's share message or direct
+   `open.spotify.com/blend/taste-match/...` URL into their private Taste Card. Bwend validates
+   and snapshots the link into new Bwend invites but does not call a Blend API, fetch the
+   playlist, or inspect its members.
 
 The remaining beta work is operational: reconnect existing Spotify users so
 they grant the current read/player and private-playlist scopes, verify the

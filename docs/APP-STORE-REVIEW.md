@@ -15,13 +15,18 @@ credentials, App Store Connect API keys, signing material, or Spotify secrets he
 > 2. Accept the Beta Terms and Privacy Notice.
 > 3. Sign in with the dedicated Spotify review account supplied in App Review Information.
 > 4. Open “Your blend” to see its Taste Card.
-> 5. Tap “Start a blend” to create a seven-day, single-use invite.
-> 6. Open “Privacy & data” to export, disconnect Spotify, or permanently delete the account.
+> 5. Optionally paste the Spotify Blend test invitation supplied in App Review Information.
+> 6. Tap “Start a blend” to create a seven-day, single-use Bwend invite. The same Bwend link
+>    includes an “Open in Spotify” handoff when the optional Spotify Blend URL was saved.
+> 7. Open “Privacy & data” to export, disconnect Spotify, or permanently delete the account.
 >
 > The app has no purchases, advertising, tracking, public people directory, messaging,
 > location access, contacts access, or dating profiles. Notifications are disabled in this
 > version. The optional AI Listening Portrait sends OpenAI only answers the user separately
 > enters after explicit consent; it never sends Spotify tracks, artists, history, or lyrics.
+> A user may optionally paste a Spotify Blend invite. Bwend validates and stores only that
+> URL, never fetches its playlist or members, and opens it in the Spotify app from a private
+> Bwend invite after showing Spotify's member-visibility disclosure.
 >
 > Universal Links for `https://www.bwend.xyz/m/*` open private invite previews. If testing a
 > two-account match, use the second allowlisted Spotify account supplied below.
@@ -31,6 +36,7 @@ credentials, App Store Connect API keys, signing material, or Spotify secrets he
 - Primary Spotify review account: `[EMAIL IN APP STORE CONNECT]`
 - Password: `[PASSWORD IN APP STORE CONNECT]`
 - Second allowlisted Spotify account: `[OPTIONAL SECOND EMAIL]`
+- Spotify Blend invitation for optional handoff test: `[OPTIONAL SPOTIFY BLEND SHARE TEXT]`
 - Any Spotify verification instructions: `[NOTES]`
 
 Both accounts must be tested immediately before submission and must be on the Spotify
@@ -67,7 +73,7 @@ other unavailable features.
 |---|---:|---:|---|
 | User ID (pseudonymous Bwend ID) | Yes | No | App functionality |
 | Product Interaction (Spotify listening/activity signals) | Yes | No | App functionality |
-| Other User Content (optional portrait answers/result) | Yes | No | App functionality |
+| Other User Content (optional Spotify Blend URL and portrait answers/result) | Yes | No | App functionality |
 
 Runtime destinations to disclose and verify during the final network audit:
 

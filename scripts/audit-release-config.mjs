@@ -51,7 +51,7 @@ requireText(
   "UserDefaults use needs the approved app-only reason"
 );
 
-const termsVersion = "2026-07-29.beta-v1";
+const termsVersion = "2026-08-01.beta-v2";
 for (const path of [
   "convex/lib/privacyConstants.ts",
   "src/lib/spotifyAuth.ts",
@@ -62,7 +62,7 @@ for (const path of [
   }
 }
 
-const privacyVersion = "2026-07-29";
+const privacyVersion = "2026-08-01";
 for (const path of [
   "convex/lib/privacyConstants.ts",
   "src/lib/spotifyAuth.ts",

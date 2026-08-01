@@ -19,6 +19,7 @@ import {
   handleClaimInvite,
   handleCreateInvite,
   handleFetchInvite,
+  handleFetchInviteHandoff,
   handleListInvites,
 } from "./invites";
 import { handleListMatches, handleFetchMatch } from "./matches";
@@ -43,6 +44,11 @@ import {
   handleGenerateListeningPortrait,
   handleGetListeningPortrait,
 } from "./listeningPortrait";
+import {
+  handleDeleteSpotifyBlend,
+  handleGetSpotifyBlend,
+  handleSaveSpotifyBlend,
+} from "./spotifyBlend";
 import {
   CURRENT_PRIVACY_VERSION,
   CURRENT_TERMS_VERSION,
@@ -102,6 +108,24 @@ http.route({
   path: "/api/me/blend",
   method: "GET",
   handler: handleMyBlend,
+});
+
+http.route({
+  path: "/api/me/spotify-blend",
+  method: "GET",
+  handler: handleGetSpotifyBlend,
+});
+
+http.route({
+  path: "/api/me/spotify-blend",
+  method: "POST",
+  handler: handleSaveSpotifyBlend,
+});
+
+http.route({
+  path: "/api/me/spotify-blend",
+  method: "DELETE",
+  handler: handleDeleteSpotifyBlend,
 });
 
 http.route({
@@ -178,6 +202,12 @@ http.route({
   handler: handleFetchInvite,
 });
 
+http.route({
+  pathPrefix: "/api/invite-handoffs/",
+  method: "GET",
+  handler: handleFetchInviteHandoff,
+});
+
 // Invites — claim by code. The URL is /api/invites/<code>/claim.
 // We can't nest pathPrefix easily, so we match the broader prefix and parse the path.
 http.route({
@@ -220,6 +250,7 @@ const preflight = httpAction(async (_ctx, request) => preflightResponse(request)
 for (const path of [
   "/api/auth/spotify",
   "/api/me/blend",
+  "/api/me/spotify-blend",
   "/api/me/listening-portrait",
   "/api/me/now-playing",
   "/api/me/player",
@@ -235,7 +266,7 @@ for (const path of [
 ]) {
   http.route({ path, method: "OPTIONS", handler: preflight });
 }
-for (const pathPrefix of ["/api/invites/", "/api/matches/"]) {
+for (const pathPrefix of ["/api/invites/", "/api/invite-handoffs/", "/api/matches/"]) {
   http.route({ pathPrefix, method: "OPTIONS", handler: preflight });
 }
 

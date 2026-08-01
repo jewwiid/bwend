@@ -29,12 +29,18 @@ export const handleCreateInvite = httpAction(async (ctx, request) => {
   const now = Date.now();
   const expiresAt = now + SEVEN_DAYS_MS;
   const selectedTrack = await parseSelectedTrack(request);
+  const inviterProfile = await ctx.runQuery(internal.bwendProfileQueries.getBySpotifyUserId, {
+    spotifyUserId: identity.spotifyUserId,
+  });
 
   await ctx.runMutation(internal.inviteMutations.create, {
     code,
     inviterSpotifyUserId: identity.spotifyUserId,
     status: "pending",
     ...(selectedTrack ? { selectedTrack } : {}),
+    ...(inviterProfile?.spotifyBlendURL
+      ? { spotifyBlendURL: inviterProfile.spotifyBlendURL }
+      : {}),
     createdAt: now,
     expiresAt,
   });
@@ -110,10 +116,39 @@ export const handleFetchInvite = httpAction(async (ctx, request) => {
       imageURL: a.imageURL ?? null,
     })),
     selectedTrack: invite.selectedTrack ?? null,
+    spotifyBlendURL: invite.spotifyBlendURL ?? null,
     expiresAt: new Date(invite.expiresAt).toISOString(),
     alreadyClaimed: invite.status === "claimed",
     isMine: identity.spotifyUserId === invite.inviterSpotifyUserId,
   }, request);
+});
+
+/**
+ * Public capability-link preview. It reveals no Taste Card, alias, or music—only the optional
+ * Spotify Blend handoff that the sender deliberately attached to this still-pending URL.
+ */
+export const handleFetchInviteHandoff = httpAction(async (ctx, request) => {
+  const code = extractLastPathSegment(request.url);
+  if (!code) return jsonResponse(400, { reason: "Missing invite code." }, request);
+
+  const invite = await ctx.runQuery(internal.inviteQueries.getByCode, { code });
+  if (!invite) return jsonResponse(404, { reason: "Invite not found." }, request);
+  if (invite.status === "expired" || invite.expiresAt < Date.now()) {
+    return jsonResponse(410, { reason: "This invite has expired." }, request);
+  }
+  if (invite.status === "claimed") {
+    return jsonResponse(409, { reason: "This invite has already been used." }, request);
+  }
+
+  return jsonResponse(
+    200,
+    {
+      code: invite.code,
+      spotifyBlendURL: invite.spotifyBlendURL ?? null,
+      expiresAt: new Date(invite.expiresAt).toISOString(),
+    },
+    request
+  );
 });
 
 // MARK: Claim → Match (delegates to a Node action for the scoring + match write)

@@ -24,6 +24,7 @@ import {
 import { AppShell, SectionLabel, Artwork, Spinner, ErrorCard } from '../components/AppShell';
 import { ListeningPortraitSection } from '../components/ListeningPortraitSection';
 import { InvitesSection } from '../components/InvitesSection';
+import { SpotifyBlendCard } from '../components/SpotifyBlendCard';
 
 const RANGES: { value: TimeRange; label: string }[] = [
   { value: 'short_term', label: 'Last month' },
@@ -44,6 +45,7 @@ export function BlendPage() {
   const [copied, setCopied] = useState(false);
   const [inviteRefreshKey, setInviteRefreshKey] = useState(0);
   const [privacyBusy, setPrivacyBusy] = useState(false);
+  const [spotifyBlendURL, setSpotifyBlendURL] = useState<string | null>(null);
 
   const session = loadSession();
 
@@ -59,6 +61,7 @@ export function BlendPage() {
       setBlend(null);
       try {
         const response = await myBlend(target);
+        setSpotifyBlendURL(response.spotifyBlendURL);
         setCache((prev) => ({ ...prev, [target]: response }));
         setBlend(response);
       } catch (e) {
@@ -185,6 +188,11 @@ export function BlendPage() {
         <p className="mt-2 text-ds-2xl font-bold leading-display">
           Invite someone to <span className="font-serif italic">blend</span>.
         </p>
+        {spotifyBlendURL && (
+          <p className="mt-2 text-ds-sm opacity-90">
+            This one Bwend link will also carry your Spotify Blend invite.
+          </p>
+        )}
         {inviteUrl ? (
           <div className="mt-4 space-y-3">
             <p className="break-all rounded-xl bg-white/20 px-4 py-3 text-ds-sm">{inviteUrl}</p>
@@ -211,6 +219,12 @@ export function BlendPage() {
       <div className="mb-10">
         <InvitesSection refreshKey={inviteRefreshKey} />
       </div>
+
+      {blend && !loading && (
+        <div className="mb-10">
+          <SpotifyBlendCard initialURL={spotifyBlendURL} onChange={setSpotifyBlendURL} />
+        </div>
+      )}
 
       {/* Time range */}
       <div className="mb-8 flex flex-wrap gap-2">

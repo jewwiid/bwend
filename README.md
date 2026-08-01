@@ -3,7 +3,8 @@
 Bwend is a private music-connection companion for two people who have already met elsewhere
 or in person. A user connects Spotify, creates a seven-day invite, and shares it directly with
 one other person. Bwend reveals ranked music overlap and can save a private Spotify playlist
-after an explicit action.
+after an explicit action. A user may also attach a Spotify Blend invite to their private Taste
+Card so the same Bwend link offers an intentional handoff to Spotify.
 
 It is intentionally not a dating marketplace: there is no public directory, swipe feed,
 personal biography, location, contacts import, or sensitive-trait inference.
@@ -76,7 +77,8 @@ persistence. OAuth credentials are encrypted with AES-256-GCM. Users can export 
 disconnect Spotify, or delete their account from both clients. Unclaimed invites expire after
 seven days; disconnected accounts are deleted after 30 days. The optional private Listening
 Portrait uses only separately consented questionnaire answers—never Spotify content or lyrics—
-and can be regenerated or deleted independently. See
+and can be regenerated or deleted independently. Optional Spotify Blend URLs are validated but
+never fetched; removing one clears it from existing invite snapshots. See
 [`docs/PRIVACY-ARCHITECTURE.md`](docs/PRIVACY-ARCHITECTURE.md).
 
 ## Deployment

@@ -111,6 +111,7 @@ struct InviteSummary: Codable, Equatable, Identifiable {
     let url: String
     let status: String
     let selectedTrack: AnchorTrack?
+    let spotifyBlendURL: String?
     let createdAt: Date
     let claimedAt: Date?
     let expiresAt: Date
@@ -149,9 +150,16 @@ struct InvitePreview: Codable, Equatable {
     let inviterTopArtists: [String]
     let inviterArtists: [ArtistBrief]?
     let selectedTrack: AnchorTrack?
+    let spotifyBlendURL: String?
     let expiresAt: Date
     let alreadyClaimed: Bool
     let isMine: Bool
+}
+
+struct InviteHandoff: Codable, Equatable {
+    let code: String
+    let spotifyBlendURL: String?
+    let expiresAt: Date
 }
 
 /// An artist reduced to what the UI needs: a name and a face.
@@ -215,6 +223,7 @@ struct AnchorTrack: Codable, Equatable, Hashable {
 /// Response from GET /me/blend. Everything the Blend screen renders.
 struct BlendResponse: Codable, Equatable {
     let displayName: String?
+    let spotifyBlendURL: String?
     let timeRange: String
     /// Mean release year across the window. Nil when no release dates were parseable.
     let era: Double?
@@ -223,6 +232,16 @@ struct BlendResponse: Codable, Equatable {
     /// Nil when the user hasn't granted `user-read-recently-played`.
     let recentlyPlayed: [BlendTrack]?
     let library: LibraryCounts
+}
+
+struct SpotifyBlendLinkResponse: Codable, Equatable {
+    let url: String
+}
+
+struct SpotifyBlendRemovalResponse: Codable, Equatable {
+    let ok: Bool
+    let removed: Bool
+    let revokedInviteCount: Int
 }
 
 /// Live Spotify presence. A nil response from the endpoint means no active playback.

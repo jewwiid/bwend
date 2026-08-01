@@ -43,13 +43,17 @@ Run on two physical iPhones and record only pass/fail plus app/build versions:
 - [ ] Fresh install and Spotify authorization on both accounts
 - [ ] Existing session survives relaunch
 - [ ] Taste Card loads all three time ranges
+- [ ] Sender pastes a complete Spotify Blend share message and Bwend extracts the valid link
 - [ ] Sender creates and shares an invite
 - [ ] Universal Link opens the recipient app at the intended invite
+- [ ] Signed-out recipient sees the optional Spotify handoff without seeing the Taste Card
+- [ ] “Open in Spotify” opens the expected Blend in the Spotify mobile app
 - [ ] Recipient cannot claim their own link
 - [ ] Recipient claims once; a second claim is rejected
 - [ ] Both users open the same frozen reveal
 - [ ] Each user can independently save a private Spotify playlist
 - [ ] Pending invite can be cancelled and becomes unusable
+- [ ] Removing the saved Spotify Blend link also removes it from existing pending invites
 - [ ] Expired invite is shown as expired
 - [ ] Data export opens as JSON
 - [ ] Disconnect removes Spotify access

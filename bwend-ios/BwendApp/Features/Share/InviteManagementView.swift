@@ -157,6 +157,11 @@ struct InviteManagementView: View {
                         Text(invite.code.uppercased())
                             .font(.system(size: 11, weight: .medium, design: .monospaced))
                             .foregroundColor(Color.bwendTextMuted)
+                        if invite.spotifyBlendURL != nil {
+                            Text("Spotify Blend included")
+                                .font(.bwend(size: 11, weight: .bold))
+                                .foregroundColor(Color.spotify)
+                        }
                     }
 
                     Spacer()

@@ -74,7 +74,7 @@ private struct ServerReason: Decodable {
 @MainActor
 final class APIClient: ObservableObject {
     static let listeningPortraitConsentVersion = "2026-07-29.ai-portrait.v1"
-    static let termsVersion = "2026-07-29.beta-v1"
+    static let termsVersion = "2026-08-01.beta-v2"
 
     /// Base URL. Configure via Info.plist `BWEND_API_URL` or default to local dev.
     static let baseURL = Bundle.main.object(forInfoDictionaryKey: "BWEND_API_URL") as? String
@@ -121,6 +121,18 @@ final class APIClient: ObservableObject {
     /// GET /me/blend — the caller's own listening profile for the given window.
     func myBlend(timeRange: BlendTimeRange = .medium) async throws -> BlendResponse {
         try await get("/me/blend?time_range=\(timeRange.rawValue)")
+    }
+
+    func saveSpotifyBlend(input: String) async throws -> SpotifyBlendLinkResponse {
+        try await post(
+            "/me/spotify-blend",
+            body: ["input": input],
+            authed: true
+        )
+    }
+
+    func removeSpotifyBlend() async throws -> SpotifyBlendRemovalResponse {
+        try await perform("DELETE", "/me/spotify-blend", body: nil, authed: true)
     }
 
     func listeningPortrait() async throws -> ListeningPortrait? {
@@ -200,6 +212,11 @@ final class APIClient: ObservableObject {
     /// GET /invites/{code}
     func fetchInvite(code: String) async throws -> InvitePreview {
         try await get("/invites/\(code)")
+    }
+
+    /// Public capability-link preview. Contains no Taste Card or identity fields.
+    func fetchInviteHandoff(code: String) async throws -> InviteHandoff {
+        try await perform("GET", "/invite-handoffs/\(code)", body: nil, authed: false)
     }
 
     /// POST /invites/{code}/claim

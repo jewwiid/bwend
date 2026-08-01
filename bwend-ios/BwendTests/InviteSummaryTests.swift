@@ -13,6 +13,7 @@ struct InviteSummaryTests {
               "url": "https://www.bwend.xyz/m/ABC123",
               "status": "pending",
               "selectedTrack": null,
+              "spotifyBlendURL": "https://open.spotify.com/blend/taste-match/abcdefgh?si=share",
               "createdAt": "2026-07-29T12:00:00Z",
               "claimedAt": null,
               "expiresAt": "2026-08-05T12:00:00Z",
@@ -27,6 +28,7 @@ struct InviteSummaryTests {
         #expect(invite.code == "ABC123")
         #expect(invite.isPending)
         #expect(invite.matchId == nil)
+        #expect(invite.spotifyBlendURL?.contains("taste-match") == true)
     }
 
     @Test("Pending links become expired at their deadline")
@@ -59,6 +61,7 @@ struct InviteSummaryTests {
             url: "https://www.bwend.xyz/m/TEST",
             status: status,
             selectedTrack: nil,
+            spotifyBlendURL: nil,
             createdAt: Date(timeIntervalSince1970: 1_000),
             claimedAt: nil,
             expiresAt: expiresAt,

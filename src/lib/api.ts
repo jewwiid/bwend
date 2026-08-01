@@ -72,6 +72,7 @@ export interface LibraryCounts {
 
 export interface BlendResponse {
   displayName: string | null;
+  spotifyBlendURL: string | null;
   timeRange: string;
   era: number | null;
   topArtists: BlendArtist[];
@@ -92,9 +93,16 @@ export interface InvitePreview {
   inviterTopArtists: string[];
   inviterArtists: ArtistBrief[] | null;
   selectedTrack: AnchorTrack | null;
+  spotifyBlendURL: string | null;
   expiresAt: string;
   alreadyClaimed: boolean;
   isMine: boolean;
+}
+
+export interface InviteHandoff {
+  code: string;
+  spotifyBlendURL: string | null;
+  expiresAt: string;
 }
 
 export interface VibeBreakdown {
@@ -150,6 +158,7 @@ export interface InviteSummary {
   url: string;
   status: InviteStatus;
   selectedTrack: AnchorTrack | null;
+  spotifyBlendURL: string | null;
   createdAt: string;
   claimedAt: string | null;
   expiresAt: string;
@@ -294,6 +303,21 @@ export function myBlend(timeRange: TimeRange = "medium_term"): Promise<BlendResp
   return request(`/me/blend?time_range=${timeRange}`);
 }
 
+export function saveSpotifyBlend(input: string): Promise<{ url: string }> {
+  return request("/me/spotify-blend", {
+    method: "POST",
+    body: JSON.stringify({ input }),
+  });
+}
+
+export function removeSpotifyBlend(): Promise<{
+  ok: boolean;
+  removed: boolean;
+  revokedInviteCount: number;
+}> {
+  return request("/me/spotify-blend", { method: "DELETE" });
+}
+
 export function getListeningPortrait(): Promise<ListeningPortrait | null> {
   return request("/me/listening-portrait");
 }
@@ -338,6 +362,10 @@ export function myInvites(): Promise<InviteSummary[]> {
 
 export function fetchInvite(code: string): Promise<InvitePreview> {
   return request(`/invites/${encodeURIComponent(code)}`);
+}
+
+export function fetchInviteHandoff(code: string): Promise<InviteHandoff> {
+  return request(`/invite-handoffs/${encodeURIComponent(code)}`, {}, false);
 }
 
 export function cancelInvite(code: string): Promise<{ ok: boolean; cancelled: boolean }> {

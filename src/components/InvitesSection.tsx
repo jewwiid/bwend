@@ -194,6 +194,11 @@ function InviteCard({
           <p className="mt-1 font-mono text-ds-xs tracking-wider text-[var(--color-text-muted)]">
             {invite.code}
           </p>
+          {invite.spotifyBlendURL && (
+            <p className="mt-1 text-ds-xs font-semibold text-[#16883d] dark:text-[#4ade80]">
+              Spotify Blend included
+            </p>
+          )}
         </button>
         <span
           className={`h-fit rounded-full px-3 py-1 text-ds-xs font-semibold ${

@@ -1,6 +1,6 @@
 # Bwend privacy architecture
 
-Version: **2026-07-29**
+Version: **2026-08-01**
 
 Bwend is a private music-connection companion. It is designed for two people who already
 met elsewhere or in person. It does not provide a public people directory, dating profile,
@@ -19,6 +19,11 @@ preference, or relationship intent.
 The optional **Listening Portrait** is private and separate from the Taste Card. It is a
 reflection based only on a short first-party questionnaire. It is not included in invites,
 matches, or other users' views.
+
+A user may optionally attach a validated Spotify Blend invite URL to their private Taste Card.
+New Bwend invites snapshot that URL so the recipient can intentionally hand off to Spotify from
+the same Bwend link. Bwend does not fetch the URL, inspect the Spotify Blend, or store its
+members. Removing the URL clears it from the Taste Card and existing Bwend invite snapshots.
 
 ## Data separation
 
@@ -42,8 +47,9 @@ Listening data is used only to:
 1. build the user's private Taste Card;
 2. calculate a blend the user intentionally sends or claims;
 3. create a Spotify playlist after an explicit save action;
-4. show the user's own Spotify playback context; and
-5. send a daily notification the user explicitly enables after the feature is enabled in a
+4. show the user's own Spotify playback context;
+5. carry an optional, user-supplied Spotify Blend handoff inside a private Bwend invite; and
+6. send a daily notification the user explicitly enables after the feature is enabled in a
    future release. Push registration and controls are disabled in the current beta binary.
 
 Bwend must not infer health, ethnicity, religion, politics, sexuality, or other sensitive
@@ -80,6 +86,9 @@ Authenticated controls:
 - `GET /api/me/listening-portrait` — returns only the caller's private portrait;
 - `POST /api/me/listening-portrait` — generates or regenerates after separate AI consent;
 - `DELETE /api/me/listening-portrait` — immediately deletes the portrait and source answers.
+- `GET /api/me/spotify-blend` — returns only the caller's saved Spotify Blend URL;
+- `POST /api/me/spotify-blend` — validates and saves a Spotify Blend invite URL;
+- `DELETE /api/me/spotify-blend` — removes it and revokes existing invite snapshots.
 
 Account deletion also removes shared reveal records for the other participant. Spotify
 playlists already created in a user's Spotify account remain there until the user deletes
@@ -89,6 +98,7 @@ them in Spotify.
 
 - Pending invite: seven days, then daily cleanup deletes it.
 - Spotify credential: deleted immediately on disconnect.
+- Spotify Blend URL: removed immediately on explicit removal or Spotify disconnect.
 - Disconnected Taste Card and related data: 30-day recovery window, then daily deletion.
 - Explicit account deletion: immediate.
 - Listening Portrait deletion: immediate.

@@ -114,8 +114,18 @@ export const disconnectSpotify = internalMutation({
     for (const push of pushes) {
       await ctx.db.patch(push._id, { enabled: false, updatedAt: Date.now() });
     }
+    const sentInvites = await bounded(
+      ctx.db
+        .query("invites")
+        .withIndex("by_inviter", (q) => q.eq("inviterSpotifyUserId", args.spotifyUserId))
+        .take(MAX_USER_RECORDS + 1)
+    );
+    for (const invite of sentInvites) {
+      if (invite.spotifyBlendURL) await ctx.db.patch(invite._id, { spotifyBlendURL: null });
+    }
     await ctx.db.patch(profile._id, {
       spotifyTokenBlob: null,
+      spotifyBlendURL: null,
       disconnectedAt: Date.now(),
       updatedAt: Date.now(),
     });

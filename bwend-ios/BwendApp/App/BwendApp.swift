@@ -40,10 +40,9 @@ struct BwendApp: App {
     ///
     /// Two cases:
     ///   1. User is already onboarded → push directly onto the navigation stack.
-    ///   2. User is brand-new (no Spotify connected yet) → hold the code in
-    ///      `router.pendingInviteCode`. After they finish onboarding, SpotifyConnectView checks
-    ///      for it and routes them to the invite instead of the start screen. This is the path a
-    ///      Hinge match takes when they tap the link without having the app set up yet.
+    ///   2. User is brand-new (no Spotify connected yet) → show the public handoff preview and
+    ///      hold the code in `router.pendingInviteCode`. After onboarding, SpotifyConnectView
+    ///      returns them to the private Taste Card preview instead of the start screen.
     private func handleIncomingURL(_ url: URL) {
         guard let inviteCode = url.inviteCode else { return }
 
@@ -51,6 +50,7 @@ struct BwendApp: App {
             router.route(to: .invitePreview(code: inviteCode))
         } else {
             router.pendingInviteCode = inviteCode
+            router.route(to: .invitePreview(code: inviteCode))
         }
     }
 }

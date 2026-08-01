@@ -45,8 +45,9 @@
             </array>
         </dict>
 
-        <!-- Other user content — optional Listening Portrait questionnaire answers and the
-             private generated result. Linked to the account for app functionality only. -->
+        <!-- Other user content — an optional Spotify Blend invite URL, optional Listening
+             Portrait questionnaire answers, and the private generated result. Linked to the
+             account for app functionality only. -->
         <dict>
             <key>NSPrivacyCollectedDataType</key>
             <string>NSPrivacyCollectedDataTypeOtherUserContent</string>

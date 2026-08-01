@@ -13,7 +13,7 @@ struct PrivacyNoticeView: View {
 
                     noticeSection(
                         "What Bwend keeps",
-                        "A Bwend-only identifier, an encrypted Spotify connection, your top music and a derived taste fingerprint, and the blends you intentionally create."
+                        "A Bwend-only identifier, an encrypted Spotify connection, your top music and a derived taste fingerprint, the blends you intentionally create, and an optional Spotify Blend invite URL you add."
                     )
                     noticeSection(
                         "What Bwend does not build",
@@ -21,7 +21,7 @@ struct PrivacyNoticeView: View {
                     )
                     noticeSection(
                         "Who sees your music",
-                        "Your Taste Card is private by default. Another person sees selected music and a compatibility reveal only after you send or claim a Bwend link."
+                        "Your Taste Card is private by default. Another person sees selected music and a compatibility reveal only after you send or claim a Bwend link. If you attach a Spotify Blend URL, it opens Spotify; Bwend never reads its playlist or members. Spotify may show Blend members your Spotify username and profile picture."
                     )
                     noticeSection(
                         "Your controls",
