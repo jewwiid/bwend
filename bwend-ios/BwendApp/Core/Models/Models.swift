@@ -224,6 +224,7 @@ struct AnchorTrack: Codable, Equatable, Hashable {
 struct BlendResponse: Codable, Equatable {
     let displayName: String?
     let spotifyBlendURL: String?
+    let spotifyBlendPlaylistId: String?
     let timeRange: String
     /// Mean release year across the window. Nil when no release dates were parseable.
     let era: Double?
@@ -234,6 +235,26 @@ struct BlendResponse: Codable, Equatable {
     let library: LibraryCounts
 }
 
+struct SpotifyPlaylistSummary: Codable, Equatable, Identifiable {
+    let id: String
+    let name: String
+    let imageURL: String?
+    let spotifyURL: String
+    let trackCount: Int
+    let collaborative: Bool
+}
+
+struct SpotifyBlendPlaylistRead: Codable, Equatable, Identifiable {
+    let id: String
+    let name: String
+    let imageURL: String?
+    let spotifyURL: String
+    let trackCount: Int
+    let collaborative: Bool
+    let tracksReadable: Bool
+    let tracks: [BlendTrack]
+}
+
 struct SpotifyBlendLinkResponse: Codable, Equatable {
     let url: String
 }
@@ -242,6 +263,11 @@ struct SpotifyBlendRemovalResponse: Codable, Equatable {
     let ok: Bool
     let removed: Bool
     let revokedInviteCount: Int
+}
+
+struct SpotifyBlendPlaylistRemovalResponse: Codable, Equatable {
+    let ok: Bool
+    let removed: Bool
 }
 
 /// Live Spotify presence. A nil response from the endpoint means no active playback.

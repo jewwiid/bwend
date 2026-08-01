@@ -126,6 +126,8 @@ export const disconnectSpotify = internalMutation({
     await ctx.db.patch(profile._id, {
       spotifyTokenBlob: null,
       spotifyBlendURL: null,
+      spotifyBlendPlaylistId: null,
+      spotifyBlendPlaylistSelectedAt: null,
       disconnectedAt: Date.now(),
       updatedAt: Date.now(),
     });

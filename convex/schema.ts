@@ -2,11 +2,24 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
-  // Landing page waitlist — untouched, existing functionality.
+  // Email-only launch-interest list. No Spotify identity, taste data, or profile data is
+  // joined to this table. New records carry explicit consent, a deletion token, and expiry.
   waitlist: defineTable({
     email: v.string(),
+    consentVersion: v.optional(v.string()),
+    consentedAt: v.optional(v.number()),
+    source: v.optional(
+      v.union(v.literal("landing"), v.literal("in_person_qr"), v.literal("invite_capacity"))
+    ),
+    manageTokenHash: v.optional(v.string()),
+    expiresAt: v.optional(v.number()),
     createdAt: v.number(),
-  }).index("by_email", ["email"]),
+    updatedAt: v.optional(v.number()),
+  })
+    .index("by_email", ["email"])
+    .index("by_consent_version", ["consentVersion"])
+    .index("by_manage_token_hash", ["manageTokenHash"])
+    .index("by_expires_at", ["expiresAt"]),
 
   // --- iOS app backend tables (ported from Vapor SimplifySchema) ---
 
@@ -65,6 +78,10 @@ export default defineSchema({
     termsAcceptedAt: v.optional(v.number()),
     // Optional user-supplied Spotify Blend invite. Bwend validates but never fetches it.
     spotifyBlendURL: v.optional(v.union(v.string(), v.null())),
+    // A playlist the user explicitly selected from their own Spotify library after joining
+    // a Blend. The invite token cannot be resolved to this id; Bwend reads it live on demand.
+    spotifyBlendPlaylistId: v.optional(v.union(v.string(), v.null())),
+    spotifyBlendPlaylistSelectedAt: v.optional(v.union(v.number(), v.null())),
     disconnectedAt: v.optional(v.union(v.number(), v.null())),
     createdAt: v.number(),
     updatedAt: v.number(),

@@ -7,7 +7,7 @@ import SwiftUI
 // we route them back to the invite preview after connect completes.
 
 struct SpotifyConnectView: View {
-    static let privacyVersion = "2026-08-01"
+    static let privacyVersion = "2026-08-01.2"
     @EnvironmentObject var auth: AuthManager
     @EnvironmentObject var api: APIClient
     @EnvironmentObject var router: Router

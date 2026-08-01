@@ -26,4 +26,11 @@ crons.daily(
   {}
 );
 
+crons.daily(
+  "launch interest retention cleanup",
+  { hourUTC: 3, minuteUTC: 45 },
+  internal.waitlist.cleanupExpired,
+  {}
+);
+
 export default crons;

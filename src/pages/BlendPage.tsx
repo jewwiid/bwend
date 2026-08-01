@@ -25,6 +25,7 @@ import { AppShell, SectionLabel, Artwork, Spinner, ErrorCard } from '../componen
 import { ListeningPortraitSection } from '../components/ListeningPortraitSection';
 import { InvitesSection } from '../components/InvitesSection';
 import { SpotifyBlendCard } from '../components/SpotifyBlendCard';
+import { InviteQRCode } from '../components/InviteQRCode';
 
 const RANGES: { value: TimeRange; label: string }[] = [
   { value: 'short_term', label: 'Last month' },
@@ -46,6 +47,7 @@ export function BlendPage() {
   const [inviteRefreshKey, setInviteRefreshKey] = useState(0);
   const [privacyBusy, setPrivacyBusy] = useState(false);
   const [spotifyBlendURL, setSpotifyBlendURL] = useState<string | null>(null);
+  const [spotifyBlendPlaylistId, setSpotifyBlendPlaylistId] = useState<string | null>(null);
 
   const session = loadSession();
 
@@ -62,6 +64,7 @@ export function BlendPage() {
       try {
         const response = await myBlend(target);
         setSpotifyBlendURL(response.spotifyBlendURL);
+        setSpotifyBlendPlaylistId(response.spotifyBlendPlaylistId);
         setCache((prev) => ({ ...prev, [target]: response }));
         setBlend(response);
       } catch (e) {
@@ -195,6 +198,11 @@ export function BlendPage() {
         )}
         {inviteUrl ? (
           <div className="mt-4 space-y-3">
+            <InviteQRCode url={inviteUrl} />
+            <p className="max-w-md text-ds-sm opacity-90">
+              Scan face-to-face. They connect and claim; after the reveal, either person can
+              explicitly make their private Bwend playlist.
+            </p>
             <p className="break-all rounded-xl bg-white/20 px-4 py-3 text-ds-sm">{inviteUrl}</p>
             <button
               type="button"
@@ -222,7 +230,12 @@ export function BlendPage() {
 
       {blend && !loading && (
         <div className="mb-10">
-          <SpotifyBlendCard initialURL={spotifyBlendURL} onChange={setSpotifyBlendURL} />
+          <SpotifyBlendCard
+            initialURL={spotifyBlendURL}
+            initialPlaylistId={spotifyBlendPlaylistId}
+            onChange={setSpotifyBlendURL}
+            onPlaylistChange={setSpotifyBlendPlaylistId}
+          />
         </div>
       )}
 

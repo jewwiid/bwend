@@ -5,6 +5,9 @@ or in person. A user connects Spotify, creates a seven-day invite, and shares it
 one other person. Bwend reveals ranked music overlap and can save a private Spotify playlist
 after an explicit action. A user may also attach a Spotify Blend invite to their private Taste
 Card so the same Bwend link offers an intentional handoff to Spotify.
+After joining in Spotify, the user may separately choose the created playlist from their own
+library so Bwend can read it live where Spotify permits. In-person invites can be shown as a
+locally generated QR code; playlist creation still requires an explicit post-reveal action.
 
 It is intentionally not a dating marketplace: there is no public directory, swipe feed,
 personal biography, location, contacts import, or sensitive-trait inference.
@@ -78,7 +81,10 @@ disconnect Spotify, or delete their account from both clients. Unclaimed invites
 seven days; disconnected accounts are deleted after 30 days. The optional private Listening
 Portrait uses only separately consented questionnaire answers—never Spotify content or lyrics—
 and can be regenerated or deleted independently. Optional Spotify Blend URLs are validated but
-never fetched; removing one clears it from existing invite snapshots. See
+never fetched; removing one clears it from existing invite snapshots. A selected created-Blend
+playlist id is stored only after the user chooses it from their own Spotify library.
+The email-only launch-interest list is separated from Spotify accounts, requires explicit
+consent, expires after two years, and supports token-based immediate deletion. See
 [`docs/PRIVACY-ARCHITECTURE.md`](docs/PRIVACY-ARCHITECTURE.md).
 
 ## Deployment
@@ -94,8 +100,10 @@ and production Convex deployments require their own `OPENAI_API_KEY` values.
 
 Release owners should use [`docs/BETA-OPERATIONS.md`](docs/BETA-OPERATIONS.md) for the
 five-person Spotify test protocol and [`docs/APP-STORE-REVIEW.md`](docs/APP-STORE-REVIEW.md)
-for submission notes, privacy labels, screenshots and remaining external blockers. Run the
-complete local release gate with:
+for submission notes, privacy labels, screenshots and remaining external blockers. The
+[`docs/IN-PERSON-TEST-PLAYBOOK.md`](docs/IN-PERSON-TEST-PLAYBOOK.md) covers face-to-face
+testing, QR handoffs, content consent, and the public-interest fallback. Run the complete local
+release gate with:
 
 ```bash
 npm run release:check

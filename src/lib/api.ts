@@ -73,12 +73,27 @@ export interface LibraryCounts {
 export interface BlendResponse {
   displayName: string | null;
   spotifyBlendURL: string | null;
+  spotifyBlendPlaylistId: string | null;
   timeRange: string;
   era: number | null;
   topArtists: BlendArtist[];
   topTracks: BlendTrack[];
   recentlyPlayed: BlendTrack[] | null;
   library: LibraryCounts;
+}
+
+export interface SpotifyPlaylistSummary {
+  id: string;
+  name: string;
+  imageURL: string | null;
+  spotifyURL: string;
+  trackCount: number;
+  collaborative: boolean;
+}
+
+export interface SpotifyBlendPlaylistRead extends SpotifyPlaylistSummary {
+  tracksReadable: boolean;
+  tracks: BlendTrack[];
 }
 
 export interface ArtistBrief {
@@ -316,6 +331,27 @@ export function removeSpotifyBlend(): Promise<{
   revokedInviteCount: number;
 }> {
   return request("/me/spotify-blend", { method: "DELETE" });
+}
+
+export function listSpotifyPlaylists(): Promise<SpotifyPlaylistSummary[]> {
+  return request("/me/spotify-blend/playlists");
+}
+
+export function getSpotifyBlendPlaylist(): Promise<SpotifyBlendPlaylistRead | null> {
+  return request("/me/spotify-blend/playlist");
+}
+
+export function selectSpotifyBlendPlaylist(
+  playlistId: string,
+): Promise<SpotifyBlendPlaylistRead> {
+  return request("/me/spotify-blend/playlist", {
+    method: "POST",
+    body: JSON.stringify({ playlistId }),
+  });
+}
+
+export function removeSpotifyBlendPlaylist(): Promise<{ ok: boolean; removed: boolean }> {
+  return request("/me/spotify-blend/playlist", { method: "DELETE" });
 }
 
 export function getListeningPortrait(): Promise<ListeningPortrait | null> {

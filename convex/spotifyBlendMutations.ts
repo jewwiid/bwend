@@ -48,3 +48,26 @@ export const update = internalMutation({
     return { updated: true, revokedInviteCount };
   },
 });
+
+/** Attach or detach the Spotify playlist the caller explicitly identifies as their Blend. */
+export const updatePlaylist = internalMutation({
+  args: {
+    bwendUserId: v.string(),
+    spotifyBlendPlaylistId: v.union(v.string(), v.null()),
+    selectedAt: v.union(v.number(), v.null()),
+  },
+  returns: v.boolean(),
+  handler: async (ctx, args) => {
+    const profile = await ctx.db
+      .query("bwendProfiles")
+      .withIndex("by_spotify_user_id", (q) => q.eq("spotifyUserId", args.bwendUserId))
+      .first();
+    if (!profile) return false;
+    await ctx.db.patch(profile._id, {
+      spotifyBlendPlaylistId: args.spotifyBlendPlaylistId,
+      spotifyBlendPlaylistSelectedAt: args.selectedAt,
+      updatedAt: Date.now(),
+    });
+    return true;
+  },
+});

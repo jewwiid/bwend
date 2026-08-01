@@ -69,6 +69,10 @@ export const exportSnapshot = internalQuery({
         topArtists: profile.topArtists,
         tasteProfile: profile.tasteProfile,
         spotifyBlendURL: profile.spotifyBlendURL ?? null,
+        spotifyBlendPlaylistId: profile.spotifyBlendPlaylistId ?? null,
+        spotifyBlendPlaylistSelectedAt: profile.spotifyBlendPlaylistSelectedAt
+          ? new Date(profile.spotifyBlendPlaylistSelectedAt).toISOString()
+          : null,
         createdAt: new Date(profile.createdAt).toISOString(),
         updatedAt: new Date(profile.updatedAt).toISOString(),
         spotifyConnected: profile.spotifyTokenBlob !== null,

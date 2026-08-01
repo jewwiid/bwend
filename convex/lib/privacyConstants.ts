@@ -1,5 +1,5 @@
 /** Increment whenever the user-facing privacy notice materially changes. */
-export const CURRENT_PRIVACY_VERSION = "2026-08-01";
+export const CURRENT_PRIVACY_VERSION = "2026-08-01.2";
 
 /** Increment whenever the user-facing terms materially change. */
 export const CURRENT_TERMS_VERSION = "2026-08-01.beta-v2";

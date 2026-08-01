@@ -11,6 +11,7 @@ import {
   partitionInvites,
 } from '../lib/invitePresentation';
 import { Artwork, SectionLabel, Spinner } from './AppShell';
+import { InviteQRCode } from './InviteQRCode';
 
 interface InvitesSectionProps {
   refreshKey: number;
@@ -163,6 +164,7 @@ function InviteCard({
   onCancel,
   onOpen,
 }: InviteCardProps) {
+  const [showQR, setShowQR] = useState(false);
   const status = effectiveInviteStatus(invite);
   const pending = status === 'pending';
   const claimed = status === 'claimed';
@@ -214,22 +216,32 @@ function InviteCard({
       </div>
 
       {pending ? (
-        <div className="mt-4 flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={onCopy}
-            className="rounded-full border border-[var(--color-border)] px-4 py-2 text-ds-sm font-semibold"
-          >
-            {copied ? 'Copied' : 'Copy link'}
-          </button>
-          <button
-            type="button"
-            onClick={onCancel}
-            disabled={cancelling}
-            className="rounded-full px-4 py-2 text-ds-sm font-semibold text-red-600 disabled:opacity-50 dark:text-red-300"
-          >
-            {cancelling ? 'Cancelling…' : 'Cancel'}
-          </button>
+        <div className="mt-4 space-y-4">
+          {showQR ? <InviteQRCode url={invite.url} /> : null}
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={onCopy}
+              className="rounded-full border border-[var(--color-border)] px-4 py-2 text-ds-sm font-semibold"
+            >
+              {copied ? 'Copied' : 'Copy link'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowQR((value) => !value)}
+              className="rounded-full border border-[var(--color-border)] px-4 py-2 text-ds-sm font-semibold"
+            >
+              {showQR ? 'Hide QR' : 'Show QR'}
+            </button>
+            <button
+              type="button"
+              onClick={onCancel}
+              disabled={cancelling}
+              className="rounded-full px-4 py-2 text-ds-sm font-semibold text-red-600 disabled:opacity-50 dark:text-red-300"
+            >
+              {cancelling ? 'Cancelling…' : 'Cancel'}
+            </button>
+          </div>
         </div>
       ) : null}
     </article>

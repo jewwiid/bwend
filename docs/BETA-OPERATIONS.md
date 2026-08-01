@@ -45,9 +45,12 @@ Run on two physical iPhones and record only pass/fail plus app/build versions:
 - [ ] Taste Card loads all three time ranges
 - [ ] Sender pastes a complete Spotify Blend share message and Bwend extracts the valid link
 - [ ] Sender creates and shares an invite
+- [ ] Sender displays the invite QR; the second iPhone Camera opens the same Universal Link
 - [ ] Universal Link opens the recipient app at the intended invite
 - [ ] Signed-out recipient sees the optional Spotify handoff without seeing the Taste Card
 - [ ] “Open in Spotify” opens the expected Blend in the Spotify mobile app
+- [ ] After both people join the Spotify Blend, each can explicitly select it from their own
+      library; Bwend reports whether Spotify permits track reads
 - [ ] Recipient cannot claim their own link
 - [ ] Recipient claims once; a second claim is rejected
 - [ ] Both users open the same frozen reveal
@@ -60,6 +63,7 @@ Run on two physical iPhones and record only pass/fail plus app/build versions:
 - [ ] Account deletion removes the account and shared reveal
 - [ ] VoiceOver can reach primary controls and Dynamic Type remains usable
 - [ ] Light and Dark Mode remain legible
+- [ ] A non-allowlisted visitor can explicitly join and remove themselves from the launch list
 
 ## Monitoring and incident response
 
@@ -106,3 +110,9 @@ npm run deploy:vercel
 
 The local release check runs web lint/build/tests, Convex typecheck/self-checks, privacy
 manifest validation, iPhone simulator tests and a signing-free Release device build.
+
+`npm audit` currently reports `GHSA-qwww-vcr4-c8h2` in React Router 7.18.2. The advisory is for
+React Router's RSC/server-action mode; Bwend is a client-only Vite `BrowserRouter` app and has
+no React Router server actions. There is no fixed stable npm release yet (the suggested forced
+downgrade exposes older router advisories), so keep the latest 7.x release pinned, recheck this
+before each release, and upgrade as soon as a fixed stable version is published.

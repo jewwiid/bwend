@@ -27,6 +27,12 @@ struct BlendView: View {
     @State private var spotifyBlendBusy = false
     @State private var spotifyBlendMessage: String?
     @State private var confirmingSpotifyBlendRemoval = false
+    @State private var spotifyBlendPlaylistId: String?
+    @State private var spotifyPlaylists: [SpotifyPlaylistSummary] = []
+    @State private var selectedSpotifyPlaylistId = ""
+    @State private var spotifyBlendPlaylistRead: SpotifyBlendPlaylistRead?
+    @State private var spotifyBlendPlaylistBusy = false
+    @State private var spotifyBlendPlaylistMessage: String?
 
     /// Cache per window so flipping back and forth doesn't re-hit the network.
     @State private var cache: [BlendTimeRange: BlendResponse] = [:]
@@ -41,6 +47,7 @@ struct BlendView: View {
 
                     if let blend {
                         spotifyBlendSection
+                        spotifyBlendPlaylistSection
                         if let nowPlaying, let track = nowPlaying.track {
                             NowPlayingStrip(nowPlaying: nowPlaying, track: track)
                         }
@@ -188,7 +195,7 @@ struct BlendView: View {
                 .disabled(spotifyBlendBusy)
                 .accessibilityLabel("Spotify Blend invite link")
 
-                Text("Spotify may show Blend members your Spotify username and profile picture. Members can invite additional friends. Bwend never reads the Blend.")
+                Text("Spotify may show Blend members your Spotify username and profile picture. Members can invite additional friends. Bwend never follows this invite link or reads its members.")
                     .font(.bwend(size: 11))
                     .foregroundColor(Color.bwendTextMuted)
                     .lineSpacing(3)
@@ -221,6 +228,117 @@ struct BlendView: View {
                         .font(.bwend(size: 12))
                         .foregroundColor(Color.bwendTextSecondary)
                         .accessibilityLabel(spotifyBlendMessage)
+                }
+            }
+            .padding(16)
+            .background(Color.bwendBgCard)
+            .cornerRadius(BwendRadius.lg)
+        }
+    }
+
+    private var spotifyBlendPlaylistSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            SectionLabel("Created on Spotify")
+            Text("Read the Blend after it exists.")
+                .font(.bwend(size: 20, weight: .bold))
+                .foregroundColor(Color.bwendText)
+
+            VStack(alignment: .leading, spacing: 12) {
+                Text("The invite URL is not a playlist ID. After joining in Spotify, load your library and choose the created Blend yourself. Bwend reads it live only when you ask and never sends its tracks to AI.")
+                    .font(.bwend(size: 13))
+                    .foregroundColor(Color.bwendTextSecondary)
+                    .lineSpacing(3)
+
+                if !spotifyPlaylists.isEmpty {
+                    Picker("Spotify playlist", selection: $selectedSpotifyPlaylistId) {
+                        ForEach(spotifyPlaylists) { playlist in
+                            Text("\(playlist.name) · \(playlist.trackCount) tracks")
+                                .tag(playlist.id)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .tint(Color.spotify)
+                }
+
+                HStack(spacing: 10) {
+                    Button {
+                        Task { await loadSpotifyPlaylists() }
+                    } label: {
+                        Text(spotifyBlendPlaylistBusy ? "Checking…" : "Load playlists")
+                            .font(.bwend(size: 13, weight: .bold))
+                    }
+                    .buttonStyle(.bordered)
+                    .disabled(spotifyBlendPlaylistBusy)
+
+                    if !spotifyPlaylists.isEmpty {
+                        Button {
+                            Task { await selectSpotifyBlendPlaylist() }
+                        } label: {
+                            Text("Choose & read")
+                                .font(.bwend(size: 13, weight: .bold))
+                                .foregroundColor(.black)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(Color.spotify)
+                        .disabled(spotifyBlendPlaylistBusy || selectedSpotifyPlaylistId.isEmpty)
+                    } else if spotifyBlendPlaylistId != nil {
+                        Button {
+                            Task { await readSelectedSpotifyBlendPlaylist() }
+                        } label: {
+                            Text("Read selected")
+                                .font(.bwend(size: 13, weight: .bold))
+                                .foregroundColor(.black)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(Color.spotify)
+                        .disabled(spotifyBlendPlaylistBusy)
+                    }
+                }
+
+                if spotifyBlendPlaylistId != nil {
+                    Button("Detach selected playlist", role: .destructive) {
+                        Task { await removeSpotifyBlendPlaylist() }
+                    }
+                    .font(.bwend(size: 12, weight: .bold))
+                    .disabled(spotifyBlendPlaylistBusy)
+                }
+
+                if let playlist = spotifyBlendPlaylistRead {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(playlist.name)
+                                    .font(.bwend(size: 14, weight: .bold))
+                                    .foregroundColor(Color.bwendText)
+                                    .lineLimit(1)
+                                Text("\(playlist.trackCount) tracks · \(playlist.tracksReadable ? "readable" : "metadata only")")
+                                    .font(.bwend(size: 11))
+                                    .foregroundColor(Color.bwendTextSecondary)
+                            }
+                            Spacer()
+                            if let url = URL(string: playlist.spotifyURL) {
+                                Link("OPEN", destination: url)
+                                    .font(.bwend(size: 11, weight: .bold))
+                                    .foregroundColor(Color.spotify)
+                            }
+                        }
+                        ForEach(playlist.tracks.prefix(5)) { track in
+                            Text("\(track.name)\(track.artistName.map { " · \($0)" } ?? "")")
+                                .font(.bwend(size: 11))
+                                .foregroundColor(Color.bwendTextSecondary)
+                                .lineLimit(1)
+                        }
+                    }
+                    .padding(12)
+                    .background(Color.bwendBackground)
+                    .cornerRadius(BwendRadius.md)
+                }
+
+                if let spotifyBlendPlaylistMessage {
+                    Text(spotifyBlendPlaylistMessage)
+                        .font(.bwend(size: 12))
+                        .foregroundColor(Color.bwendTextSecondary)
+                        .accessibilityLabel(spotifyBlendPlaylistMessage)
                 }
             }
             .padding(16)
@@ -421,6 +539,10 @@ struct BlendView: View {
             cache[range] = response
             spotifyBlendURL = response.spotifyBlendURL
             spotifyBlendInput = response.spotifyBlendURL ?? ""
+            spotifyBlendPlaylistId = response.spotifyBlendPlaylistId
+            if selectedSpotifyPlaylistId.isEmpty {
+                selectedSpotifyPlaylistId = response.spotifyBlendPlaylistId ?? ""
+            }
             // Ignore a response that lost the race with a newer selection.
             if range == timeRange { blend = response }
         } catch let e as APIError {
@@ -470,6 +592,86 @@ struct BlendView: View {
             spotifyBlendMessage = error.errorDescription
         } catch {
             spotifyBlendMessage = error.localizedDescription
+        }
+    }
+
+    @MainActor
+    private func loadSpotifyPlaylists() async {
+        spotifyBlendPlaylistBusy = true
+        spotifyBlendPlaylistMessage = nil
+        defer { spotifyBlendPlaylistBusy = false }
+        do {
+            spotifyPlaylists = try await api.spotifyPlaylists()
+            if selectedSpotifyPlaylistId.isEmpty {
+                selectedSpotifyPlaylistId = spotifyPlaylists.first?.id ?? ""
+            }
+            spotifyBlendPlaylistMessage = spotifyPlaylists.isEmpty
+                ? "Spotify returned no playlists."
+                : "Choose the Blend yourself—Bwend does not guess from playlist names."
+        } catch let error as APIError {
+            spotifyBlendPlaylistMessage = error.errorDescription
+        } catch {
+            spotifyBlendPlaylistMessage = error.localizedDescription
+        }
+    }
+
+    @MainActor
+    private func selectSpotifyBlendPlaylist() async {
+        guard !selectedSpotifyPlaylistId.isEmpty else { return }
+        spotifyBlendPlaylistBusy = true
+        spotifyBlendPlaylistMessage = nil
+        defer { spotifyBlendPlaylistBusy = false }
+        do {
+            let playlist = try await api.selectSpotifyBlendPlaylist(id: selectedSpotifyPlaylistId)
+            spotifyBlendPlaylistId = playlist.id
+            spotifyBlendPlaylistRead = playlist
+            spotifyBlendPlaylistMessage = playlist.tracksReadable
+                ? "Bwend can read \(playlist.trackCount) tracks from this selected Blend."
+                : "Spotify exposes this playlist but does not allow Bwend to read its tracks."
+        } catch let error as APIError {
+            spotifyBlendPlaylistMessage = error.errorDescription
+        } catch {
+            spotifyBlendPlaylistMessage = error.localizedDescription
+        }
+    }
+
+    @MainActor
+    private func readSelectedSpotifyBlendPlaylist() async {
+        spotifyBlendPlaylistBusy = true
+        spotifyBlendPlaylistMessage = nil
+        defer { spotifyBlendPlaylistBusy = false }
+        do {
+            spotifyBlendPlaylistRead = try await api.spotifyBlendPlaylist()
+            guard let playlist = spotifyBlendPlaylistRead else {
+                spotifyBlendPlaylistMessage = "Choose the created Blend from your Spotify library first."
+                return
+            }
+            selectedSpotifyPlaylistId = playlist.id
+            spotifyBlendPlaylistMessage = playlist.tracksReadable
+                ? "Read \(playlist.trackCount) tracks live from Spotify."
+                : "Spotify exposes the playlist but not its tracks to Bwend."
+        } catch let error as APIError {
+            spotifyBlendPlaylistMessage = error.errorDescription
+        } catch {
+            spotifyBlendPlaylistMessage = error.localizedDescription
+        }
+    }
+
+    @MainActor
+    private func removeSpotifyBlendPlaylist() async {
+        spotifyBlendPlaylistBusy = true
+        spotifyBlendPlaylistMessage = nil
+        defer { spotifyBlendPlaylistBusy = false }
+        do {
+            _ = try await api.removeSpotifyBlendPlaylist()
+            spotifyBlendPlaylistId = nil
+            spotifyBlendPlaylistRead = nil
+            selectedSpotifyPlaylistId = ""
+            spotifyBlendPlaylistMessage = "The selected Spotify playlist was detached from Bwend."
+        } catch let error as APIError {
+            spotifyBlendPlaylistMessage = error.errorDescription
+        } catch {
+            spotifyBlendPlaylistMessage = error.localizedDescription
         }
     }
 }

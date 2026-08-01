@@ -27,8 +27,16 @@ The first native iPhone slice is now implemented end-to-end:
    entitlement until APNs is configured and verified on physical devices.
 6. **Optional Spotify Blend handoff** — a user can paste Spotify's share message or direct
    `open.spotify.com/blend/taste-match/...` URL into their private Taste Card. Bwend validates
-   and snapshots the link into new Bwend invites but does not call a Blend API, fetch the
-   playlist, or inspect its members.
+   and snapshots the link into new Bwend invites but does not call a Blend API or inspect its
+   members. Because the invite token is not a playlist id, a user who joins must separately
+   choose the created playlist from their own Spotify library. Bwend can then read metadata
+   and, where Spotify recognizes the user as owner/collaborator, playlist items.
+7. **In-person QR** — new and managed pending invites render the same one-time Bwend URL as a
+   locally generated QR code. Scanning leads to the existing consented claim/reveal flow;
+   playlist creation remains a separate explicit action.
+8. **Launch-interest capture** — the public site makes the consented email list primary while
+   Spotify remains allowlist-limited. Signup is separated from Taste Cards and includes
+   token-based removal plus a two-year retention limit.
 
 The remaining beta work is operational: reconnect existing Spotify users so
 they grant the current read/player and private-playlist scopes, verify the

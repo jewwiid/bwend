@@ -48,6 +48,8 @@ import type * as pushSubscriptions from "../pushSubscriptions.js";
 import type * as spotifyActions from "../spotifyActions.js";
 import type * as spotifyBlend from "../spotifyBlend.js";
 import type * as spotifyBlendMutations from "../spotifyBlendMutations.js";
+import type * as spotifyBlendPlaylist from "../spotifyBlendPlaylist.js";
+import type * as spotifyBlendPlaylistActions from "../spotifyBlendPlaylistActions.js";
 import type * as spotifyConnect from "../spotifyConnect.js";
 import type * as spotifyFeatureActions from "../spotifyFeatureActions.js";
 import type * as spotifyFeatures from "../spotifyFeatures.js";
@@ -100,6 +102,8 @@ declare const fullApi: ApiFromModules<{
   spotifyActions: typeof spotifyActions;
   spotifyBlend: typeof spotifyBlend;
   spotifyBlendMutations: typeof spotifyBlendMutations;
+  spotifyBlendPlaylist: typeof spotifyBlendPlaylist;
+  spotifyBlendPlaylistActions: typeof spotifyBlendPlaylistActions;
   spotifyConnect: typeof spotifyConnect;
   spotifyFeatureActions: typeof spotifyFeatureActions;
   spotifyFeatures: typeof spotifyFeatures;

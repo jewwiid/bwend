@@ -13,13 +13,14 @@ import {
   CURRENT_TERMS_VERSION,
   redirectUri,
 } from '../lib/spotifyAuth';
-import { connectSpotify, saveSession } from '../lib/api';
+import { ApiError, connectSpotify, saveSession } from '../lib/api';
 import { AppShell, Spinner, ErrorCard, PrimaryButton } from '../components/AppShell';
 
 export function CallbackPage() {
   const navigate = useNavigate();
   const [search] = useSearchParams();
   const [error, setError] = useState<string | null>(null);
+  const [spotifyAccessLimited, setSpotifyAccessLimited] = useState(false);
 
   // The authorization code is single-use. React StrictMode may double-invoke effects in
   // dev, and a second exchange with the same code fails — so guard to exactly one attempt.
@@ -46,6 +47,9 @@ export function CallbackPage() {
         });
         navigate(returnTo ?? '/blend', { replace: true });
       } catch (e) {
+        setSpotifyAccessLimited(
+          e instanceof ApiError && e.code === 'spotify_beta_access_required',
+        );
         setError(e instanceof Error ? e.message : 'Something went wrong signing in.');
       }
     })();
@@ -57,6 +61,14 @@ export function CallbackPage() {
         <div className="space-y-6">
           <h1 className="text-ds-2xl font-bold">Couldn't finish signing in</h1>
           <ErrorCard message={error} />
+          {spotifyAccessLimited ? (
+            <a
+              href="/?interest=invite_capacity#waitlist"
+              className="ds-btn ds-btn-primary inline-flex w-full justify-center"
+            >
+              Join the launch list
+            </a>
+          ) : null}
           <PrimaryButton onClick={() => navigate('/', { replace: true })}>
             Back to start
           </PrimaryButton>

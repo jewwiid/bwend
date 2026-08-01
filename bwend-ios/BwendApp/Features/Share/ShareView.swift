@@ -219,7 +219,8 @@ struct ShareView: View {
         ZStack {
             OrbBackground().opacity(0.5)
 
-            VStack(spacing: 28) {
+            ScrollView {
+                VStack(spacing: 28) {
                 VStack(spacing: 8) {
                     SectionLabel("Share invite")
 
@@ -232,28 +233,14 @@ struct ShareView: View {
 
                 if let url = shareURL {
                     VStack(spacing: 16) {
-                        RoundedRectangle(cornerRadius: BwendRadius.lg)
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color.Accent.peach.opacity(0.3), Color.Accent.lavender.opacity(0.3)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                            .frame(height: 180)
-                            .overlay(
-                                VStack(spacing: 8) {
-                                    Image(systemName: "link")
-                                        .font(.system(size: 32, weight: .semibold))
-                                        .foregroundColor(Color.bwendText)
-                                    Text(url.absoluteString)
-                                        .font(.bwend(size: 14, weight: .medium))
-                                        .foregroundColor(Color.bwendText)
-                                        .lineLimit(2)
-                                        .multilineTextAlignment(.center)
-                                        .padding(.horizontal, 16)
-                                }
-                            )
+                        InviteQRCode(url: url)
+
+                        Text("Scan face-to-face with the Camera app. They connect and claim; after the reveal, either person can explicitly make their private Bwend playlist.")
+                            .font(.bwend(size: 12))
+                            .foregroundColor(Color.bwendTextSecondary)
+                            .multilineTextAlignment(.center)
+                            .lineSpacing(3)
+                            .padding(.horizontal, 8)
 
                         HStack(spacing: 12) {
                             Button {
@@ -323,10 +310,12 @@ struct ShareView: View {
                     }
                 }
 
-                Spacer()
+                    Spacer(minLength: 24)
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 40)
+                .padding(.bottom, 32)
             }
-            .padding(.horizontal, 24)
-            .padding(.top, 40)
         }
         .navigationTitle("Share")
         .navigationBarTitleDisplayMode(.inline)
@@ -360,7 +349,7 @@ private struct SpotifyBlendHandoff: View {
             Text("Join their Spotify Blend")
                 .font(.bwend(size: 18, weight: .bold))
                 .foregroundColor(Color.bwendText)
-            Text("Spotify may show members your Spotify username and profile picture. Members can invite other friends. Bwend does not read the Blend.")
+            Text("Spotify may show members your Spotify username and profile picture. Members can invite other friends. Bwend does not follow this invite or read its members.")
                 .font(.bwend(size: 12))
                 .foregroundColor(Color.bwendTextSecondary)
                 .lineSpacing(3)

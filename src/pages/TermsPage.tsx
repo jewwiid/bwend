@@ -20,6 +20,7 @@ const sections = [
     title: 'Invites and respectful use',
     body: [
       'Send an invite only to someone you reasonably expect to receive it. Each invite is private, works once, and expires after seven days if unused. You can cancel a pending invite at any time. If you attach a Spotify Blend invite, the recipient may open it from the Bwend link before connecting to Bwend.',
+      'An invite QR code contains the same private Bwend URL, not extra profile data. Playlist creation still requires an explicit action after a Bwend reveal; scanning does not silently create or modify a Spotify playlist.',
       'Do not use Bwend to harass, threaten, stalk, discriminate, scrape data, probe another person’s account, bypass access controls, distribute malware, or use the service unlawfully. A vibe score describes music overlap only and must not be presented as a judgment about a person.',
     ],
   },
@@ -33,7 +34,7 @@ const sections = [
   {
     title: 'Spotify, OpenAI, and Apple',
     body: [
-      'Spotify, OpenAI, Apple, and other third-party services are governed by their own terms and availability. Bwend is not endorsed by those providers and cannot guarantee that an external API, Spotify Blend invite, or platform feature will remain available. Joining a Spotify Blend may reveal your Spotify username and profile picture to its members and allow members to invite others.',
+      'Spotify, OpenAI, Apple, and other third-party services are governed by their own terms and availability. Bwend is not endorsed by those providers and cannot guarantee that an external API, Spotify Blend invite, playlist-reading permission, or platform feature will remain available. Joining a Spotify Blend may reveal your Spotify username and profile picture to its members and allow members to invite others.',
       'Bwend sends OpenAI only optional Listening Portrait questionnaire answers after separate consent. Spotify listening history, tracks, artists, and lyrics are not sent to OpenAI.',
     ],
   },

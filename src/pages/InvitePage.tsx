@@ -230,7 +230,7 @@ function SpotifyBlendHandoff({ url }: { url: string }) {
           <h2 className="mt-2 text-ds-xl font-semibold">Join their Spotify Blend.</h2>
           <p className="mt-2 text-ds-sm leading-relaxed text-[var(--color-text-secondary)]">
             Spotify may show Blend members your Spotify username and profile picture. Members
-            can invite other friends. This opens Spotify; Bwend does not read the Blend.
+            can invite other friends. This opens Spotify; Bwend does not follow this invite or read its members.
           </p>
           <a
             href={url}

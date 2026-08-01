@@ -44,7 +44,7 @@ struct AccountPrivacyView: View {
                 controlCard(
                     icon: "link.badge.minus",
                     title: "Disconnect Spotify",
-                    body: "Deletes the stored Spotify credential and optional Spotify Blend URL now. Your remaining Taste Card stays for 30 days so you can reconnect."
+                    body: "Deletes the stored Spotify credential, optional Spotify Blend URL, and selected Blend playlist ID now. Your remaining Taste Card stays for 30 days so you can reconnect."
                 ) {
                     confirmDisconnect = true
                 }
@@ -89,7 +89,7 @@ struct AccountPrivacyView: View {
                 Task { await disconnect() }
             }
         } message: {
-            Text("Spotify access and any attached Spotify Blend link will be removed immediately. Bwend will erase the remaining account after 30 days unless you reconnect.")
+            Text("Spotify access, any attached Spotify Blend link, and selected Blend playlist ID will be removed immediately. Bwend will erase the remaining account after 30 days unless you reconnect.")
         }
         .alert("Delete your Bwend account?", isPresented: $confirmDelete) {
             Button("Cancel", role: .cancel) {}

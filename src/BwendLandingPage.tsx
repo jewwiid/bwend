@@ -6,6 +6,7 @@ import logoLight from './assets/logo_light.png';
 import logoDark from './assets/logo_dark.png';
 import { loadSession } from './lib/api';
 import { beginSpotifyLogin } from './lib/spotifyAuth';
+import { InviteQRCode } from './components/InviteQRCode';
 
 type IconProps = SVGProps<SVGSVGElement>;
 
@@ -116,11 +117,15 @@ function SectionLabel({ children, className = '' }: { children: React.ReactNode;
   );
 }
 
-const WAITLIST_STORAGE_KEY = 'bwend_waitlist_email';
+const INTEREST_TOKEN_STORAGE_KEY = 'bwend_launch_interest_token';
+const LEGACY_WAITLIST_STORAGE_KEY = 'bwend_waitlist_email';
+const LAUNCH_INTEREST_CONSENT_VERSION = '2026-08-01.launch-interest.v1';
 
-function savedWaitlistEmail(): string {
+function savedInterestToken(): string {
   try {
-    return localStorage.getItem(WAITLIST_STORAGE_KEY) ?? '';
+    // Older builds stored the email itself in localStorage. It is no longer needed there.
+    localStorage.removeItem(LEGACY_WAITLIST_STORAGE_KEY);
+    return localStorage.getItem(INTEREST_TOKEN_STORAGE_KEY) ?? '';
   } catch {
     return '';
   }
@@ -129,10 +134,14 @@ function savedWaitlistEmail(): string {
 export type WaitlistSignup = {
   email: string;
   setEmail: (v: string) => void;
+  consent: boolean;
+  setConsent: (v: boolean) => void;
   submitted: boolean;
   loading: boolean;
+  removing: boolean;
   error: string | null;
   submit: (e?: React.FormEvent) => Promise<void>;
+  remove: () => Promise<void>;
 };
 
 type SpotifyAccess = {
@@ -148,10 +157,14 @@ function isValidEmail(email: string): boolean {
 
 function useWaitlistSignup(): WaitlistSignup {
   const joinWaitlist = useMutation(api.waitlist.join);
-  const [email, setEmail] = useState(savedWaitlistEmail);
+  const removeWaitlist = useMutation(api.waitlist.remove);
+  const [email, setEmail] = useState('');
+  const [consent, setConsent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [removing, setRemoving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [submitted, setSubmitted] = useState(() => savedWaitlistEmail().length > 0);
+  const [manageToken, setManageToken] = useState(savedInterestToken);
+  const submitted = manageToken.length > 0;
 
   const submit = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -164,12 +177,30 @@ function useWaitlistSignup(): WaitlistSignup {
       setError('Please enter a valid email address.');
       return;
     }
+    if (!consent) {
+      setError('Please consent to launch emails before joining.');
+      return;
+    }
     setError(null);
     setLoading(true);
     try {
-      await joinWaitlist({ email: trimmed });
-      localStorage.setItem(WAITLIST_STORAGE_KEY, trimmed);
-      setSubmitted(true);
+      const params = new URLSearchParams(window.location.search);
+      const interest = params.get('interest');
+      const source = interest === 'in_person'
+        ? 'in_person_qr'
+        : interest === 'invite_capacity'
+          ? 'invite_capacity'
+          : 'landing';
+      const result = await joinWaitlist({
+        email: trimmed,
+        consent,
+        consentVersion: LAUNCH_INTEREST_CONSENT_VERSION,
+        source,
+        website: '',
+      });
+      localStorage.setItem(INTEREST_TOKEN_STORAGE_KEY, result.manageToken);
+      setManageToken(result.manageToken);
+      setEmail('');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Try again.');
     } finally {
@@ -177,7 +208,34 @@ function useWaitlistSignup(): WaitlistSignup {
     }
   };
 
-  return { email, setEmail, submitted, loading, error, submit };
+  const remove = async () => {
+    if (!manageToken) return;
+    setRemoving(true);
+    setError(null);
+    try {
+      await removeWaitlist({ manageToken });
+      localStorage.removeItem(INTEREST_TOKEN_STORAGE_KEY);
+      setManageToken('');
+      setConsent(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not remove your email. Try again.');
+    } finally {
+      setRemoving(false);
+    }
+  };
+
+  return {
+    email,
+    setEmail,
+    consent,
+    setConsent,
+    submitted,
+    loading,
+    removing,
+    error,
+    submit,
+    remove,
+  };
 }
 
 function useSpotifyAccess(): SpotifyAccess {
@@ -240,7 +298,7 @@ function SpotifyAccessButton({
           ? 'Opening Spotify…'
           : access.signedIn
             ? 'Open your blend'
-            : 'Continue with Spotify'}
+            : 'Approved tester sign in'}
       </span>
     </button>
   );
@@ -364,7 +422,7 @@ function HeroSection({
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 lg:px-24 w-full">
         <div className="translate-y-4 animate-fade-in">
-          <SectionLabel className="text-white/60 mb-8">Spotify sign-in is open.</SectionLabel>
+          <SectionLabel className="text-white/60 mb-8">Private beta · Spotify access is limited.</SectionLabel>
           <h1 className="font-display text-[clamp(3.5rem,10vw,8rem)] text-white font-semibold leading-[0.85] tracking-[-0.06em]">
             The connection layer <br />
             <span className="italic font-serif">designed</span> to <br />
@@ -376,17 +434,17 @@ function HeroSection({
 
           <div className="mt-10 max-w-xl">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <SpotifyAccessButton
-                access={access}
-                variant="accent"
-                className="px-8 py-4 text-[0.75rem] font-bold uppercase tracking-[0.18em] shadow-xl"
-              />
               <a
                 href="#waitlist"
-                className="inline-flex justify-center rounded-full border border-white/25 bg-white/10 px-8 py-4 text-[0.75rem] font-bold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all hover:bg-white/15"
+                className="inline-flex justify-center rounded-full bg-[var(--color-accent-cta)] px-8 py-4 text-[0.75rem] font-bold uppercase tracking-[0.18em] text-[#14120f] shadow-xl transition-all hover:brightness-105"
               >
-                Join by email
+                Join the launch list
               </a>
+              <SpotifyAccessButton
+                access={access}
+                variant="outline"
+                className="px-8 py-4 text-[0.75rem] font-bold uppercase tracking-[0.18em]"
+              />
             </div>
             {access.error ? (
               <p className="mt-3 text-sm text-red-300" role="alert">
@@ -590,7 +648,7 @@ function LabsSection() {
   );
 }
 
-function HowItWorksSection({ access }: { access: SpotifyAccess }) {
+function HowItWorksSection() {
   const { ref, inView } = useInView();
   const steps = [
     {
@@ -640,19 +698,17 @@ function HowItWorksSection({ access }: { access: SpotifyAccess }) {
         </div>
 
         <div className="mt-24 text-center">
-          <button
-            type="button"
-            onClick={() => void access.connect()}
-            disabled={access.connecting}
+          <a
+            href="#waitlist"
             className={`inline-flex items-center justify-center gap-3 rounded-full bg-[var(--color-accent-cta)] px-7 py-3.5 text-[0.6875rem] font-bold uppercase tracking-[0.18em] text-[#14120f] transition-all duration-500 hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-focus-ring)] ${
               inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
-            } disabled:cursor-wait disabled:opacity-60`}
+            }`}
           >
-            <span>{access.signedIn ? 'Your blend is ready' : 'Start here'}</span>
+            <span>Interested?</span>
             <span className="h-1 w-1 rounded-full bg-[#14120f]/50" aria-hidden="true" />
-            <span>{access.signedIn ? 'Open the app' : 'Connect Spotify'}</span>
+            <span>Join the launch list</span>
             <Icons.arrow className="h-4 w-4" aria-hidden="true" />
-          </button>
+          </a>
         </div>
       </div>
     </section>
@@ -973,32 +1029,62 @@ function FinalCTASection({
             </div>
 
             {waitlist.submitted ? (
-              <div className="mt-12 inline-flex items-center gap-4 px-8 py-5 rounded-full bg-[var(--color-accent-coral)]/10 border border-[var(--color-accent-coral)]/20 shadow-sm animate-fade-in">
+              <div className="mt-12 inline-flex flex-wrap items-center gap-4 rounded-3xl border border-[var(--color-accent-coral)]/20 bg-[var(--color-accent-coral)]/10 px-8 py-5 shadow-sm animate-fade-in">
                 <Icons.check className="w-5 h-5 text-[var(--color-accent-coral)]" />
-                <span className="text-[0.625rem] font-bold uppercase tracking-[0.2em]">Email saved.</span>
+                <span className="text-[0.625rem] font-bold uppercase tracking-[0.2em]">Launch interest saved.</span>
+                <button
+                  type="button"
+                  onClick={() => void waitlist.remove()}
+                  disabled={waitlist.removing}
+                  className="text-xs font-semibold underline underline-offset-4 disabled:opacity-50"
+                >
+                  {waitlist.removing ? 'Removing…' : 'Remove my email'}
+                </button>
               </div>
             ) : (
               <div className="mt-14 max-w-xl">
-                <form onSubmit={waitlist.submit} className="flex flex-col sm:flex-row gap-4">
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    value={waitlist.email}
-                    onChange={(e) => waitlist.setEmail(e.target.value)}
-                    required
-                    disabled={waitlist.loading}
-                    autoComplete="email"
-                    className={`ds-input flex-1 font-medium ${waitlist.error ? 'ds-input-error' : ''}`}
-                    aria-invalid={waitlist.error ? true : undefined}
-                    aria-describedby={waitlist.error ? 'waitlist-error' : undefined}
-                  />
-                  <button
-                    type="submit"
-                    disabled={waitlist.loading}
-                    className={`ds-btn ds-btn-primary whitespace-nowrap text-[0.625rem] font-bold uppercase tracking-[0.2em] px-12 shadow-xl ${waitlist.loading ? 'ds-btn-loading' : ''}`}
-                  >
-                    {waitlist.loading ? 'Joining…' : 'Join waitlist'}
-                  </button>
+                <form onSubmit={waitlist.submit} className="space-y-4">
+                  <div className="flex flex-col gap-4 sm:flex-row">
+                    <input
+                      type="email"
+                      placeholder="Email"
+                      value={waitlist.email}
+                      onChange={(e) => waitlist.setEmail(e.target.value)}
+                      required
+                      disabled={waitlist.loading}
+                      autoComplete="email"
+                      className={`ds-input flex-1 font-medium ${waitlist.error ? 'ds-input-error' : ''}`}
+                      aria-invalid={waitlist.error ? true : undefined}
+                      aria-describedby={waitlist.error ? 'waitlist-error' : undefined}
+                    />
+                    <input
+                      type="text"
+                      name="website"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      aria-hidden="true"
+                      className="hidden"
+                    />
+                    <button
+                      type="submit"
+                      disabled={waitlist.loading || !waitlist.consent}
+                      className={`ds-btn ds-btn-primary whitespace-nowrap text-[0.625rem] font-bold uppercase tracking-[0.2em] px-12 shadow-xl ${waitlist.loading ? 'ds-btn-loading' : ''}`}
+                    >
+                      {waitlist.loading ? 'Joining…' : 'Keep me posted'}
+                    </button>
+                  </div>
+                  <label className="flex items-start gap-3 text-sm leading-relaxed text-[var(--color-text-secondary)]">
+                    <input
+                      type="checkbox"
+                      checked={waitlist.consent}
+                      onChange={(event) => waitlist.setConsent(event.target.checked)}
+                      className="mt-1 h-4 w-4 accent-[var(--color-accent-cta)]"
+                    />
+                    <span>
+                      Email me about limited beta access and Bwend&apos;s public launch. I can
+                      unsubscribe at any time. See the <a href="/privacy" className="underline">Privacy Notice</a>.
+                    </span>
+                  </label>
                 </form>
                 {waitlist.error ? (
                   <p id="waitlist-error" className="ds-field-error mt-4" role="alert">
@@ -1007,6 +1093,16 @@ function FinalCTASection({
                 ) : null}
               </div>
             )}
+            <div className="mt-10 flex flex-wrap items-center gap-5 rounded-3xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-5">
+              <InviteQRCode url="https://www.bwend.xyz/?interest=in_person#waitlist" />
+              <div className="max-w-xs">
+                <p className="font-semibold">Talking to someone in person?</p>
+                <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
+                  Let them scan this public interest QR. It opens the email form and records
+                  only that the signup came from an in-person conversation—not a location or profile.
+                </p>
+              </div>
+            </div>
             <p className="mt-10 text-[0.625rem] font-bold uppercase tracking-[0.4em] text-[var(--color-text-muted)]">
               One private link. Music first.
             </p>
@@ -1083,7 +1179,7 @@ export function BwendLandingPage() {
         <LogoBar />
         <PhilosophySection access={spotifyAccess} />
         <LabsSection />
-        <HowItWorksSection access={spotifyAccess} />
+        <HowItWorksSection />
         <MidCTASection access={spotifyAccess} />
         <FeaturesSection />
         <StatsSection />

@@ -32,10 +32,12 @@ associated domain. The current release is iPhone-only and portrait-only.
    hours when Spotify provides those signals.
 3. Optionally create a private AI Listening Portrait from a separate three-question form.
    Spotify tracks, artists, history, and lyrics are not sent to the AI provider.
-4. Optionally attach a Spotify Blend invite URL. Bwend validates but never fetches it.
-5. Choose a track, create a seven-day link, and share it with someone already met elsewhere.
-6. The recipient can open the attached Spotify Blend or connect Spotify and claim Bwend's link.
-7. Both people see the same reveal and may independently save a private playlist to Spotify.
+4. Optionally attach a Spotify Blend invite URL. Bwend validates but never follows it.
+5. After joining in Spotify, optionally choose the created Blend from the caller's own library
+   so Bwend can read it live where Spotify permits.
+6. Choose a track, create a seven-day link, and share it or display its locally generated QR.
+7. The recipient can scan, open the attached Spotify Blend, or connect Spotify and claim Bwend's link.
+8. Both people see the same reveal and may independently save a private playlist to Spotify.
 
 There is no public profile, discovery feed, photo, biography, location, contacts access, or
 dating-app import.

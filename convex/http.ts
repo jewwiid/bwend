@@ -50,6 +50,12 @@ import {
   handleSaveSpotifyBlend,
 } from "./spotifyBlend";
 import {
+  handleDeleteSpotifyBlendPlaylist,
+  handleGetSpotifyBlendPlaylist,
+  handleListSpotifyPlaylists,
+  handleSelectSpotifyBlendPlaylist,
+} from "./spotifyBlendPlaylist";
+import {
   CURRENT_PRIVACY_VERSION,
   CURRENT_TERMS_VERSION,
 } from "./lib/privacyConstants";
@@ -114,6 +120,30 @@ http.route({
   path: "/api/me/spotify-blend",
   method: "GET",
   handler: handleGetSpotifyBlend,
+});
+
+http.route({
+  path: "/api/me/spotify-blend/playlists",
+  method: "GET",
+  handler: handleListSpotifyPlaylists,
+});
+
+http.route({
+  path: "/api/me/spotify-blend/playlist",
+  method: "GET",
+  handler: handleGetSpotifyBlendPlaylist,
+});
+
+http.route({
+  path: "/api/me/spotify-blend/playlist",
+  method: "POST",
+  handler: handleSelectSpotifyBlendPlaylist,
+});
+
+http.route({
+  path: "/api/me/spotify-blend/playlist",
+  method: "DELETE",
+  handler: handleDeleteSpotifyBlendPlaylist,
 });
 
 http.route({
@@ -251,6 +281,8 @@ for (const path of [
   "/api/auth/spotify",
   "/api/me/blend",
   "/api/me/spotify-blend",
+  "/api/me/spotify-blend/playlists",
+  "/api/me/spotify-blend/playlist",
   "/api/me/listening-portrait",
   "/api/me/now-playing",
   "/api/me/player",

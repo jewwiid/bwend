@@ -18,7 +18,10 @@ credentials, App Store Connect API keys, signing material, or Spotify secrets he
 > 5. Optionally paste the Spotify Blend test invitation supplied in App Review Information.
 > 6. Tap “Start a blend” to create a seven-day, single-use Bwend invite. The same Bwend link
 >    includes an “Open in Spotify” handoff when the optional Spotify Blend URL was saved.
-> 7. Open “Privacy & data” to export, disconnect Spotify, or permanently delete the account.
+> 7. Show the locally generated QR to a second iPhone; scanning opens the same Universal Link.
+> 8. After joining a Spotify Blend, optionally load the caller's own Spotify playlists and
+>    explicitly select the created Blend. Spotify may expose metadata only or allow track reads.
+> 9. Open “Privacy & data” to export, disconnect Spotify, or permanently delete the account.
 >
 > The app has no purchases, advertising, tracking, public people directory, messaging,
 > location access, contacts access, or dating profiles. Notifications are disabled in this
@@ -27,6 +30,9 @@ credentials, App Store Connect API keys, signing material, or Spotify secrets he
 > A user may optionally paste a Spotify Blend invite. Bwend validates and stores only that
 > URL, never fetches its playlist or members, and opens it in the Spotify app from a private
 > Bwend invite after showing Spotify's member-visibility disclosure.
+> Separately, after joining, the user may choose a playlist from their own Spotify library.
+> Bwend stores its playlist ID and reads it live only when requested; selected tracks are never
+> sent to OpenAI. QR generation happens locally and sends the invite URL to no QR service.
 >
 > Universal Links for `https://www.bwend.xyz/m/*` open private invite previews. If testing a
 > two-account match, use the second allowlisted Spotify account supplied below.
@@ -72,7 +78,7 @@ other unavailable features.
 | App Store data category | Linked | Tracking | Purpose |
 |---|---:|---:|---|
 | User ID (pseudonymous Bwend ID) | Yes | No | App functionality |
-| Product Interaction (Spotify listening/activity signals) | Yes | No | App functionality |
+| Product Interaction (Spotify listening/activity signals and explicitly selected playlist) | Yes | No | App functionality |
 | Other User Content (optional Spotify Blend URL and portrait answers/result) | Yes | No | App functionality |
 
 Runtime destinations to disclose and verify during the final network audit:

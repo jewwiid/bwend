@@ -135,6 +135,26 @@ final class APIClient: ObservableObject {
         try await perform("DELETE", "/me/spotify-blend", body: nil, authed: true)
     }
 
+    func spotifyPlaylists() async throws -> [SpotifyPlaylistSummary] {
+        try await get("/me/spotify-blend/playlists")
+    }
+
+    func spotifyBlendPlaylist() async throws -> SpotifyBlendPlaylistRead? {
+        try await get("/me/spotify-blend/playlist")
+    }
+
+    func selectSpotifyBlendPlaylist(id: String) async throws -> SpotifyBlendPlaylistRead {
+        try await post(
+            "/me/spotify-blend/playlist",
+            body: ["playlistId": id],
+            authed: true
+        )
+    }
+
+    func removeSpotifyBlendPlaylist() async throws -> SpotifyBlendPlaylistRemovalResponse {
+        try await perform("DELETE", "/me/spotify-blend/playlist", body: nil, authed: true)
+    }
+
     func listeningPortrait() async throws -> ListeningPortrait? {
         try await get("/me/listening-portrait")
     }

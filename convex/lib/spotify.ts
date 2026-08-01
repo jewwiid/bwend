@@ -259,6 +259,20 @@ export interface SpotifyDiscoveryItem {
   spotifyURL: string | null;
 }
 
+export interface SpotifyPlaylistSummary {
+  id: string;
+  name: string;
+  imageURL: string | null;
+  spotifyURL: string;
+  trackCount: number;
+  collaborative: boolean;
+}
+
+export interface SpotifyPlaylistRead extends SpotifyPlaylistSummary {
+  tracksReadable: boolean;
+  tracks: SpotifyTrack[];
+}
+
 /**
  * Recently played tracks. Requires the `user-read-recently-played` scope.
  *
@@ -423,6 +437,69 @@ export async function addPlaylistItems(
   }
 }
 
+/**
+ * Playlists visible in the current user's own library. Bwend never guesses which one is a
+ * Blend from its name: the user explicitly chooses it in the client.
+ */
+export async function currentUserPlaylists(
+  token: string,
+  limit = 50
+): Promise<SpotifyPlaylistSummary[]> {
+  const boundedLimit = Math.max(1, Math.min(limit, 50));
+  const resp = await fetch(`${API_BASE}/me/playlists?limit=${boundedLimit}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!resp.ok) throw await spotifyAPIError("/me/playlists", resp);
+  const data = await resp.json();
+  return (Array.isArray(data?.items) ? data.items : [])
+    .filter(
+      (playlist: any) =>
+        playlist?.id && playlist?.name && typeof playlist?.external_urls?.spotify === "string"
+    )
+    .map((playlist: any) => mapPlaylistSummary(playlist));
+}
+
+/**
+ * Read a playlist the user selected from their own library. Spotify currently limits items
+ * to playlists the user owns or collaborates on, so metadata may be readable while tracks
+ * are not. That distinction is returned honestly instead of treating a 403 as empty music.
+ */
+export async function readSpotifyPlaylist(
+  token: string,
+  playlistId: string
+): Promise<SpotifyPlaylistRead> {
+  const encodedId = encodeURIComponent(playlistId);
+  const detailsResponse = await fetch(`${API_BASE}/playlists/${encodedId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!detailsResponse.ok) {
+    throw await spotifyAPIError(`/playlists/${playlistId}`, detailsResponse);
+  }
+  const details = await detailsResponse.json();
+  const summary = mapPlaylistSummary(details);
+
+  const itemsResponse = await fetch(`${API_BASE}/playlists/${encodedId}/items?limit=50`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (itemsResponse.status === 403) {
+    return { ...summary, tracksReadable: false, tracks: [] };
+  }
+  if (!itemsResponse.ok) {
+    throw await spotifyAPIError(`/playlists/${playlistId}/items`, itemsResponse);
+  }
+  const items = await itemsResponse.json();
+  const tracks = (Array.isArray(items?.items) ? items.items : [])
+    .map((row: any) => row?.item ?? row?.track)
+    .filter((track: any) => track?.type === "track" && track?.id && track?.name)
+    .map(mapTrack);
+  return {
+    ...summary,
+    trackCount: typeof items?.total === "number" ? items.total : summary.trackCount,
+    tracksReadable: true,
+    tracks,
+  };
+}
+
 /** New releases and featured playlists for the post-match discovery rail. */
 export async function discovery(token: string): Promise<SpotifyDiscoveryItem[]> {
   const headers = { Authorization: `Bearer ${token}` };
@@ -529,6 +606,26 @@ export function mapTrack(item: any): SpotifyTrack {
     explicit: typeof item.explicit === "boolean" ? item.explicit : null,
     releaseYear: parseYear(item.album?.release_date),
     popularity: numberOrNull(item.popularity),
+  };
+}
+
+function mapPlaylistSummary(item: any): SpotifyPlaylistSummary {
+  const spotifyURL = item?.external_urls?.spotify;
+  if (!item?.id || !item?.name || typeof spotifyURL !== "string") {
+    throw new SpotifyAPIError("/playlists", 502, "missing playlist metadata");
+  }
+  return {
+    id: item.id,
+    name: item.name,
+    imageURL: largestImage(item.images),
+    spotifyURL,
+    trackCount:
+      typeof item?.items?.total === "number"
+        ? item.items.total
+        : typeof item?.tracks?.total === "number"
+          ? item.tracks.total
+          : 0,
+    collaborative: item.collaborative === true,
   };
 }
 

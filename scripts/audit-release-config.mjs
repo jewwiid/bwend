@@ -62,7 +62,7 @@ for (const path of [
   }
 }
 
-const privacyVersion = "2026-08-01";
+const privacyVersion = "2026-08-01.2";
 for (const path of [
   "convex/lib/privacyConstants.ts",
   "src/lib/spotifyAuth.ts",
